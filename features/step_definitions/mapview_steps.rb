@@ -1,7 +1,7 @@
 require "uri"
 require "domain/latlon"
 require "domain/vessel"
-require "service/lookup"
+require "service"
 
 Given /^vessel "([^"]*)" at position "([^"]*)"$/ do |name, coords_str|
     # Create vessel with given info
@@ -10,8 +10,8 @@ Given /^vessel "([^"]*)" at position "([^"]*)"$/ do |name, coords_str|
     @vessel.position = LatLon.from_str coords_str
 
     # Send position report for vessel
-    transmitter = Service::lookup('ais/transmitter')
-    transmitter.send_position_report_for vessel
+    transmitter = Service.new.bind 'ais/transmitter'
+    transmitter.send_position_report_for @vessel
 end
 
 When /^I view the map area between "([^"]*)" and "([^"]*)"$/ do |coords1_str, coords2_str|
