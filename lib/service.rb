@@ -16,17 +16,26 @@ class Service
 
     def initialize(context=ZMQ::Context.new)
         @context = context
+        @sockets = []
     end
     
     def bind(name)
         ep = ENDPOINTS[:transmitter]
         socket = @context.socket ZMQ::REQ
+        @sockets << socket
+        
         rc = socket.connect ep
 
         if ZMQ::Util.resultcode_ok? rc
-            return TransmitterProxy.new socket    
+            return TransmitterProxy.new socket
         else
             raise RuntimeError, "Couldn't connect to #{ep}"
+        end
+    end
+    
+    def terminate
+        @sockets.each do |socket|
+            socket.close
         end
     end
 end

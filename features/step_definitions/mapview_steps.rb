@@ -10,8 +10,10 @@ Given /^vessel "([^"]*)" at position "([^"]*)"$/ do |name, coords_str|
     @vessel.position = LatLon.from_str coords_str
 
     # Send position report for vessel
-    transmitter = Service.new.bind 'ais/transmitter'
+    service = Service.new
+    transmitter = service.bind 'ais/transmitter'
     transmitter.send_position_report_for @vessel
+    service.terminate
 end
 
 When /^I view the map area between "([^"]*)" and "([^"]*)"$/ do |coords1_str, coords2_str|

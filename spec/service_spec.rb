@@ -33,6 +33,19 @@ describe Service do
             service = Service.new context
             expect { service.bind 'ais/transmitter' }.to raise_error
         end
+
+        it "closes all sockets when stopped" do
+            socket = double("Socket")
+            socket.stub(:connect) { 0 }
+            socket.should_receive(:close)
+            
+            context = double("Context")
+            context.stub(:socket) { socket }
+            
+            service = Service.new context
+            service.bind 'ais/transmitter'
+            service.terminate            
+        end
     end    
 end
 
