@@ -29,4 +29,9 @@ describe LatLon do
         expect { LatLon.from_str "1.1 N, 9.6E" }.to raise_error
         expect { LatLon.from_str "1 1.1N, 9.6E" }.to raise_error
     end
+    
+    it 'can be converted to a string' do
+        latlon = LatLon.from_str "47.16N, 9.66W"
+        latlon.to_s.should eq "47.16,-9.66"
+    end
 end

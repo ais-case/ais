@@ -24,4 +24,8 @@ class LatLon
             raise ArgumentError, "Unrecognized format"
         end
     end
+    
+    def to_s
+        "#{@lat},#{@lon}"
+    end
 end
