@@ -44,6 +44,7 @@ group :development, :test do
   gem 'rspec-rails', '~> 2.0'
   gem 'cucumber-rails', :require => false
   gem 'capybara'
+  gem 'jasmine'
   # database_cleaner is not required, but highly recommended
   # gem 'database_cleaner'
 end
