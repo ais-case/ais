@@ -7,7 +7,7 @@ require 'headless'
 
 Before do
   Capybara.current_driver = Capybara.javascript_driver
-  @headless = Headless.new
+  @headless = Headless.new :display => 10 + rand(90)
   @headless.start
 end
 
