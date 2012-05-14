@@ -24,7 +24,7 @@ Given /^vessel "([^"]*)" at position "([^"]*)"$/ do |name, coords_str|
   # Send position report for vessel
   service = Service.new
   transmitter = service.bind 'ais/transmitter'
-  transmitter.send_position_report_for @vessel
+  #transmitter.send_position_report_for @vessel
   service.terminate
 end
 
