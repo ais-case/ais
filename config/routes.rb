@@ -46,6 +46,8 @@ Ais::Application.routes.draw do
   #     resources :products
   #   end
 
+  match 'map/' => 'map#index', :as => 'map' 
+  
   # You can have the root of your site routed with "root"
   # just remember to delete public/index.html.
   root :to => 'map#index'

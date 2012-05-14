@@ -3,7 +3,6 @@ Feature: Map View
   As a coast guard
   I want to see the location of each vessel marked on a map
 
-  @wip
   Scenario: show map
      When I view the homepage
      Then I should see a map of the area around "52.10N, 3.90E"
