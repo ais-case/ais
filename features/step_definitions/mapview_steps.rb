@@ -7,13 +7,9 @@ require 'headless'
 
 Before do
   Capybara.current_driver = Capybara.javascript_driver
-  Capybara.server_port = 9000 + rand(90)
-  @headless = Headless.new :display => 10 + rand(90)
-  @headless.start
 end
 
 After do |scenario|
-  @headless.destroy
 end
 
 Given /^vessel "([^"]*)" at position "([^"]*)"$/ do |name, coords_str|
