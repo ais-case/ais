@@ -3,7 +3,6 @@ require 'domain/latlon'
 require 'domain/vessel'
 require 'service'
 require 'capybara/rails'
-require 'headless'
 
 Before do
   Capybara.current_driver = Capybara.javascript_driver
