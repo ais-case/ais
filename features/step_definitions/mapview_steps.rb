@@ -3,8 +3,17 @@ require 'domain/latlon'
 require 'domain/vessel'
 require 'service'
 require 'capybara/rails'
+require 'headless'
 
-Capybara.current_driver = Capybara.javascript_driver
+Before do
+  Capybara.current_driver = Capybara.javascript_driver
+  @headless = Headless.new
+  @headless.start
+end
+
+After do |scenario|
+  @headless.destroy
+end
 
 Given /^vessel "([^"]*)" at position "([^"]*)"$/ do |name, coords_str|
   # Create vessel with given info
