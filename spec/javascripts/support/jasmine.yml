@@ -11,7 +11,8 @@
 #   - dist/**/*.js
 #
 src_files:
-  - app/assets/javascripts/**/*.js
+  - vendor/assets/javascripts/**/*.js
+  - app/assets/javascripts/vessel_map.js
 
 # stylesheets
 #
