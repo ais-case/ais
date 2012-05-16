@@ -54,9 +54,9 @@ Map.prototype.zoomToArea = function(latlon1, latlon2) {
 	this.map.zoomToExtent(bounds);
 }
 
-Map.prototype.addMarker = function(vessel) {
-	var marker = new OpenLayers.Marker(vessel.position.getLonLat());
-	this.markerLayer.addMarker(marker);
+Map.prototype.addMarker = function(marker) {
+	var osmMarker = new OpenLayers.Marker(marker.position.getLonLat());
+	this.markerLayer.addMarker(osmMarker);
 }
 
 Map.prototype.hasMarkerAt = function(latlon) {
