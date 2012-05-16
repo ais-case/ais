@@ -42,6 +42,31 @@ describe("Marker", function() {
 	});
 });
 
+describe("AjaxDataLoader", function() {
+	var loader;
+	
+	beforeEach(function() {
+		window.jQuery = {'ajax': function(url, settings) { 
+			settings.success("TestData", "success", {}); 
+		}};
+		loader = new AjaxDataLoader("http://example.com/some/path");
+	});
+
+	it("requests data", function() {
+		spyOn(window.jQuery, 'ajax').andCallThrough();
+		loader.load(function() {});
+		expect(window.jQuery.ajax).toHaveBeenCalled();
+		expect(window.jQuery.ajax.mostRecentCall.args[0]).toEqual("http://example.com/some/path");
+	});
+	
+	it("calls the callback after receiving data", function() {
+		var obj = {'cb': function (data) {}}
+		spyOn(obj, 'cb');
+		loader.load(obj.cb);
+		expect(obj.cb).toHaveBeenCalledWith("TestData");
+	});
+});
+
 describe("Map", function() {
 	var map;
 	var marker;

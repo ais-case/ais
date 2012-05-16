@@ -27,6 +27,18 @@ function Marker(position) {
 	this.position = position;
 }
 
+function AjaxDataLoader(url) {
+	this.url = url;
+}
+
+AjaxDataLoader.prototype.load = function(callback) {
+	jQuery.ajax(this.url, {
+		'success': function(data, status, xhr) {
+			callback(data);
+		}		
+	});
+}
+
 function Map(id, centeredAt) {
 	this.markerLayer = new OpenLayers.Layer.Markers("Markers");
 	
