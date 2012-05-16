@@ -12,7 +12,7 @@ var parseLocations = function(s) {
 }
 
 $(document).ready(function() {
-	var map = new VesselMap('map', new LatLon(52.1,3.9))
+	map = new VesselMap('map', new LatLon(52.1,3.9))
 	var locations;
 	try {
 		locations = parseLocations(window.location.hash.substring(1));
