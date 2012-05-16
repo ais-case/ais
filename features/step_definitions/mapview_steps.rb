@@ -41,6 +41,7 @@ Then /^I should see a map of the area around "(.*?)"$/ do |coords|
 end
 
 Then /^I should see a vessel at position "([^"]*)"$/ do |point_str|
+  pending
   position = LatLon.from_str point_str
   marker = page.evaluate_script('haveMarkerAtLatLon(' << position.lat.to_s << ',' << position.lon.to_s << ')')
   marker.should eq true
