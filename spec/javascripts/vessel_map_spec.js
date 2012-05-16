@@ -28,4 +28,11 @@ describe("VesselMap", function() {
 		var map = new VesselMap('map', latlon);
 		expect(map.isCenteredAt(latlon)).toBeTruthy();
 	});
+	
+	it("can zoom into an area", function() {
+		var latlon1 = new LatLon(52, 4);
+		var latlon2 = new LatLon(52.1, 4.1);
+		var map = new VesselMap('map', latlon1);
+		map.zoomToArea(latlon1, latlon2);
+	});
 });
