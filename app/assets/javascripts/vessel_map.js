@@ -19,7 +19,18 @@ LatLon.prototype.getLonLat = function() {
 	return ol;
 }
 
+LatLon.prototype.equals = function(that) {
+	return ((this.lat == that.lat) && (this.lon == that.lon));
+}
+
+function Vessel(name, position) {
+	this.name = name;
+	this.position = position;
+}
+
 function VesselMap(id, centeredAt) {
+	this.vessels = [];
+	
     OpenLayers.ImgPath = "/ol/img/"
 	this.map = new OpenLayers.Map({
 		div: id,
@@ -43,3 +54,16 @@ VesselMap.prototype.zoomToArea = function(latlon1, latlon2) {
 	bounds.extend(latlon2.getLonLat());
 	this.map.zoomToExtent(bounds);
 }
+
+VesselMap.prototype.addVessel = function(vessel) {
+	this.vessels.push(vessel);
+}
+
+VesselMap.prototype.hasVesselAt = function(latlon) {
+	for (var i=0; i<this.vessels.length; i++) {
+		if (this.vessels[i].position.equals(latlon)) {
+			return true;
+		}
+	}
+	return false;
+};
