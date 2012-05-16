@@ -35,11 +35,21 @@ function Map(id, centeredAt) {
 		div: id,
 		layers: [
 			new OpenLayers.Layer.OSM(),
+			this.markerLayer,
 		],
 		theme: "ol/theme/style.css",
 	});	
 	this.map.zoomTo(11);
 	this.map.setCenter(centeredAt.getLonLat());
+}
+
+Map.prototype.loadMarkers = function(loader) {
+	var self = this;
+	loader.load(function(markers) {
+		for (var i=0; i<markers.length; i++) {
+			self.addMarker(markers[i]);
+		}
+	});
 }
 
 Map.prototype.isCenteredAt = function(latlon) {

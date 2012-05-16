@@ -72,4 +72,14 @@ describe("Map", function() {
 		expect(map.hasMarkerAt(new LatLon(52, 4))).toBeTruthy();
 	});
 	
+	it("loads markers", function() {
+		var loader = {'load': function(cb){
+			cb([{'position': new LatLon(52.1, 3.9)}, {'position': new LatLon(52.2, 3.8)}]);
+		}};
+		spyOn(loader, 'load').andCallThrough(); 
+		map.loadMarkers(loader);
+		expect(loader.load).toHaveBeenCalled();
+		expect(map.markerLayer.markers.length).toBe(2);
+	});
+	
 });
