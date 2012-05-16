@@ -23,13 +23,12 @@ LatLon.prototype.equals = function(that) {
 	return ((this.lat == that.lat) && (this.lon == that.lon));
 }
 
-function Vessel(name, position) {
-	this.name = name;
+function Marker(position) {
 	this.position = position;
 }
 
-function VesselMap(id, centeredAt) {
-	this.vessels = [];
+function Map(id, centeredAt) {
+	this.markerLayer = new OpenLayers.Layer.Markers("Markers");
 	
     OpenLayers.ImgPath = "/ol/img/"
 	this.map = new OpenLayers.Map({
@@ -43,25 +42,27 @@ function VesselMap(id, centeredAt) {
 	this.map.setCenter(centeredAt.getLonLat());
 }
 
-VesselMap.prototype.isCenteredAt = function(latlon) {
+Map.prototype.isCenteredAt = function(latlon) {
 	var center = LatLon.fromLonLat(this.map.getCenter());
 	return (latlon.lat == center.lat) && (latlon.lon == center.lon);
 }
 
-VesselMap.prototype.zoomToArea = function(latlon1, latlon2) {
+Map.prototype.zoomToArea = function(latlon1, latlon2) {
 	var bounds = new OpenLayers.Bounds();
 	bounds.extend(latlon1.getLonLat());
 	bounds.extend(latlon2.getLonLat());
 	this.map.zoomToExtent(bounds);
 }
 
-VesselMap.prototype.addVessel = function(vessel) {
-	this.vessels.push(vessel);
+Map.prototype.addMarker = function(vessel) {
+	var marker = new OpenLayers.Marker(vessel.position.getLonLat());
+	this.markerLayer.addMarker(marker);
 }
 
-VesselMap.prototype.hasVesselAt = function(latlon) {
-	for (var i=0; i<this.vessels.length; i++) {
-		if (this.vessels[i].position.equals(latlon)) {
+Map.prototype.hasMarkerAt = function(latlon) {
+	for (var i=0; i<this.markerLayer.markers.length; i++) {
+		var position = LatLon.fromLonLat(this.markerLayer.markers[i].lonlat);
+		if (position.equals(latlon)) {
 			return true;
 		}
 	}

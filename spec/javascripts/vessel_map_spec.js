@@ -34,23 +34,22 @@ describe("LatLon", function() {
 	});
 });
 
-describe("Vessel", function() {
-	it("has name and position properties", function() {
+describe("Marker", function() {
+	it("has position property", function() {
 		var latlon = new LatLon(52, 4);
-		var vessel = new Vessel("Seal", latlon);
-		expect(vessel.name).toBe("Seal");
-		expect(vessel.position).toBe(latlon);
+		var marker = new Marker(latlon);
+		expect(marker.position).toBe(latlon);
 	});
 });
 
-describe("VesselMap", function() {
+describe("Map", function() {
 	var map;
-	var vessel;
+	var marker;
 	
 	beforeEach(function() {
 		var latlon = new LatLon(52, 4);
-		map = new VesselMap('map', latlon);
-		vessel = new Vessel("Seal", new LatLon(52, 4));		
+		map = new Map('map', latlon);
+		marker = new Marker(new LatLon(52, 4));		
 	});
 	
 	it("checks whether it is centered at a given point", function() {
@@ -63,14 +62,14 @@ describe("VesselMap", function() {
 		map.zoomToArea(latlon1, latlon2);
 	});
 	
-	it("allows adding vessels", function() {
-		map.addVessel(vessel);
-		expect(map.vessels.length).toBe(1);
+	it("allows adding markers", function() {
+		map.addMarker(marker);
+		expect(map.markerLayer.markers.length).toBe(1);
 	});
 
-	it("checks whether a vessel is at a given location", function() {
-		map.addVessel(vessel);
-		expect(map.hasVesselAt(new LatLon(52, 4))).toBeTruthy();
+	it("checks whether a marker is at a given location", function() {
+		map.addMarker(marker);
+		expect(map.hasMarkerAt(new LatLon(52, 4))).toBeTruthy();
 	});
 	
 });
