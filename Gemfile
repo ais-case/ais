@@ -40,7 +40,7 @@ gem 'jquery-rails'
 # Project specific gems
 gem "ffi-rzmq"
 
-group :test do
+group :development, :test do
   gem 'rspec-rails', '~> 2.0'
   gem 'cucumber-rails', :require => false
   gem 'capybara'
