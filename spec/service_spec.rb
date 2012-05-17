@@ -1,7 +1,7 @@
 require 'spec_helper'
 require 'service'
 
-describe Service do
+describe ServiceRegistry do
   describe "bind" do
     it "returns a service binding" do
       socket = double("Socket")
@@ -10,12 +10,12 @@ describe Service do
       context = double("Context")
       context.stub(:socket) { socket }
 
-      service = Service.new context
+      registry = ServiceRegistry.new context
 
-      ret = service.bind 'ais/transmitter'
+      ret = registry.bind 'ais/transmitter'
       ret.should be_a_kind_of(TransmitterProxy)
 
-      ret = service.bind 'ais/vessels'
+      ret = registry.bind 'ais/vessels'
       ret.should be_a_kind_of(VesselServiceProxy)
     end
 
@@ -26,11 +26,11 @@ describe Service do
       context = double("Context")
       context.stub(:socket) { socket }
 
-      service = Service.new context
+      registry = ServiceRegistry.new context
 
       socket.stub(:connect) { -1 }
-      service = Service.new context
-      expect { service.bind 'ais/transmitter' }.to raise_error
+      registry = ServiceRegistry.new context
+      expect { registry.bind 'ais/transmitter' }.to raise_error
     end
 
     it "closes all sockets when stopped" do
@@ -41,9 +41,9 @@ describe Service do
       context = double("Context")
       context.stub(:socket) { socket }
 
-      service = Service.new context
-      service.bind 'ais/transmitter'
-      service.terminate
+      registry = ServiceRegistry.new context
+      registry.bind 'ais/transmitter'
+      registry.terminate
     end
   end
 end

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-class MockService
+class MockServiceRegistry
   def initialize(vessels)
     @vessels = vessels
   end
@@ -35,7 +35,7 @@ describe MapController do
 
     it "returns markers" do
       vessels = [@vessel1, @vessel2]
-      @controller.service = MockService.new(vessels)
+      @controller.registry = MockServiceRegistry.new(vessels)
       get :markers, :format => :json
       response.should be_success
       assigns[:markers].should eql(vessels)
@@ -43,7 +43,7 @@ describe MapController do
 
     it "only returns markers when the vessels have a position" do
       vessels = [@vessel1, @vessel3]
-      @controller.service = MockService.new(vessels)            
+      @controller.registry = MockServiceRegistry.new(vessels)            
       get :markers, :format => :json
       response.should be_success
       assigns[:markers].should eql([@vessel1])

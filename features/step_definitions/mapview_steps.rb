@@ -18,10 +18,10 @@ Given /^vessel "([^"]*)" at position "([^"]*)"$/ do |name, coords_str|
   @vessel.position = LatLon.from_str coords_str
 
   # Send position report for vessel
-  service = Service.new
-  transmitter = service.bind 'ais/transmitter'
+  registry = ServiceRegistry.new
+  transmitter = registry.bind 'ais/transmitter'
   #transmitter.send_position_report_for @vessel
-  service.terminate
+  registry.terminate
 end
 
 When /^I view the homepage$/ do

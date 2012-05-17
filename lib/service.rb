@@ -23,7 +23,7 @@ class VesselServiceProxy
   end
 end
 
-class Service
+class ServiceRegistry
   ENDPOINTS = { 
     'ais/transmitter' => { :endpoint => 'tcp://localhost:20010', :class => TransmitterProxy},
     'ais/vessels'     => { :endpoint => 'tcp://localhost:20011', :class => VesselServiceProxy}
