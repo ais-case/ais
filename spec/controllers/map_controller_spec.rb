@@ -25,13 +25,28 @@ end
 
 describe MapController do
   describe "GET markers" do
-    it "returns all markers" do
-      vessels = [Vessel.new(Vessel::CLASS_A), Vessel.new(Vessel::CLASS_A)]
+    before(:each) do
+      @vessel1 = Vessel.new(Vessel::CLASS_A)
+      @vessel1.position = LatLon.new(20, 10)
+      @vessel2 = Vessel.new(Vessel::CLASS_A)
+      @vessel2.position = LatLon.new(10, 10)
+      @vessel3 = Vessel.new(Vessel::CLASS_A)
+    end
+
+    it "returns markers" do
+      vessels = [@vessel1, @vessel2]
       @controller.service = MockService.new(vessels)
-            
       get :markers, :format => :json
       response.should be_success
-      assigns[:vessels].should eql(vessels)
+      assigns[:markers].should eql(vessels)
     end
+
+    it "only returns markers when the vessels have a position" do
+      vessels = [@vessel1, @vessel3]
+      @controller.service = MockService.new(vessels)            
+      get :markers, :format => :json
+      response.should be_success
+      assigns[:markers].should eql([@vessel1])
+    end      
   end
 end

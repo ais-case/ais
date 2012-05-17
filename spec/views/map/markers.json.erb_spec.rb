@@ -13,20 +13,20 @@ describe "map/markers.json.erb" do
         end
     end
         
-    vessels = []
+    markers = []
     for i in 1..5 do
-      vessels << MarkerMock.new(i) 
+      markers << MarkerMock.new(i) 
     end
-    assign(:vessels, vessels)
+    assign(:markers, markers)
     render
-    expected = ActiveSupport::JSON.encode({:markers => vessels})
+    expected = ActiveSupport::JSON.encode({:markers => markers})
     normalized = ActiveSupport::JSON.encode(ActiveSupport::JSON.decode rendered)  
     normalized.should eql(expected)
   end
 
-  it "is empty when no vessels are visible" do
-    vessels = []
-    assign(:vessels, vessels)
+  it "is empty when no markers are visible" do
+    markers = []
+    assign(:markers, markers)
     render
     ActiveSupport::JSON.decode(rendered).should eql({"markers" => []})
   end

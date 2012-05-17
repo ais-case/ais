@@ -11,6 +11,8 @@ class MapController < ApplicationController
     @vessels = vessel_service.vessels()
     service.terminate
     
+    @markers = @vessels.keep_if { |vessel| vessel.position }
+    
     respond_to do |format| 
       format.json
     end

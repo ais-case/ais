@@ -1,9 +1,9 @@
 {
 	"markers": [
 	<% first = true %>
-	<% @vessels.each_with_index do |vessel,i| %>
-		{ "position": <%=raw(ActiveSupport::JSON.encode(vessel.position)) %> }<%=
-		"," unless i == (@vessels.size - 1) 
+	<% @markers.each_with_index do |marker,i| %>
+		{ "position": <%=raw(ActiveSupport::JSON.encode(marker.position)) %> }<%=
+		"," unless i == (@markers.size - 1) 
 		%>
 	<% end %>
 	]
