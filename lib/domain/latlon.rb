@@ -25,6 +25,10 @@ class LatLon
     end
   end
 
+  def ==(other)
+    (@lat == other.lat) and (@lon == other.lon) 
+  end
+
   def to_s
     "#{@lat},#{@lon}"
   end
