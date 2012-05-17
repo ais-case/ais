@@ -1,21 +1,23 @@
 require 'ffi-rzmq'
 
-class TransmitterProxy
+class ServiceProxy
   def initialize(socket)
     @socket = socket
   end
+  
+  def release
+    @socket.close
+  end
+end
 
+class TransmitterProxy < ServiceProxy
   def send_position_report_for(vessel)
     message = Marshal.dump(vessel)
     @socket.send_string(message)
   end
 end
 
-class VesselServiceProxy
-  def initialize(socket)
-    @socket = socket
-  end
-  
+class VesselServiceProxy < ServiceProxy
   def vessels
     @socket.send_string("")
     @socket.recv_string(message = "")
