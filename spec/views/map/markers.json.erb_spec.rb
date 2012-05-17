@@ -6,7 +6,7 @@ describe "map/markers.json.erb" do
     vessels = []
     for i in 1..5 do
       vessels << Class.new do
-        @position = "Hello #{i}"
+        @position = LatLon.new(50.0 + i/10, 4.0 + i/10)
         def self.position 
           @position
         end
