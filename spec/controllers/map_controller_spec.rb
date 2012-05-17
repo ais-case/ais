@@ -6,7 +6,7 @@ class MockServiceRegistry
   end
   
   def bind(name)
-    MockProxy.new(@vessels)
+    yield MockProxy.new(@vessels)
   end
   
   def terminate()

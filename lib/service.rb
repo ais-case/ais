@@ -4,10 +4,6 @@ class ServiceProxy
   def initialize(socket)
     @socket = socket
   end
-  
-  def release
-    @socket.close
-  end
 end
 
 class TransmitterProxy < ServiceProxy
@@ -33,26 +29,23 @@ class ServiceRegistry
 
   def initialize(context=ZMQ::Context.new)
     @context = context
-    @sockets = []
   end
 
   def bind(name)
     ep = ENDPOINTS[name][:endpoint]
     socket = @context.socket ZMQ::REQ
-    @sockets << socket
 
     rc = socket.connect ep
 
     if ZMQ::Util.resultcode_ok? rc
-      return ENDPOINTS[name][:class].new socket
+      proxy = ENDPOINTS[name][:class].new socket 
+      begin
+        yield proxy
+      ensure
+        socket.close
+      end
     else
       raise RuntimeError, "Couldn't connect to #{ep}"
-    end
-  end
-
-  def terminate
-    @sockets.each do |socket|
-      socket.close
     end
   end
 end

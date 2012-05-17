@@ -6,17 +6,19 @@ describe ServiceRegistry do
     it "returns a service binding" do
       socket = double("Socket")
       socket.stub(:connect) { 0 }
+      socket.stub(:close) { 0 }
 
       context = double("Context")
       context.stub(:socket) { socket }
 
       registry = ServiceRegistry.new context
-
-      ret = registry.bind 'ais/transmitter'
-      ret.should be_a_kind_of(TransmitterProxy)
-
-      ret = registry.bind 'ais/vessels'
-      ret.should be_a_kind_of(VesselServiceProxy)
+      registry.bind 'ais/transmitter' do |service|
+        service.should be_a_kind_of(TransmitterProxy) 
+      end
+      
+      registry.bind 'ais/vessels' do |service|
+        service.should be_a_kind_of(VesselServiceProxy)
+      end
     end
 
     it "raises an exception when the socket fails" do
@@ -42,8 +44,7 @@ describe ServiceRegistry do
       context.stub(:socket) { socket }
 
       registry = ServiceRegistry.new context
-      registry.bind 'ais/transmitter'
-      registry.terminate
+      registry.bind('ais/transmitter') {|service| }
     end
   end
 end

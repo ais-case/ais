@@ -7,8 +7,9 @@ class MapController < ApplicationController
   
   def markers
     registry = get_registry
-    vessel_service = registry.bind 'ais/vessels'
-    @vessels = vessel_service.vessels()
+    registry.bind('ais/vessels') do |service|
+      @vessels = service.vessels()
+    end
     registry.terminate
     
     @markers = @vessels.keep_if { |vessel| vessel.position }
