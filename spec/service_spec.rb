@@ -12,13 +12,12 @@ describe ServiceRegistry do
       context.stub(:socket) { socket }
 
       registry = ServiceRegistry.new context
-      registry.bind 'ais/transmitter' do |service|
-        service.should be_a_kind_of(TransmitterProxy) 
-      end
-      
-      registry.bind 'ais/vessels' do |service|
-        service.should be_a_kind_of(VesselServiceProxy)
-      end
+      proxies = {'ais/transmitter' => TransmitterProxy, 'ais/vessels' => VesselServiceProxy}
+      proxies.each do |name, klass|
+        registry.bind(name) do |service|
+          service.should be_a_kind_of(klass) 
+        end
+      end      
     end
 
     it "raises an exception when the socket fails" do
