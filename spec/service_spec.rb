@@ -15,9 +15,8 @@ describe Service do
       ret = service.bind 'ais/transmitter'
       ret.should be_a_kind_of(TransmitterProxy)
 
-      socket.stub(:connect) { -1 }
-      service = Service.new context
-      expect { service.bind 'ais/transmitter' }.to raise_error
+      ret = service.bind 'ais/vessels'
+      ret.should be_a_kind_of(VesselServiceProxy)
     end
 
     it "raises an exception when the socket fails" do
