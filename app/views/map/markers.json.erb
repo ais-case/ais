@@ -1,0 +1,10 @@
+{
+	"markers": [
+	<% first = true %>
+	<% @vessels.each_with_index do |vessel,i| %>
+		{ "position": <%=raw(ActiveSupport::JSON.encode(vessel.position)) %> }<%=
+		"," unless i == (@vessels.size - 1) 
+		%>
+	<% end %>
+	]
+}
