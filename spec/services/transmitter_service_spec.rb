@@ -1,9 +1,13 @@
-describe Service::TransmitterService do
-  it "accepts requests" do
-    vessel = Vessel.new(1234, Vessel::CLASS_A)
-    vessel.position = LatLon.new(3.0, 4.0)
+require 'spec_helper'
 
-    service = TransmitterService.new
-    service.processRequest(Marshal.dump(vessel))
-  end
+module Service
+  describe TransmitterService do
+    it "accepts requests" do
+      vessel = Domain::Vessel.new(1234, Domain::Vessel::CLASS_A)
+      vessel.position = Domain::LatLon.new(3.0, 4.0)
+  
+      service = TransmitterService.new
+      service.processRequest(Marshal.dump(vessel))
+    end
+  end  
 end
