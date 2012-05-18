@@ -23,39 +23,8 @@ module Service
     end
   end
   
-  class ServiceManager
-    attr_writer :bindings
-    
-    BINDINGS = []
-    
+  class Service
     def initialize
-      @services = []
-    end
-    
-    def get_bindings
-      @bindings ||= BINDINGS 
-    end
-    
-    def start
-      get_bindings.each do |binding|
-        service = binding[:service].new
-        service.start binding[:endpoint]
-        @services << service
-      end
-    end
-    
-    def stop
-      @services.each do |service|    
-        service.stop
-      end
-      @services.clear
-    end
-  end
-  
-  class VesselService
-    def initialize
-      @vessels = []
-      @vessels_mutex = Mutex.new
       @request_thread = nil
     end
     
@@ -81,12 +50,27 @@ module Service
       # Wait until thread is ready for action
       ready_queue.pop
     end
-    
+
     def stop
       @request_thread.kill if @request_thread
       @request_thread = nil
     end
-    
+  end
+  
+  class TransmitterService < Service
+    def processRequest(data)
+      # TODO compile information in AIS message and deliver it
+      # Nothing needs to be returned, empty response
+      ""
+    end  
+  end
+  
+  class VesselService < Service
+    def initialize
+      @vessels = []
+      @vessels_mutex = Mutex.new
+    end
+        
     def receiveVessel(vessel)
       @vessels_mutex.synchronize do
         @vessels << vessel
@@ -100,6 +84,36 @@ module Service
     end
   end
   
+  class ServiceManager
+    attr_writer :bindings
+    
+    BINDINGS = [{:endpoint => 'tcp://*:21000', :service => TransmitterService},
+                {:endpoint => 'tcp://*:21001', :service => VesselService}]
+    
+    def initialize
+      @services = []
+    end
+    
+    def get_bindings
+      @bindings ||= BINDINGS 
+    end
+    
+    def start
+      get_bindings.each do |binding|
+        service = binding[:service].new
+        service.start binding[:endpoint]
+        @services << service
+      end
+    end
+    
+    def stop
+      @services.each do |service|    
+        service.stop
+      end
+      @services.clear
+    end
+  end
+
   class ServiceRegistry
     ENDPOINTS = { 
       'ais/transmitter' => { :endpoint => 'tcp://localhost:20010', :class => TransmitterProxy},

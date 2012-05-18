@@ -3,8 +3,6 @@ require 'ffi-rzmq'
 include Domain
 include Service
 
-    
-
 describe Service::ServiceManager do
   it "starts and stops all services in its bindings" do
     class ServiceMock
@@ -39,6 +37,48 @@ describe Service::ServiceManager do
   end
 end
 
+describe Service::Service do
+  it "can be started and stopped" do
+    service = Service::Service.new
+    service.start 'tcp://*:21000'
+    service.stop
+  end
+  
+  it "accepts requests on a socket" do
+    class EchoServiceMock < Service::Service
+      def processRequest(data)
+        data
+      end
+    end
+    service = EchoServiceMock.new
+    service.start 'tcp://*:21000'
+     
+    ctx = ZMQ::Context.new
+    sock = ctx.socket ZMQ::REQ
+    rc = sock.connect 'tcp://localhost:21000'
+    ZMQ::Util.resultcode_ok?(rc).should be_true
+    begin
+      sock.send_string(Marshal.dump("Test"))
+      response = ''
+      sock.recv_string(response)
+      response.should eq(Marshal.dump("Test"))
+    ensure
+      sock.close
+      service.stop
+    end
+  end  
+end
+
+describe Service::TransmitterService do
+  it "accepts requests" do
+    vessel = Vessel.new(1234, Vessel::CLASS_A)
+    vessel.position = LatLon.new(3.0, 4.0) 
+
+    service = TransmitterService.new
+    service.processRequest(Marshal.dump(vessel))
+  end
+end
+
 describe Service::VesselService do
   it "returns a list of vessels" do
     vessel1 = Vessel.new(1234, Vessel::CLASS_A)
@@ -51,31 +91,6 @@ describe Service::VesselService do
     service.receiveVessel(vessel2)
     vessels = service.processRequest('')
     vessels.should eq(Marshal.dump([vessel1, vessel2]))
-  end
-  
-  it "can be started and stopped" do
-    service = VesselService.new
-    service.start 'tcp://*:21000'
-    service.stop
-  end
-  
-  it "accepts requests on a socket" do
-    service = VesselService.new
-    service.start 'tcp://*:21000'
-     
-    ctx = ZMQ::Context.new
-    sock = ctx.socket ZMQ::REQ
-    rc = sock.connect 'tcp://localhost:21000'
-    ZMQ::Util.resultcode_ok?(rc).should be_true
-    begin
-      sock.send_string('')
-      response = ''
-      sock.recv_string(response)
-      response.should eq(Marshal.dump([]))
-    ensure
-      sock.close
-      service.stop
-    end
   end
 end
 
