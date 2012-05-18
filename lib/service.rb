@@ -99,7 +99,6 @@ module Service
     end
     
     def start
-      puts get_bindings
       get_bindings.each do |binding|
         service = binding[:service].new
         service.start binding[:endpoint]
