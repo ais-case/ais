@@ -40,3 +40,8 @@ Then /^I should see a map of the area around "(.*?)"$/ do |coords|
   visible.should eq true
 end
 
+Then /^I should see a vessel at position "([^"]*)"$/ do |point_str|
+  position = Domain::LatLon.from_str point_str
+  has_vessel = page.evaluate_script('map.hasMarkerAt(new LatLon(' << position.lat.to_s << ',' << position.lon.to_s << '))')
+  has_vessel.should eq true
+end
