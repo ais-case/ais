@@ -24,19 +24,22 @@ describe Service::VesselService do
   end
   
   it "accepts requests on a socket" do
-    # service = VesselService.new
-    # service.start 'tcp://*:21000'
-#     
-    # ctx = ZMQ::Context.new
-    # sock = ctx.socket ZMQ::REQ
-    # rc = sock.connect 'tcp://localhost:21000'
-    # ZMQ::Util.resultcode_ok?(rc).should be_true
-# 
-    # sock.send_string('')
-    # response = ''
-    # sock.recv_string(response)
-    # response.should eq(Marshal.dump([]))
-    # service.stop
+    service = VesselService.new
+    service.start 'tcp://*:21000'
+     
+    ctx = ZMQ::Context.new
+    sock = ctx.socket ZMQ::REQ
+    rc = sock.connect 'tcp://localhost:21000'
+    ZMQ::Util.resultcode_ok?(rc).should be_true
+    begin
+      sock.send_string('')
+      response = ''
+      sock.recv_string(response)
+      response.should eq(Marshal.dump([]))
+    ensure
+      sock.close
+      service.stop
+    end
   end
 end
 
