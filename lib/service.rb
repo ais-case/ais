@@ -23,6 +23,35 @@ module Service
     end
   end
   
+  class ServiceManager
+    attr_writer :bindings
+    
+    BINDINGS = []
+    
+    def initialize
+      @services = []
+    end
+    
+    def get_bindings
+      @bindings ||= BINDINGS 
+    end
+    
+    def start
+      get_bindings.each do |binding|
+        service = binding[:service].new
+        service.start binding[:endpoint]
+        @services << service
+      end
+    end
+    
+    def stop
+      @services.each do |service|    
+        service.stop
+      end
+      @services.clear
+    end
+  end
+  
   class VesselService
     def initialize
       @vessels = []
