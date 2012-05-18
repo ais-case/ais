@@ -1,3 +1,5 @@
+require 'spec_helper'
+
 describe Service::ServiceManager do
   it "starts and stops all services in its bindings" do
     class ServiceMock
