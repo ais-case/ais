@@ -10,7 +10,7 @@ describe Domain::Vessel do
   it "has name and position attributes" do
     vessel = Vessel.new(1234, Vessel::CLASS_A)
     vessel.name = "Seal"
-    vessel.position = LatLon.new 50.0, 4.0
+    vessel.position = LatLon.new(50.0, 4.0)
 
     vessel.name.should eq "Seal"
     vessel.position.lat.should eq 50.0

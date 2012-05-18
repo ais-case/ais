@@ -120,10 +120,10 @@ describe Service::ServiceRegistry do
       context = double("Context")
       context.stub(:socket) { socket }
 
-      registry = ServiceRegistry.new context
+      registry = ServiceRegistry.new(context)
 
       socket.stub(:connect) { -1 }
-      registry = ServiceRegistry.new context
+      registry = ServiceRegistry.new(context)
       expect { registry.bind 'ais/transmitter' }.to raise_error
     end
 
@@ -147,7 +147,7 @@ describe Service::TransmitterProxy do
     socket = double('Socket')
     socket.should_receive(:send_string).with(Marshal.dump(vessel))
 
-    t = TransmitterProxy.new socket
+    t = TransmitterProxy.new(socket)
     t.send_position_report_for vessel
   end
 end
@@ -173,7 +173,7 @@ describe Service::VesselServiceProxy do
       end
     end).new(vessels)
     
-    t = VesselServiceProxy.new socket
+    t = VesselServiceProxy.new(socket)
     t.vessels.should eq(vessels)
   end  
 end

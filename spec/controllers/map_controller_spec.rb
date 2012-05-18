@@ -39,7 +39,7 @@ describe MapController do
       @controller.registry = MockServiceRegistry.new(vessels)
       get :markers, :format => :json
       response.should be_success
-      assigns[:markers].should eql(vessels)
+      assigns[:markers].should eq(vessels)
     end
 
     it "only returns markers when the vessels have a position" do
@@ -47,7 +47,7 @@ describe MapController do
       @controller.registry = MockServiceRegistry.new(vessels)            
       get :markers, :format => :json
       response.should be_success
-      assigns[:markers].should eql([@vessel1])
+      assigns[:markers].should eq([@vessel1])
     end      
   end
 end

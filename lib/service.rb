@@ -101,7 +101,7 @@ module Service
     def start
       get_bindings.each do |binding|
         service = binding[:service].new
-        service.start binding[:endpoint]
+        service.start(binding[:endpoint])
         @services << service
       end
     end
@@ -130,7 +130,7 @@ module Service
   
       rc = socket.connect ep
   
-      if ZMQ::Util.resultcode_ok? rc
+      if ZMQ::Util.resultcode_ok?(rc)
         proxy = ENDPOINTS[name][:class].new socket 
         begin
           yield proxy
