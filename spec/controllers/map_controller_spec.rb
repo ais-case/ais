@@ -26,11 +26,11 @@ end
 describe MapController do
   describe "GET markers" do
     before(:each) do
-      @vessel1 = Vessel.new(Vessel::CLASS_A)
+      @vessel1 = Vessel.new(1234, Vessel::CLASS_A)
       @vessel1.position = LatLon.new(20, 10)
-      @vessel2 = Vessel.new(Vessel::CLASS_A)
+      @vessel2 = Vessel.new(5678, Vessel::CLASS_A)
       @vessel2.position = LatLon.new(10, 10)
-      @vessel3 = Vessel.new(Vessel::CLASS_A)
+      @vessel3 = Vessel.new(9012, Vessel::CLASS_A)
     end
 
     it "returns markers" do

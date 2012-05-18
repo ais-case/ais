@@ -61,9 +61,9 @@ end
 
 describe "VesselServiceProxy" do
   it "requests vessel information from the Vessel service" do
-    vessel1 = Vessel.new(Vessel::CLASS_A)
+    vessel1 = Vessel.new(1234, Vessel::CLASS_A)
     vessel1.position = LatLon.new(3.0, 4.0) 
-    vessel2 = Vessel.new(Vessel::CLASS_A)
+    vessel2 = Vessel.new(5678, Vessel::CLASS_A)
     vessel2.position = LatLon.new(5.0, 6.0)
     vessels = [vessel1, vessel2] 
     
