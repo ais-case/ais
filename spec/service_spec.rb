@@ -19,25 +19,24 @@ describe Service::VesselService do
   
   it "can be started and stopped" do
     service = VesselService.new
-    #service.start 'tcp://localhost:21000'
-    #service.stop    
+    service.start 'tcp://*:21000'
+    service.stop
   end
   
   it "accepts requests on a socket" do
     service = VesselService.new
-    #service.start 'tcp://localhost:21000'
+    service.start 'tcp://*:21000'
+    
+    ctx = ZMQ::Context.new
+    sock = ctx.socket ZMQ::REQ
+    rc = sock.connect 'tcp://localhost:21000'
+    ZMQ::Util.resultcode_ok?(rc).should be_true
 
-    #ctx = ZMQ::Context.new
-    #sock = ctx.socket ZMQ::REQ
-    #rc = sock.connect 'tcp://localhost:21000'
-    #if not ZMQ::Util.resultcode_ok?(rc)
-    #  puts "sending"
-    #  sock.send_string('')
-    #  #response = ''
-    #  #sock.recv_string(response)
-    #  #puts response
-    #end      
-    #service.stop
+    sock.send_string('')
+    response = ''
+    sock.recv_string(response)
+    response.should eq(Marshal.dump([]))
+    service.stop
   end
 end
 

@@ -1,4 +1,5 @@
 require 'ffi-rzmq'
+require 'thread'
 
 module Service
   class ServiceProxy
@@ -25,25 +26,31 @@ module Service
   class VesselService
     def initialize
       @vessels = []
+      @vessels_mutex = Mutex.new
       @request_thread = nil
     end
     
     def start(endpoint)
+      ready_queue = Queue.new
+
+      @request_thread = Thread.new do
         context = ZMQ::Context.new
-        socket = context.socket(ZMQ::REP)
-        socket.bind(endpoint)
-        
-        begin
-          @request_thread = Thread.new do
-            loop do
-              puts "Ready for requests"
-              socket.recv_string()
-            end
+        socket = context.socket(ZMQ::REP)        
+        begin            
+          socket.bind(endpoint)
+          ready_queue.push(:ready) 
+          loop do 
+            data = ''
+            socket.recv_string(data)
+            socket.send_string(processRequest(data))
           end
         ensure 
           socket.close
-          @request_thread = nil
         end
+      end
+      
+      # Wait until thread is ready for action
+      ready_queue.pop
     end
     
     def stop
@@ -52,11 +59,15 @@ module Service
     end
     
     def receiveVessel(vessel)
-      @vessels << vessel
+      @vessels_mutex.synchronize do
+        @vessels << vessel
+      end
     end
     
     def processRequest(request)
-      Marshal.dump(@vessels)
+      @vessels_mutex.synchronize do
+        Marshal.dump(@vessels)
+      end
     end
   end
   
