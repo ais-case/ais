@@ -23,7 +23,7 @@ module Service
     end
   end
   
-  class Service
+  class BaseService
     def initialize
       @request_thread = nil
     end
@@ -57,7 +57,7 @@ module Service
     end
   end
   
-  class TransmitterService < Service
+  class TransmitterService < BaseService
     def processRequest(data)
       # TODO compile information in AIS message and deliver it
       # Nothing needs to be returned, empty response
@@ -65,7 +65,7 @@ module Service
     end  
   end
   
-  class VesselService < Service
+  class VesselService < BaseService
     def initialize
       @vessels = []
       @vessels_mutex = Mutex.new

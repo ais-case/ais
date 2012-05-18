@@ -37,15 +37,15 @@ describe Service::ServiceManager do
   end
 end
 
-describe Service::Service do
+describe Service::BaseService do
   it "can be started and stopped" do
-    service = Service::Service.new
+    service = Service::BaseService.new
     service.start 'tcp://*:21000'
     service.stop
   end
   
   it "accepts requests on a socket" do
-    class EchoServiceMock < Service::Service
+    class EchoServiceMock < Service::BaseService
       def processRequest(data)
         data
       end
