@@ -20,6 +20,7 @@ Given /^vessel "([^"]*)" at position "([^"]*)"$/ do |name, coords_str|
   # Send position report for vessel
   registry = Service::ServiceRegistry.new 
   registry.bind('ais/transmitter') do |service|
+    sleep(10)
   #  service.send_position_report_for @vessel
   end
 end
