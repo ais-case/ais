@@ -1,7 +1,6 @@
 require 'spec_helper'
-require 'domain/latlon'
 
-describe LatLon do
+describe Domain::LatLon do
     it "can create a new LatLon from a string" do
       latlon = LatLon.from_str "47.16N, 9.66E"
       latlon.lat.should eq 47.16

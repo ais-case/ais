@@ -1,8 +1,6 @@
 require 'spec_helper'
-require 'domain/vessel'
-require 'domain/latlon'
 
-describe Vessel do
+describe Domain::Vessel do
   it "requires a mmsi and class" do
     vessel = Vessel.new(1234, Vessel::CLASS_A)
     vessel.mmsi.should eq 1234

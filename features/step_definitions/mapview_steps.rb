@@ -1,7 +1,4 @@
 require 'uri'
-require 'domain/latlon'
-require 'domain/vessel'
-require 'service'
 require 'capybara/rails'
 
 Before do
@@ -13,15 +10,15 @@ end
 
 Given /^vessel "([^"]*)" at position "([^"]*)"$/ do |name, coords_str|
   # Create vessel with given info
-  @vessel = Vessel.new Vessel::CLASS_A
+  @vessel = Domain::Vessel.new(1234, Domain::Vessel::CLASS_A)
   @vessel.name = name
-  @vessel.position = LatLon.from_str coords_str
+  @vessel.position = Domain::LatLon.from_str(coords_str)
 
   # Send position report for vessel
-  registry = ServiceRegistry.new
-  transmitter = registry.bind 'ais/transmitter'
-  #transmitter.send_position_report_for @vessel
-  registry.terminate
+  registry = Service::ServiceRegistry.new 
+  registry.bind('ais/transmitter') do |service|
+    #servoce.send_position_report_for @vessel
+  end
 end
 
 When /^I view the homepage$/ do
@@ -29,13 +26,13 @@ When /^I view the homepage$/ do
 end
 
 When /^I see the map area between "([^"]*)" and "([^"]*)"$/ do |coords1_str, coords2_str|
-  point1 = LatLon.from_str coords1_str
-  point2 = LatLon.from_str coords2_str
+  point1 = Domain::LatLon.from_str coords1_str
+  point2 = Domain::LatLon.from_str coords2_str
   visit "#{map_path}##{URI::encode(point1.to_s)}_#{URI::encode(point2.to_s)}"
 end
 
 Then /^I should see a map of the area around "(.*?)"$/ do |coords|
-  point = LatLon.from_str coords
+  point = Domain::LatLon.from_str coords
   visible = page.evaluate_script('map.isCenteredAt(new LatLon(' << point.lat.to_s << ',' << point.lon.to_s << '))')
   visible.should eq true
 end

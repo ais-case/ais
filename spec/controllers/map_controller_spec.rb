@@ -1,4 +1,5 @@
 require 'spec_helper'
+include Domain
 
 class MockServiceRegistry
   def initialize(vessels)

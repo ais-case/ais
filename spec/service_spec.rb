@@ -1,7 +1,47 @@
 require 'spec_helper'
-require 'service'
+require 'ffi-rzmq'
+include Domain
+include Service
 
-describe ServiceRegistry do
+describe Service::VesselService do
+  it "returns a list of vessels" do
+    vessel1 = Vessel.new(1234, Vessel::CLASS_A)
+    vessel1.position = LatLon.new(3.0, 4.0) 
+    vessel2 = Vessel.new(5678, Vessel::CLASS_A)
+    vessel2.position = LatLon.new(5.0, 6.0)
+
+    service = VesselService.new
+    service.receiveVessel(vessel1)
+    service.receiveVessel(vessel2)
+    vessels = service.processRequest('')
+    vessels.should eq(Marshal.dump([vessel1, vessel2]))
+  end
+  
+  it "can be started and stopped" do
+    service = VesselService.new
+    #service.start 'tcp://localhost:21000'
+    #service.stop    
+  end
+  
+  it "accepts requests on a socket" do
+    service = VesselService.new
+    #service.start 'tcp://localhost:21000'
+
+    #ctx = ZMQ::Context.new
+    #sock = ctx.socket ZMQ::REQ
+    #rc = sock.connect 'tcp://localhost:21000'
+    #if not ZMQ::Util.resultcode_ok?(rc)
+    #  puts "sending"
+    #  sock.send_string('')
+    #  #response = ''
+    #  #sock.recv_string(response)
+    #  #puts response
+    #end      
+    #service.stop
+  end
+end
+
+describe Service::ServiceRegistry do
   describe "bind" do
     it "returns a service binding" do
       socket = double("Socket")
@@ -48,7 +88,7 @@ describe ServiceRegistry do
   end
 end
 
-describe "TransmitterProxy" do
+describe Service::TransmitterProxy do
   it "sends position reports to the Transmitter service" do
     vessel = "Vessel"
     socket = double('Socket')
@@ -59,7 +99,7 @@ describe "TransmitterProxy" do
   end
 end
 
-describe "VesselServiceProxy" do
+describe Service::VesselServiceProxy do
   it "requests vessel information from the Vessel service" do
     vessel1 = Vessel.new(1234, Vessel::CLASS_A)
     vessel1.position = LatLon.new(3.0, 4.0) 
