@@ -99,6 +99,7 @@ module Service
     end
     
     def start
+      puts get_bindings
       get_bindings.each do |binding|
         service = binding[:service].new
         service.start binding[:endpoint]
@@ -116,8 +117,8 @@ module Service
 
   class ServiceRegistry
     ENDPOINTS = { 
-      'ais/transmitter' => { :endpoint => 'tcp://localhost:20010', :class => TransmitterProxy},
-      'ais/vessels'     => { :endpoint => 'tcp://localhost:20011', :class => VesselServiceProxy}
+      'ais/transmitter' => { :endpoint => 'tcp://localhost:21000', :class => TransmitterProxy},
+      'ais/vessels'     => { :endpoint => 'tcp://localhost:21001', :class => VesselServiceProxy}
     }
   
     def initialize(context=ZMQ::Context.new)
