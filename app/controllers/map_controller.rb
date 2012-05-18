@@ -6,13 +6,13 @@ class MapController < ApplicationController
   end
   
   def markers
+    vessels = []
     registry = get_registry
     registry.bind('ais/vessels') do |service|
-      @vessels = service.vessels()
+      vessels = service.vessels()
     end
-    registry.terminate
-    
-    @markers = @vessels.keep_if { |vessel| vessel.position }
+
+    @markers = vessels.keep_if { |vessel| vessel.position }
     
     respond_to do |format| 
       format.json
