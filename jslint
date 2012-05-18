@@ -1,0 +1,4 @@
+#!/bin/bash
+
+. penv/bin/activate
+gjslint -r app/assets/javascripts/ --nojsdoc
