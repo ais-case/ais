@@ -5,7 +5,7 @@ Before do
   Capybara.current_driver = Capybara.javascript_driver
   @manager = Service::ServiceManager.new
   @manager.start
-  sleep(5)
+  sleep(30)
 end
 
 After do |scenario|
