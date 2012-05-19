@@ -1,7 +1,9 @@
 require 'spec_helper'
 
 module Service
-  describe Service::VesselService do
+  describe VesselService do
+    it_behaves_like "a service"
+    
     it "returns a list of vessels" do
       vessel1 = Domain::Vessel.new(1234, Domain::Vessel::CLASS_A)
       vessel1.position = Domain::LatLon.new(3.0, 4.0) 

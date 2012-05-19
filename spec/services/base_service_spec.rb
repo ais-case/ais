@@ -2,20 +2,20 @@ require 'spec_helper'
 require 'ffi-rzmq'
 
 module Service
-  describe BaseService do
+  shared_examples_for "a service" do
     it "can be started and stopped" do
-      service = Service::BaseService.new
+      service = described_class.new
       service.start 'tcp://*:21000'
       service.stop
     end
     
     it "accepts requests on a socket" do
-      class EchoServiceMock < Service::BaseService
+      mock_class = Class.new(described_class) do
         def processRequest(data)
           data
         end
       end
-      service = EchoServiceMock.new
+      service = mock_class.new
       service.start 'tcp://*:22000'
        
       ctx = ZMQ::Context.new
@@ -31,6 +31,10 @@ module Service
         sock.close
         service.stop
       end
-    end  
+    end    
+  end
+  
+  describe BaseService do
+    it_behaves_like "a service"
   end
 end
