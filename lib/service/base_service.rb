@@ -18,6 +18,9 @@ module Service
             socket.recv_string(data)
             socket.send_string(processRequest(data))
           end
+        rescue
+          puts $!
+          raise
         ensure 
           socket.close
         end
