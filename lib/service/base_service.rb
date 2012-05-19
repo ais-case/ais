@@ -1,3 +1,5 @@
+require 'ffi-rzmq'
+
 module Service
   class BaseService
     def initialize
@@ -5,14 +7,11 @@ module Service
     end
     
     def start(endpoint)
-      ready_queue = Queue.new
-
       @request_thread = Thread.new do
         context = ZMQ::Context.new
         socket = context.socket(ZMQ::REP)        
         begin            
           socket.bind(endpoint)
-          ready_queue.push(:ready) 
           loop do 
             data = ''
             socket.recv_string(data)
@@ -25,9 +24,11 @@ module Service
           socket.close
         end
       end
-      
-      # Wait until thread is ready for action
-      ready_queue.pop
+
+      sleep(2)
+      if not @request_thread.alive? 
+        raise RuntimeError, "Couldn't start service listener"
+      end 
     end
 
     def stop
