@@ -7,6 +7,9 @@ module Service
         @@started = []
         @@stopped = []
         
+        def initialize(registry)
+        end
+        
         def start(endpoint)
           @@started << endpoint
           @endpoint = endpoint    
