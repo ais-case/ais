@@ -1,8 +1,39 @@
 require 'spec_helper'
+require 'ffi-rzmq'
 
 module Service
   describe VesselService do
     it_behaves_like "a service"
+    
+    it "listens for AIS status messages" do
+      vessel = Domain::Vessel.new(431100391, Domain::Vessel::CLASS_A)
+      vessel.position = Domain::LatLon.new(3.0, 4.0) 
+      
+      registry = (Class.new do
+        def lookup(name)
+          
+        end
+      end).new
+
+      ctx = ZMQ::Context.new
+      sock = ctx.socket(ZMQ::PUB)
+      begin
+        rc = sock.bind('tcp://*:24000')
+        ZMQ::Util.resultcode_ok?(rc).should be_true
+        
+        service = VesselService.new
+        service.start('tcp://localhost:23000')
+        service.should_receive(:processMessage).with("13`wgT0P5fPGmDfN>o?TN?vN2<05")        
+        sock.send_string("1 1337501950 13`wgT0P5fPGmDfN>o?TN?vN2<05")
+
+        # Give service time to receive and process message
+        sleep(0.1)
+        
+        service.stop
+      ensure
+        sock.close
+      end
+    end
     
     it "can process AIS messages" do
       payload = "13`wgT0P5fPGmDfN>o?TN?vN2<05"
