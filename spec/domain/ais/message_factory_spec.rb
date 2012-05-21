@@ -7,12 +7,6 @@ module Domain::AIS
       mf = MessageFactory.new
       msg = mf.fromPayload(payload)
       msg.mmsi.should eq(244314000)
-    end
-    
-    it "can decode a payload using 6-bit decode" do
-      mf = MessageFactory.new
-      decoded = mf.decode("13`wgT0")
-      decoded.should eq("000001000011101000111111101111100100000000")
     end    
   end
 end
