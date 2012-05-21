@@ -5,9 +5,10 @@ module Domain::AIS
       msg_type = decoded[0..5].to_i(2)
       raise "Unknown message type #{msg_type}" unless [1, 2, 3].include?(msg_type)   
       message = Message.new(decoded[8..37].to_i(2))
-      message.lon = decoded[61..88].to_i(2) / 600000.0
-      message.lat = decoded[89..115].to_i(2) / 600000.0
-      
+      lon = Datatypes::Int.from_bit_string(decoded[61..88])
+      lat = Datatypes::Int.from_bit_string(decoded[89..115])
+      message.lon = lon.value / 600000.0
+      message.lat = lat.value / 600000.0
       message
     end
   end
