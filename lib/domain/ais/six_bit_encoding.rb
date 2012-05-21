@@ -1,30 +1,52 @@
 module Domain::AIS::SixBitEncoding
-  DECODE_HASH = {
-    '0' => "000000", '1' => "000001", '2' => "000010", '3' => "000011", 
-    '4' => "000100", '5' => "000101", '6' => "000110", '7' => "000111",
-    '8' => "001000", '9' => "001001", ':' => "001010", ';' => "001011",
-    '<' => "001100", '=' => "001101", '>' => "001110", '?' => "001111",
-    '@' => "010000", 'A' => "010001", 'B' => "010010", 'C' => "010011",
-    'D' => "010100", 'E' => "010101", 'F' => "010110", 'G' => "010111",
-    'H' => "011000", 'I' => "011001", 'J' => "011010", 'K' => "011011",
-    'L' => "011100", 'M' => "011101", 'N' => "011110", 'O' => "011111",
-    'P' => "100000", 'Q' => "100001", 'R' => "100010", 'S' => "100011",
-    'T' => "100100", 'U' => "100101", 'V' => "100110", 'W' => "100111",
-    '`' => "101000", 'a' => "101001", 'b' => "101010", 'c' => "101011",
-    'd' => "101100", 'e' => "101101", 'f' => "101110", 'g' => "101111",
-    'h' => "110000", 'i' => "110001", 'j' => "110010", 'k' => "110011", 
-    'l' => "110100", 'm' => "110101", 'n' => "110110", 'o' => "110111", 
-    'p' => "111000", 'q' => "111001", 'r' => "111010", 's' => "111011", 
-    't' => "111100", 'u' => "111101", 'v' => "111110", 'w' => "111111"
-  }
+
+  def encode_nibble(nibble)
+    value = nibble.to_i(2)
+    case value
+    when (0..39) 
+      ascii = value + 48
+    when (40..63)
+      ascii = value + 48 + 8
+    else
+      raise "Encoding error for bit pattern " << nibble 
+    end
+    ascii.chr
+  end
+
+  def encode(binary_string)
+    # input binary string from SixBitDecoder
+    # output ascii string according to AIVDM transformation (see above)
+    chunk_count = binary_string.length / 6
+    encoded = ""
+    1.upto(chunk_count) do |i|
+      a = i*6-1
+      nibble = binary_string[a-5..a]
+      
+      encoded << encode_nibble(nibble)
+    end
+    encoded.delete '@'
+  end
+
+  def decode_character(character)
+    ascii = character[0].ord
+    case ascii
+    when (48..87) 
+      value = ascii - 48
+    when (96..119)
+      value = ascii - 48 - 8
+    else
+      raise "Decoding error for character " << character 
+    end
+    value.to_s(2).rjust(6, '0')
+  end
 
   def decode(sixbit)
     binaryString = ""
     sixbit.each_char do |c|
-      binaryString << DECODE_HASH[c].to_s
+      binaryString << decode_character(c)
     end
     binaryString
   end
   
-  module_function :decode
+  module_function :encode_nibble, :encode, :decode_character, :decode
 end
