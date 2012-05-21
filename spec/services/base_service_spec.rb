@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'ffi-rzmq'
 
 module Service
   describe BaseService do

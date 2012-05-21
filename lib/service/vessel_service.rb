@@ -1,5 +1,3 @@
-require 'ffi-rzmq'
-
 module Service
   class VesselService < BaseService
     def initialize(registry)
