@@ -7,7 +7,7 @@ module Service
         socket = TCPSocket.new('localhost', 20000)
         begin          
           loop do
-            processRawMessage(socket.gets)
+            process_message(socket.gets)
           end
        rescue
           puts $!
@@ -33,7 +33,7 @@ module Service
       @subscriber_thread = nil
     end
     
-    def processRawMessage(data)
+    def process_message(data)
       preamble, fragment_count, fragment, id, channel, payload, checksum = data.split(',')      
       type = Domain::AIS::SixBitEncoding.decode(payload[0]).to_i(2)
       publish_message(type, payload)

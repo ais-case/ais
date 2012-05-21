@@ -18,7 +18,7 @@ module Service
       sleep(1)
 
       service = MessageService.new(ServiceRegistry.new)
-      service.should_receive(:processRawMessage).with("!AIVDM,1,1,,B,13OF<80vh2wgiJJNes7EMGrD0<0e,0*00\n")        
+      service.should_receive(:process_message).with("!AIVDM,1,1,,B,13OF<80vh2wgiJJNes7EMGrD0<0e,0*00\n")        
       service.start('tcp://*:28000')
 
       # Give service time to receive and process message
@@ -30,7 +30,7 @@ module Service
     it "publishes incoming messages" do
       service = MessageService.new(ServiceRegistry.new)
       service.should_receive(:publish_message).with(1,"13OF<80vh2wgiJJNes7EMGrD0<0e")
-      service.processRawMessage("!AIVDM,1,1,,B,13OF<80vh2wgiJJNes7EMGrD0<0e,0*00")
+      service.process_message("!AIVDM,1,1,,B,13OF<80vh2wgiJJNes7EMGrD0<0e,0*00")
     end
     
     it "publishes messages" do
