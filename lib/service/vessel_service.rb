@@ -4,8 +4,8 @@ module Service
       super(registry)
       @vessels = []
       @vessels_mutex = Mutex.new
-      @reply_service = ReplyService.new(method(:processRequest))
-      @message_service = SubscriberService.new(method(:processMessage), ['1 '])
+      @reply_service = ReplyService.new(method(:process_request))
+      @message_service = SubscriberService.new(method(:process_message), ['1 '])
     end
     
     def start(endpoint)
@@ -21,7 +21,7 @@ module Service
       super
     end
 
-    def processMessage(data)
+    def process_message(data)
       payload = data.split(' ')[1]
       message = Domain::AIS::MessageFactory.fromPayload(payload)
       vessel = Domain::Vessel.new(message.mmsi, message.vessel_class)
@@ -35,7 +35,7 @@ module Service
       end
     end
     
-    def processRequest(request)
+    def process_request(request)
       @vessels_mutex.synchronize do
         Marshal.dump(@vessels)
       end

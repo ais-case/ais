@@ -2,7 +2,7 @@ module Service
   class TransmitterService < BaseService
     def initialize(registry)
 
-      @reply_service = ReplyService.new(method(:processRequest))
+      @reply_service = ReplyService.new(method(:process_request))
     end
     
     def start(endpoint)
@@ -13,7 +13,7 @@ module Service
       @reply_service.stop
     end
     
-    def processRequest(data)
+    def process_request(data)
       # TODO compile information in AIS message and deliver it
       # Nothing needs to be returned, empty response
       ""

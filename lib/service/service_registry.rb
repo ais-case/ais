@@ -1,3 +1,5 @@
+require 'ffi-rzmq'
+
 module Service
   class ServiceRegistry
     ENDPOINTS = { 
@@ -10,13 +12,11 @@ module Service
     end
   
     def bind(name)
-      ep = ENDPOINTS[name][:endpoint]
-      socket = @context.socket ZMQ::REQ
-  
-      rc = socket.connect ep
-  
+      endpoint = ENDPOINTS[name][:endpoint]
+      socket = @context.socket(ZMQ::REQ)
+      rc = socket.connect(endpoint)
       if ZMQ::Util.resultcode_ok?(rc)
-        proxy = ENDPOINTS[name][:class].new socket 
+        proxy = ENDPOINTS[name][:class].new(socket) 
         begin
           yield proxy
         ensure

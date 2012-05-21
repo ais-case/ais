@@ -10,7 +10,7 @@ module Service
       vessel.position = Domain::LatLon.new(3.0, 4.0)
   
       service = TransmitterService.new(ServiceRegistry.new)
-      service.processRequest(Marshal.dump(vessel))
+      service.process_request(Marshal.dump(vessel))
     end
   end  
 end

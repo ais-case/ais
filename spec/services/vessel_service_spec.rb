@@ -15,7 +15,7 @@ module Service
         
         service = (Class.new(VesselService) do
           attr_reader :received_data
-          def processMessage(data)
+          def process_message(data)
             @received_data = data
           end
         end).new(ServiceRegistry.new)
@@ -34,8 +34,8 @@ module Service
     it "can process AIS messages" do
       message = "1 13`wgT0P5fPGmDfN>o?TN?vN2<05"
       service = VesselService.new(ServiceRegistry.new)
-      service.processMessage(message)
-      vessel = Marshal.load(service.processRequest(''))[0]
+      service.process_message(message)
+      vessel = Marshal.load(service.process_request(''))[0]
       vessel.vessel_class.should eq(Domain::Vessel::CLASS_A)
       vessel.mmsi.should eq(244314000)
     end
@@ -49,7 +49,7 @@ module Service
       service = VesselService.new(ServiceRegistry.new)
       service.receiveVessel(vessel1)
       service.receiveVessel(vessel2)
-      vessels = service.processRequest('')
+      vessels = service.process_request('')
       vessels.should eq(Marshal.dump([vessel1, vessel2]))
     end
   end
