@@ -17,14 +17,6 @@ module Domain::AIS
   'p' => "111000", 'q' => "111001", 'r' => "111010", 's' => "111011", 
   't' => "111100", 'u' => "111101", 'v' => "111110", 'w' => "111111"
   }
-  
-  class Message
-    attr_reader :mmsi
-    
-    def initialize(mmsi)
-      @mmsi = mmsi
-    end
-  end
 
   class MessageFactory
     def fromPayload(payload)
