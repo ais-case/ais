@@ -15,7 +15,7 @@ module Service
         service = VesselService.new
         service.start('tcp://localhost:23000')
         service.should_receive(:processMessage).with("13`wgT0P5fPGmDfN>o?TN?vN2<05")        
-        sock.send_string("1 1337501950 13`wgT0P5fPGmDfN>o?TN?vN2<05")
+        sock.send_string("1 13`wgT0P5fPGmDfN>o?TN?vN2<05")
 
         # Give service time to receive and process message
         sleep(0.1)

@@ -22,7 +22,7 @@ module Service
             data = ''
             socket.recv_string(data)
             fields = data.split(' ')
-            processMessage(fields[2])
+            processMessage(fields[1])
           end
        rescue
           puts $!
