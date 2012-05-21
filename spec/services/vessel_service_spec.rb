@@ -5,10 +5,7 @@ module Service
   describe VesselService do
     it_behaves_like "a service"
     
-    it "listens for AIS status messages" do
-      vessel = Domain::Vessel.new(431100391, Domain::Vessel::CLASS_A)
-      vessel.position = Domain::LatLon.new(3.0, 4.0) 
-      
+    it "listens for AIS position reports" do
       registry = (Class.new do
         def lookup(name)
           
