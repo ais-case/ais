@@ -7,6 +7,9 @@ module Domain::AIS
       mf = MessageFactory.new
       msg = MessageFactory.fromPayload(payload)
       msg.mmsi.should eq(244314000)
+      msg.vessel_class.should eq(Domain::Vessel::CLASS_A)
+      msg.lat.should be_within(1.0/1_000_000).of(52.834663)
+      msg.lon.should be_within(1.0/1_000_000).of(5.206438)
     end    
   end
 end
