@@ -22,14 +22,12 @@ module Domain
       v1 = Vessel.new(1234, Vessel::CLASS_A)
       v1.position = LatLon.new(10.0, 4.0)
       v2 = Vessel.new(1234, Vessel::CLASS_A)
-      v2.position = LatLon.new(10.0, 4.0)
+      v2.position = LatLon.new(4.0, 4.0)
+      v1.should eq(v2)
+
       v3 = Vessel.new(5678, Vessel::CLASS_A)
       v3.position = LatLon.new(10.0, 4.0)
-      v1.should eq(v2)
       v2.should_not eq(v3)
-      
-      v2.position = LatLon.new(0.0, 0.0)
-      v1.should_not eq(v2)
     end
   end
 end

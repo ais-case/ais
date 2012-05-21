@@ -13,8 +13,7 @@ module Domain
     
     def ==(other)
       (@mmsi == other.mmsi) and 
-      (@vessel_class == other.vessel_class) and 
-      (@position == other.position) 
+      (@vessel_class == other.vessel_class)
     end
   end
 end
