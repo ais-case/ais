@@ -6,12 +6,6 @@ module Service
     it_behaves_like "a service"
     
     it "listens for AIS position reports" do
-      registry = (Class.new do
-        def lookup(name)
-          
-        end
-      end).new
-
       ctx = ZMQ::Context.new
       sock = ctx.socket(ZMQ::PUB)
       begin
