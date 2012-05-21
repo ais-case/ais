@@ -5,10 +5,13 @@ module Service
     def initialize
       @vessels = []
       @vessels_mutex = Mutex.new
+      @request_service = RequestService.new(method(:processMessage))
     end
     
     def start(endpoint)
       super(endpoint)
+      
+      @request_service.start(endpoint)
       
       @subscriber_thread = Thread.new do
         ctx = ZMQ::Context.new
@@ -34,6 +37,12 @@ module Service
       
       # Extra time needed for this socket to connect
       sleep(2)
+    end
+
+    def stop
+      @request_service.stop
+      @subscriber_thread.kill if @subscriber_thread
+      super
     end
 
     def processMessage(payload)
