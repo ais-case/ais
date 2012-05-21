@@ -2,7 +2,8 @@ require 'ffi-rzmq'
 
 module Service
   class VesselService < BaseService
-    def initialize
+    def initialize(registry)
+      super(registry)
       @vessels = []
       @vessels_mutex = Mutex.new
       @reply_service = ReplyService.new(method(:processRequest))

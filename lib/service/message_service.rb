@@ -1,7 +1,7 @@
 require 'ffi-rzmq'
 
 module Service
-  class MessageService
+  class MessageService < BaseService
     def start(endpoint)
       @subscriber_thread = Thread.new do
         socket = TCPSocket.new('localhost', 20000)

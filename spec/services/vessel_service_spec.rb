@@ -18,7 +18,7 @@ module Service
           def processMessage(data)
             @received_data = data
           end
-        end).new
+        end).new(ServiceRegistry.new)
         service.start('tcp://localhost:23000')
         sock.send_string("1 13`wgT0P5fPGmDfN>o?TN?vN2<05")
 
@@ -33,7 +33,7 @@ module Service
     
     it "can process AIS messages" do
       message = "1 13`wgT0P5fPGmDfN>o?TN?vN2<05"
-      service = VesselService.new
+      service = VesselService.new(ServiceRegistry.new)
       service.processMessage(message)
       vessel = Marshal.load(service.processRequest(''))[0]
       vessel.vessel_class.should eq(Domain::Vessel::CLASS_A)
@@ -46,7 +46,7 @@ module Service
       vessel2 = Domain::Vessel.new(5678, Domain::Vessel::CLASS_A)
       vessel2.position = Domain::LatLon.new(5.0, 6.0)
   
-      service = VesselService.new
+      service = VesselService.new(ServiceRegistry.new)
       service.receiveVessel(vessel1)
       service.receiveVessel(vessel2)
       vessels = service.processRequest('')

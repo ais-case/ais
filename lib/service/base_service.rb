@@ -2,6 +2,10 @@ module Service
   class BaseService
     attr_writer :reply_service
     
+    def initialize(registry)
+      @registry = registry
+    end
+    
     def start(endpoint)
     end
 

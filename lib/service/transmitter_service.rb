@@ -1,7 +1,7 @@
 module Service
   class TransmitterService < BaseService
-    def initialize
-      super
+    def initialize(registry)
+
       @reply_service = ReplyService.new(method(:processRequest))
     end
     
