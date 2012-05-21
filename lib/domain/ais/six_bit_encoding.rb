@@ -24,7 +24,7 @@ module Domain::AIS::SixBitEncoding
       
       encoded << encode_nibble(nibble)
     end
-    encoded.delete '@'
+    encoded
   end
 
   def decode_character(character)
