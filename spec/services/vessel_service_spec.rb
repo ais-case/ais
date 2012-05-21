@@ -13,14 +13,18 @@ module Service
         rc = sock.bind('tcp://*:24000')
         ZMQ::Util.resultcode_ok?(rc).should be_true
         
-        service = VesselService.new
+        service = (Class.new(VesselService) do
+          attr_reader :received_data
+          def processMessage(data)
+            @received_data = data
+          end
+        end).new
         service.start('tcp://localhost:23000')
-        service.should_receive(:processMessage).with("13`wgT0P5fPGmDfN>o?TN?vN2<05")        
         sock.send_string("1 13`wgT0P5fPGmDfN>o?TN?vN2<05")
 
         # Give service time to receive and process message
         sleep(0.1)
-        
+        service.received_data.should eq("1 13`wgT0P5fPGmDfN>o?TN?vN2<05")
         service.stop
       ensure
         sock.close
@@ -28,9 +32,9 @@ module Service
     end
     
     it "can process AIS messages" do
-      payload = "13`wgT0P5fPGmDfN>o?TN?vN2<05"
+      message = "1 13`wgT0P5fPGmDfN>o?TN?vN2<05"
       service = VesselService.new
-      service.processMessage(payload)
+      service.processMessage(message)
       vessel = Marshal.load(service.processRequest(''))[0]
       vessel.vessel_class.should eq(Domain::Vessel::CLASS_A)
       vessel.mmsi.should eq(244314000)

@@ -5,47 +5,25 @@ module Service
     def initialize
       @vessels = []
       @vessels_mutex = Mutex.new
-      @request_service = RequestService.new(method(:processMessage))
+      @request_service = RequestService.new(method(:processRequest))
+      @message_service = SubscriberService.new(method(:processMessage), ['1 '])
     end
     
     def start(endpoint)
       super(endpoint)
       
+      @message_service.start('tcp://localhost:24000')
       @request_service.start(endpoint)
-      
-      @subscriber_thread = Thread.new do
-        ctx = ZMQ::Context.new
-        socket = ctx.socket(ZMQ::SUB)
-        socket.setsockopt(ZMQ::SUBSCRIBE, "1")
-        begin
-          rc = socket.connect('tcp://localhost:24000')
-          raise "Couldn't listen to socket" unless ZMQ::Util.resultcode_ok?(rc)
-          
-          loop do
-            data = ''
-            socket.recv_string(data)
-            fields = data.split(' ')
-            processMessage(fields[1])
-          end
-       rescue
-          puts $!
-          raise
-        ensure
-          socket.close
-        end
-      end
-      
-      # Extra time needed for this socket to connect
-      sleep(2)
     end
 
     def stop
       @request_service.stop
-      @subscriber_thread.kill if @subscriber_thread
+      @message_service.stop
       super
     end
 
-    def processMessage(payload)
+    def processMessage(data)
+      payload = data.split(' ')[1]
       message = Domain::AIS::MessageFactory.fromPayload(payload)
       vessel = Domain::Vessel.new(message.mmsi, message.vessel_class)
       vessel.position = Domain::LatLon.new(message.lat, message.lon)
