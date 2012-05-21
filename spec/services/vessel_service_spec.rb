@@ -4,7 +4,7 @@ require 'ffi-rzmq'
 module Service
   describe VesselService do
     it_behaves_like "a service"
-    it_behaves_like "a request service"
+    it_behaves_like "a reply service"
     
     it "listens for AIS position reports" do
       ctx = ZMQ::Context.new

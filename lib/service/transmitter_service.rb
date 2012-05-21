@@ -2,15 +2,15 @@ module Service
   class TransmitterService < BaseService
     def initialize
       super
-      @request_service = RequestService.new(method(:processRequest))
+      @reply_service = ReplyService.new(method(:processRequest))
     end
     
     def start(endpoint)
-      @request_service.start(endpoint)
+      @reply_service.start(endpoint)
     end
     
     def stop
-      @request_service.stop
+      @reply_service.stop
     end
     
     def processRequest(data)

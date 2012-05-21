@@ -3,7 +3,7 @@ require 'spec_helper'
 module Service
   describe TransmitterService do
     it_behaves_like "a service"
-    it_behaves_like "a request service"
+    it_behaves_like "a reply service"
 
     it "accepts requests" do
       vessel = Domain::Vessel.new(1234, Domain::Vessel::CLASS_A)

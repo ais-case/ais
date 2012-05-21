@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 module Service
-  describe RequestService do
+  describe ReplyService do
     it "accepts requests on a socket" do
       handler_class = Class.new do
         def handle_request(data)
@@ -10,7 +10,7 @@ module Service
       end
 
       handler = handler_class.new
-      service = RequestService.new(handler.method(:handle_request))
+      service = ReplyService.new(handler.method(:handle_request))
       service.start('tcp://*:22000')
        
       ctx = ZMQ::Context.new

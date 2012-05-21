@@ -1,7 +1,7 @@
 require 'ffi-rzmq'
 
 module Service
-  class RequestService
+  class ReplyService
     def initialize(handler)
       @handler = handler
       @thread = nil

@@ -1,6 +1,6 @@
 module Service
   class BaseService
-    attr_writer :request_service
+    attr_writer :reply_service
     
     def start(endpoint)
     end
@@ -8,8 +8,8 @@ module Service
     def stop
     end
     
-    def request_service(handler)
-      @request_service ||= RequestService.new(handler)
+    def reply_service(handler)
+      @reply_service ||= ReplyService.new(handler)
     end
   end
 end
