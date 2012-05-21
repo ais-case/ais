@@ -20,7 +20,8 @@ module Service
     end
     
     def stop
-      
+      @subscriber_thread.kill if @subscriber_thread
+      @subscriber_thread = nil
     end
     
     def processRawMessage(data)
