@@ -4,7 +4,7 @@ module Domain::AIS::Datatypes
       @num = num
     end
     
-    def bit_vector(bit_count)
+    def bit_string(bit_count)
       s = ''
       (bit_count - 1).downto(0) do |i|
         s << @num[i].to_s
