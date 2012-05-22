@@ -7,7 +7,6 @@ Feature: Map View
      When I view the homepage
      Then I should see a map of the area around "52.10N, 3.90E"
 
-  @wip
   Scenario: show vessel inside map area
     Given vessel "Seal" at position "52.01N, 3.99E"
      When I see the map area between "52.01N, 3.99E" and "52.01N, 3.99E"
