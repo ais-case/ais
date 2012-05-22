@@ -3,7 +3,7 @@ require 'spec_helper'
 module Service::Platform
   describe ServiceManager do
     it "starts and stops all services in its bindings" do
-      class ServiceMock
+      service_mock_class = Class.new do
         @@started = []
         @@stopped = []
         
@@ -29,12 +29,12 @@ module Service::Platform
       end
       
       sm = ServiceManager.new
-      sm.bindings = [{:endpoint => 'tcp://*:21000', :service => ServiceMock},
-                     {:endpoint => 'tcp://*:21001', :service => ServiceMock}]
+      sm.bindings = [{:endpoint => 'tcp://*:21000', :service => service_mock_class},
+                     {:endpoint => 'tcp://*:21001', :service => service_mock_class}]
       sm.start
-      ServiceMock.started.should include('tcp://*:21000', 'tcp://*:21000')
+      service_mock_class.started.should include('tcp://*:21000', 'tcp://*:21000')
       sm.stop
-      ServiceMock.stopped.should include('tcp://*:21000', 'tcp://*:21000')
+      service_mock_class.stopped.should include('tcp://*:21000', 'tcp://*:21000')
     end
   end
 end
