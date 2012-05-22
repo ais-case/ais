@@ -20,6 +20,14 @@ module Service
         end      
       end
   
+      it "can be used to look up endpoints" do
+        registry = ServiceRegistry.new
+        endpoints = {'ais/message' => 'tcp://localhost:21002'}
+        endpoints.each do |name, endpoint|
+          registry.lookup(name).should eq(endpoint)        
+        end
+      end
+  
       it "raises an exception when the socket fails" do
         socket = double("Socket")
         socket.stub(:connect) { -1 }
