@@ -99,7 +99,7 @@ describe("Map", function() {
 	
 	it("loads markers", function() {
 		var loader = {'load': function(cb){
-			cb([{'position': new LatLon(52.1, 3.9)}, {'position': new LatLon(52.2, 3.8)}]);
+			cb({'markers':[{'position': new LatLon(52.1, 3.9)}, {'position': new LatLon(52.2, 3.8)}]});
 		}};
 		spyOn(loader, 'load').andCallThrough(); 
 		map.loadMarkers(loader);

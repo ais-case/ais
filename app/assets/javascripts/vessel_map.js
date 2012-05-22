@@ -57,9 +57,11 @@ function Map(id, centeredAt) {
 
 Map.prototype.loadMarkers = function(loader) {
   var self = this;
-  loader.load(function(markers) {
+  loader.load(function(data) {    
+    var markers = data.markers;
     for (var i = 0; i < markers.length; i++) {
-      self.addMarker(markers[i]);
+      var marker = new Marker(new LatLon(markers[i].position.lat, markers[i].position.lon));
+      self.addMarker(marker);
     }
   });
 };
