@@ -1,8 +1,14 @@
 require 'ffi-rzmq'
 
 module Service
-  class MessageService < BaseService
+  class MessageService < Platform::BaseService
     def start(endpoint)
+      context = ZMQ::Context.new
+      @pub_socket = context.socket(ZMQ::PUB)
+      rc = @pub_socket.bind(endpoint)
+      raise "Couldn't bind to socket" unless ZMQ::Util.resultcode_ok?(rc)
+      sleep(1)
+      
       @subscriber_thread = Thread.new do
         socket = TCPSocket.new('localhost', 20000)
         begin          
@@ -18,12 +24,7 @@ module Service
       end
       
       # Extra time needed for this socket to connect
-      sleep(2)
-      
-      context = ZMQ::Context.new
-      @pub_socket = context.socket(ZMQ::PUB)
-      rc = @pub_socket.bind(endpoint)
-      raise "Couldn't bind to socket" unless ZMQ::Util.resultcode_ok?(rc)
+      sleep(1)      
     end
     
     def stop

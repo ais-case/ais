@@ -9,12 +9,12 @@ module Service
       vessel = Domain::Vessel.new(1234, Domain::Vessel::CLASS_A)
       vessel.position = Domain::LatLon.new(3.0, 4.0)
   
-      service = TransmitterService.new(ServiceRegistry.new)
+      service = TransmitterService.new(Platform::ServiceRegistry.new)
       service.process_request(Marshal.dump(vessel))
     end
     
     it "accepts raw messages" do
-      service = TransmitterService.new(ServiceRegistry.new)
+      service = TransmitterService.new(Platform::ServiceRegistry.new)
       service.start('tcp://*:27000')
       socket = TCPSocket.new('localhost', 20000)      
       sleep(1)
@@ -39,7 +39,7 @@ module Service
     end
     
     it "sends out updates" do
-      service = TransmitterService.new(ServiceRegistry.new)
+      service = TransmitterService.new(Platform::ServiceRegistry.new)
       service.start('tcp://*:27000')
       socket = TCPSocket.new('localhost', 20000)
       sleep(1)

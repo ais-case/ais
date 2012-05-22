@@ -1,7 +1,7 @@
 module Service
-  class TransmitterService < BaseService
+  class TransmitterService < Platform::BaseService
     def initialize(registry)
-      @reply_service = ReplyService.new(method(:process_request))
+      @reply_service = Platform::ReplyService.new(method(:process_request))
       @messages = Queue.new
       @client_threads = []
     end

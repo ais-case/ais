@@ -1,4 +1,4 @@
-module Service
+module Service::Platform
   class ServiceProxy
     def initialize(socket)
       @socket = socket

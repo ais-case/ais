@@ -1,4 +1,4 @@
-module Service
+module Service::Platform
   class BaseService
     attr_writer :reply_service
     

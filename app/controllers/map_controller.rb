@@ -2,7 +2,7 @@ class MapController < ApplicationController
   attr_writer :registry
   
   def get_registry
-    @registry ||= Service::ServiceRegistry.new
+    @registry ||= Service::Platform::ServiceRegistry.new
   end
   
   def markers

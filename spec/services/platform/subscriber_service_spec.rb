@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-module Service
+module Service::Platform
   describe SubscriberService do
     it "accepts lists for updates on a socket" do
       handler_class = Class.new do

@@ -18,7 +18,7 @@ module Service
           def process_message(data)
             @received_data = data
           end
-        end).new(ServiceRegistry.new)
+        end).new(Platform::ServiceRegistry.new)
         service.start('tcp://localhost:23000')
         sock.send_string("1 13`wgT0P5fPGmDfN>o?TN?vN2<05")
 
@@ -33,7 +33,7 @@ module Service
     
     it "can process AIS messages" do
       message = "1 13`wgT0P5fPGmDfN>o?TN?vN2<05"
-      service = VesselService.new(ServiceRegistry.new)
+      service = VesselService.new(Platform::ServiceRegistry.new)
       service.process_message(message)
       vessel = Marshal.load(service.process_request(''))[0]
       vessel.vessel_class.should eq(Domain::Vessel::CLASS_A)
@@ -42,7 +42,7 @@ module Service
     
     it "updates information for known vessels" do
       message = "1 13`wgT0P5fPGmDfN>o?TN?vN2<05"
-      service = VesselService.new(ServiceRegistry.new)
+      service = VesselService.new(Platform::ServiceRegistry.new)
       service.process_message(message)
       bits = Domain::AIS::SixBitEncoding.decode("13`wgT0P5fPGmDfN>o?TN?vN2<05")
       
@@ -65,7 +65,7 @@ module Service
       vessel2 = Domain::Vessel.new(5678, Domain::Vessel::CLASS_A)
       vessel2.position = Domain::LatLon.new(5.0, 6.0)
   
-      service = VesselService.new(ServiceRegistry.new)
+      service = VesselService.new(Platform::ServiceRegistry.new)
       service.receiveVessel(vessel1)
       service.receiveVessel(vessel2)
       vessels = service.process_request('')

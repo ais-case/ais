@@ -1,6 +1,6 @@
 require 'ffi-rzmq'
 
-module Service
+module Service::Platform
   class ReplyService
     def initialize(handler)
       @handler = handler

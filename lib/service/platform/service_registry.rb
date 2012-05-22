@@ -1,10 +1,10 @@
 require 'ffi-rzmq'
 
-module Service
+module Service::Platform
   class ServiceRegistry
     ENDPOINTS = { 
-      'ais/transmitter' => { :endpoint => 'tcp://localhost:21000', :class => TransmitterProxy},
-      'ais/vessels'     => { :endpoint => 'tcp://localhost:21001', :class => VesselServiceProxy},
+      'ais/transmitter' => { :endpoint => 'tcp://localhost:21000', :class => Service::TransmitterProxy},
+      'ais/vessels'     => { :endpoint => 'tcp://localhost:21001', :class => Service::VesselServiceProxy},
       'ais/message'     => { :endpoint => 'tcp://localhost:21002', :class => nil}
     }
   

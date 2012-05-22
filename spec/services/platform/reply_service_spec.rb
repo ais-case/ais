@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-module Service
+module Service::Platform
   describe ReplyService do
     it "accepts requests on a socket" do
       handler_class = Class.new do

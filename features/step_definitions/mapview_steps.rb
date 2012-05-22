@@ -3,7 +3,7 @@ require 'capybara/rails'
 
 Before do
   Capybara.current_driver = Capybara.javascript_driver
-  @manager = Service::ServiceManager.new
+  @manager = Service::Platform::ServiceManager.new
   @manager.start
 end
 
@@ -18,7 +18,7 @@ Given /^vessel "([^"]*)" at position "([^"]*)"$/ do |name, coords_str|
   @vessel.position = Domain::LatLon.from_str(coords_str)
 
   # Send position report for vessel
-  registry = Service::ServiceRegistry.new 
+  registry = Service::Platform::ServiceRegistry.new 
   registry.bind('ais/transmitter') do |service|
     service.send_position_report_for @vessel
   end

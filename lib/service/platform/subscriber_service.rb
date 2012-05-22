@@ -1,6 +1,6 @@
 require 'ffi-rzmq'
 
-module Service
+module Service::Platform
   class SubscriberService
     def initialize(handler, filters)
       @handler = handler

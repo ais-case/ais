@@ -1,5 +1,5 @@
 module Service
-  class TransmitterProxy < ServiceProxy
+  class TransmitterProxy < Platform::ServiceProxy
     def send_position_report_for(vessel)
       message = Marshal.dump(vessel)
       @socket.send_string(message)

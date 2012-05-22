@@ -1,11 +1,11 @@
 module Service
-  class VesselService < BaseService
+  class VesselService < Platform::BaseService
     def initialize(registry)
       super(registry)
       @vessels = {}
       @vessels_mutex = Mutex.new
-      @reply_service = ReplyService.new(method(:process_request))
-      @message_service = SubscriberService.new(method(:process_message), ['1 '])
+      @reply_service = Platform::ReplyService.new(method(:process_request))
+      @message_service = Platform::SubscriberService.new(method(:process_message), ['1 '])
     end
     
     def start(endpoint)

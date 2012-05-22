@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-module Service
+module Service::Platform
   describe ServiceRegistry do
     describe "bind" do
       it "returns a service binding" do
@@ -12,7 +12,8 @@ module Service
         context.stub(:socket) { socket }
   
         registry = ServiceRegistry.new context
-        proxies = {'ais/transmitter' => TransmitterProxy, 'ais/vessels' => VesselServiceProxy}
+        proxies = {'ais/transmitter' => Service::TransmitterProxy, 
+                   'ais/vessels' => Service::VesselServiceProxy}
         proxies.each do |name, klass|
           registry.bind(name) do |service|
             service.should be_a_kind_of(klass) 

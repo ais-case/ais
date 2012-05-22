@@ -1,10 +1,10 @@
-module Service
+module Service::Platform
   class ServiceManager
     attr_writer :bindings
     
-    BINDINGS = [{:endpoint => 'tcp://*:21000', :service => TransmitterService},
-                {:endpoint => 'tcp://*:21002', :service => MessageService},
-                {:endpoint => 'tcp://*:21001', :service => VesselService}]
+    BINDINGS = [{:endpoint => 'tcp://*:21000', :service => Service::TransmitterService},
+                {:endpoint => 'tcp://*:21002', :service => Service::MessageService},
+                {:endpoint => 'tcp://*:21001', :service => Service::VesselService}]
     
     def initialize
       @services = []
