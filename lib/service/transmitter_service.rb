@@ -107,6 +107,9 @@ module Service
       message << checksum(message).to_s(16)
       message = "!" << message << "\n"
       broadcast_message(message) 
+      
+      # Empty response
+      ''
     end  
   end
 end

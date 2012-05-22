@@ -39,6 +39,11 @@ module Service
         service = TransmitterService.new(Platform::ServiceRegistry.new)
         service.process_request(Marshal.dump(@vessel))
       end
+
+      it "returns an empy response" do  
+        service = TransmitterService.new(Platform::ServiceRegistry.new)
+        service.process_request(Marshal.dump(@vessel)).should eq('')
+      end
       
       it "broadcasts the encoded message" do
         raw = Marshal.dump(@vessel)
