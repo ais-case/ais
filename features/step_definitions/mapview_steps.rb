@@ -9,7 +9,6 @@ end
 
 After do |scenario|
   @manager.stop
-  sleep(60)
 end
 
 Given /^vessel "([^"]*)" at position "([^"]*)"$/ do |name, coords_str|
