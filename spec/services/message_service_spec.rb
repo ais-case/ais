@@ -18,11 +18,13 @@ module Service
           socket.close
         end
       end
+      sleep(2)
     end
     
     after(:each) do
       @server.kill
       @server = nil
+      sleep(10)
     end
     
     it_behaves_like "a service"
