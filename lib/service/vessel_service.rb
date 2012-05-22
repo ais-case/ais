@@ -11,7 +11,7 @@ module Service
     def start(endpoint)
       super(endpoint)
       
-      @message_service.start('tcp://localhost:24000')
+      @message_service.start(@registry.lookup('ais/message'))
       @reply_service.start(endpoint)
     end
 
