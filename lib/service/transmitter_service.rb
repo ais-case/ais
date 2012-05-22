@@ -17,8 +17,10 @@ module Service
           sender = Thread.new do
             loop do
               msg = @messages.pop
+              puts "sending message"
               cli_mutex.synchronize do
                 clients.each do |client|
+                  puts "sent"
                   client.puts(msg)
                 end
               end
@@ -102,7 +104,6 @@ module Service
       message = "AIVDM,1,1,,A,#{Domain::AIS::SixBitEncoding.encode(payload)},0*"
       message << checksum(message).to_s(16)
       message = "!" << message 
-      puts message
       @messages.push(message)
       
       ""
