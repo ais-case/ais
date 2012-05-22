@@ -2,7 +2,7 @@ module Service
   class VesselService < BaseService
     def initialize(registry)
       super(registry)
-      @vessels = []
+      @vessels = {}
       @vessels_mutex = Mutex.new
       @reply_service = ReplyService.new(method(:process_request))
       @message_service = SubscriberService.new(method(:process_message), ['1 '])
@@ -26,18 +26,18 @@ module Service
       message = Domain::AIS::MessageFactory.fromPayload(payload)
       vessel = Domain::Vessel.new(message.mmsi, message.vessel_class)
       vessel.position = Domain::LatLon.new(message.lat, message.lon)
-      @vessels << vessel
+      @vessels[vessel.mmsi] = vessel
     end
     
      def receiveVessel(vessel)
       @vessels_mutex.synchronize do
-        @vessels << vessel
+        @vessels[vessel.mmsi] = vessel
       end
     end
     
     def process_request(request)
       @vessels_mutex.synchronize do
-        Marshal.dump(@vessels)
+        Marshal.dump(@vessels.values)
       end
     end
   end
