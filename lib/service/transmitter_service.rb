@@ -14,6 +14,7 @@ module Service
         begin
           clients = []
           cli_mutex = Mutex.new
+          puts "starting sender thread"
           sender = Thread.new do
             loop do
               msg = @messages.pop
@@ -28,7 +29,9 @@ module Service
           end
 
           loop do
+            puts "accepting"
             client = socket.accept
+            puts "accepted"
             cli_mutex.synchronize do
               clients << client
             end
