@@ -3,13 +3,9 @@ require 'spec_helper'
 module Service::Platform
   describe ReplyService do
     it "accepts requests on a socket" do
-      handler_class = Class.new do
-        def handle_request(data)
-          data
-        end
-      end
-
-      handler = handler_class.new
+      handler = double('Handler')
+      handler.stub(:handle_request) { "Test Response" }
+      handler.should_receive(:handle_request).with("Test Request")
       service = ReplyService.new(handler.method(:handle_request))
       service.start('tcp://*:22000')
        
@@ -18,10 +14,10 @@ module Service::Platform
       rc = sock.connect 'tcp://localhost:22000'
       ZMQ::Util.resultcode_ok?(rc).should be_true
       begin
-        sock.send_string(Marshal.dump("Test"))
+        sock.send_string("Test Request")
         response = ''
         sock.recv_string(response)
-        response.should eq(Marshal.dump("Test"))
+        response.should eq("Test Response")
       ensure
         sock.close
         service.stop
