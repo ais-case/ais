@@ -10,7 +10,7 @@ module Service
       ctx = ZMQ::Context.new
       sock = ctx.socket(ZMQ::PUB)
       begin
-        rc = sock.bind('tcp://*:24000')
+        rc = sock.bind('tcp://*:21002')
         ZMQ::Util.resultcode_ok?(rc).should be_true
         
         service = (Class.new(VesselService) do
