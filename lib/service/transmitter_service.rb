@@ -105,7 +105,7 @@ module Service
       
       message = "AIVDM,1,1,,A,#{Domain::AIS::SixBitEncoding.encode(payload)},0*"
       message << checksum(message).to_s(16)
-      message = "!" << message
+      message = "!" << message << "\n"
       broadcast_message(message) 
     end  
   end
