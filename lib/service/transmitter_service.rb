@@ -66,6 +66,8 @@ module Service
       @client_threads.each do |thread|
         thread.kill
       end
+      @transmitter = nil
+      @client_threads = []
     end
         
     def checksum(msg)

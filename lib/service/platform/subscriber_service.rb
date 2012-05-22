@@ -50,6 +50,7 @@ module Service::Platform
     
     def stop
       @thread.kill if @thread
+      @thread = nil
     end
   end
 end
