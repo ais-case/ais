@@ -8,8 +8,10 @@ module Service
       @sample_payload =               "13OF<80vh2wgiJJNes7EMGrD0<0e"
     end
     
-    before(:each) do 
-      @server = Thread.new(TCPServer.new(20000)) do |socket|
+    before(:each) do
+      socket = TCPServer.new(20000)
+      socket.setsockopt(Socket::SOL_SOCKET, Socket::SO_REUSEADDR, 1)
+      @server = Thread.new() do  
         begin
           client = socket.accept
           client.puts(@sample_message)
