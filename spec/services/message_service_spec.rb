@@ -45,6 +45,7 @@ module Service
       service = MessageService.new(Platform::ServiceRegistry.new)
       service.should_receive(:publish_message).with(@sample_type, @sample_payload)
       service.process_message(@sample_message)
+      sleep(10)
     end
     
     it "broadcasts published messages to subscribers" do
