@@ -9,6 +9,7 @@ module Service
     end
     
     before(:each) do
+      sleep(5)
       @server_queue = Queue.new
       @server = Thread.new(TCPServer.new(20000)) do |socket|
         begin
