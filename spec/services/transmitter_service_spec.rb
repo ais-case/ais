@@ -17,12 +17,22 @@ module Service
       service = TransmitterService.new(ServiceRegistry.new)
       service.start('tcp://*:27000')
       socket = TCPSocket.new('localhost', 20000)      
-      sleep(0.5)
+      sleep(1)
 
       data = "!AIVDM,1,1,,A,1000h>@0000BCp01eo@00000000,0*21\n"
       service.process_raw_message(data)
       
-      timeout(0.5) do
+      timeout(1) do
+        socket.gets.should eq("!AIVDM,1,1,,A,1000h>@0000BCp01eo@00000000,0*21\n")
+      end
+
+      data = "#!AIVDM,1,1,,A,1000h>@0000BCp01eo@00000000,0*21\n"
+      service.process_raw_message(data)
+
+      data = "1234.1234!AIVDM,1,1,,A,1000h>@0000BCp01eo@00000000,0*21\n"
+      service.process_raw_message(data)
+      
+      timeout(1) do
         socket.gets.should eq("!AIVDM,1,1,,A,1000h>@0000BCp01eo@00000000,0*21\n")
       end
       service.stop
@@ -32,14 +42,14 @@ module Service
       service = TransmitterService.new(ServiceRegistry.new)
       service.start('tcp://*:27000')
       socket = TCPSocket.new('localhost', 20000)
-      sleep(0.5)
+      sleep(1)
 
       begin
         vessel = Domain::Vessel.new(12345, Domain::Vessel::CLASS_A)
         vessel.position = Domain::LatLon.new(3.0, 4.0)
         service.process_request(Marshal.dump(vessel))
  
-        timeout(0.5) do
+        timeout(1) do
           socket.gets.should eq("!AIVDM,1,1,,A,1000h>@0000BCp01eo@00000000,0*21\n")
         end
       ensure

@@ -3,6 +3,7 @@ module Service
     def initialize(registry)
       @reply_service = ReplyService.new(method(:process_request))
       @messages = Queue.new
+      @client_threads = []
     end
     
     def start(endpoint)
@@ -38,13 +39,31 @@ module Service
           socket.close
         end
       end
-      
-      sleep(2)
+
+      Rails.configuration.ais_sources.each do |ais_source|
+        @client_threads << Thread.new(ais_source) do |source|
+          host, port = source
+          socket = TCPSocket.new(host, port)
+          begin
+            loop do
+              process_raw_message(socket.gets)
+            end
+          rescue
+            puts $!
+            raise
+          ensure
+            socket.close
+          end
+        end
+      end
     end
     
     def stop
       @reply_service.stop
       @transmitter.kill if @transmitter
+      @client_threads.each do |thread|
+        thread.kill
+      end
     end
         
     def checksum(msg)
@@ -55,8 +74,14 @@ module Service
       return sum
     end
     
+    def process_raw_message(data)
+      return if data[0] == '#'
+      i = data.index('!')
+      return unless i
+      @messages.push(data[i..-1])
+    end
+    
     def process_request(data)
-      
       # Make sure Ruby knows about the unmarshalled classes
       Domain::Vessel.class
       Domain::LatLon.class
