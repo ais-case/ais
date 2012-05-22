@@ -4,7 +4,6 @@ module Service
   describe MessageService do
     before(:all) do
       @sample_message = "!AIVDM,1,1,,B,13OF<80vh2wgiJJNes7EMGrD0<0e,0*00"
-      @sample_message2 = "!BIVDM,1,1,,B,13OF<80vh2wgiJJNes7EMGrD0<0e,0*00"
       @sample_type    =                1
       @sample_payload =               "13OF<80vh2wgiJJNes7EMGrD0<0e"
     end
@@ -14,7 +13,7 @@ module Service
       @server = Thread.new() do  
         begin
           client = socket.accept
-          client.puts(@sample_message2)
+          client.puts(@sample_message)
         ensure 
           socket.close
         end
@@ -24,14 +23,13 @@ module Service
     after(:each) do
       @server.kill
       @server = nil
-      sleep(3)
     end
     
     it_behaves_like "a service"
     
     it "listens for raw AIS data from a local TCP server on port 20000" do      
       service = MessageService.new(Platform::ServiceRegistry.new)
-      service.should_receive(:process_message).with(@sample_message2 << "\n")        
+      service.should_receive(:process_message).with(@sample_message << "\n")        
       service.start('tcp://*:28000')
       
       # Wait for mock TCP server to finish request
