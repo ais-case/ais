@@ -3,7 +3,7 @@ module Domain::AIS::Datatypes
     attr_reader :value
     
     def initialize(value)
-      @value = value
+      @value = value.to_i
     end
     
     def self.from_bit_string(s)
