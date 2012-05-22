@@ -10,7 +10,6 @@ module Service
     
     before(:each) do
       socket = TCPServer.new(20000)
-      socket.setsockopt(Socket::SOL_SOCKET, Socket::SO_REUSEADDR, 1)
       @server = Thread.new() do  
         begin
           client = socket.accept
@@ -24,7 +23,7 @@ module Service
     after(:each) do
       @server.kill
       @server = nil
-      sleep(1)
+      sleep(3)
     end
     
     it_behaves_like "a service"
