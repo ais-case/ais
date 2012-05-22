@@ -27,11 +27,15 @@ end
 describe MapController do
   describe "GET markers" do
     before(:each) do
-      @vessel1 = Vessel.new(1234, Vessel::CLASS_A)
-      @vessel1.position = LatLon.new(20, 10)
-      @vessel2 = Vessel.new(5678, Vessel::CLASS_A)
-      @vessel2.position = LatLon.new(10, 10)
-      @vessel3 = Vessel.new(9012, Vessel::CLASS_A)
+      @vessel1 = Domain::Vessel.new(1234, Domain::Vessel::CLASS_A)
+      @vessel1.position = Domain::LatLon.new(20, 10)
+      @vessel2 = Domain::Vessel.new(5678, Domain::Vessel::CLASS_A)
+      @vessel2.position = Domain::LatLon.new(10, 10)
+      @vessel3 = Domain::Vessel.new(9012, Domain::Vessel::CLASS_A)
+    end
+
+    it "returns a registry" do
+      @controller.get_registry
     end
 
     it "returns markers" do
