@@ -36,6 +36,9 @@ module Service
           raise
         ensure
           sender.kill
+          clients.each do |client|
+            client.close
+          end            
           socket.close
         end
       end
