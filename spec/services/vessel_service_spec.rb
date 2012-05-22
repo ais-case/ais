@@ -31,44 +31,46 @@ module Service
       end
     end
     
-    it "can process AIS messages" do
+    it "processes incoming AIS messages into vessel information" do
       message = "1 13`wgT0P5fPGmDfN>o?TN?vN2<05"
+      vessel = Domain::Vessel.new(244314000, Domain::Vessel::CLASS_A)
+
+      # Send position report
       service = VesselService.new(Platform::ServiceRegistry.new)
-      service.process_message(message)
-      vessel = Marshal.load(service.process_request(''))[0]
-      vessel.vessel_class.should eq(Domain::Vessel::CLASS_A)
-      vessel.mmsi.should eq(244314000)
+      service.stub(:receiveVessel)
+      service.should_receive(:receiveVessel).with(vessel)
+      service.process_message(message)      
     end
     
-    it "updates information for known vessels" do
-      message = "1 13`wgT0P5fPGmDfN>o?TN?vN2<05"
+    it "updates the existing vessel when the position of a known vessel is reported" do
+      vessel1 = Domain::Vessel.new(1234, Domain::Vessel::CLASS_A)
+      vessel1.position = Domain::LatLon.new(3.0, 4.0) 
+      vessel2 = Domain::Vessel.new(1234, Domain::Vessel::CLASS_A)
+      vessel2.position = Domain::LatLon.new(5.0, 6.0)
+
+      # Send the messages
       service = VesselService.new(Platform::ServiceRegistry.new)
-      service.process_message(message)
-      bits = Domain::AIS::SixBitEncoding.decode("13`wgT0P5fPGmDfN>o?TN?vN2<05")
+      service.receiveVessel(vessel1)
+      service.receiveVessel(vessel2)
       
-      lat = Domain::AIS::Datatypes::Int.new((52.5 * 600_000).to_i)
-      lon = Domain::AIS::Datatypes::Int.new((4.2 * 600_000).to_i)
-      
-      bits[61..88] = lon.bit_string(28)
-      bits[89..115] = lat.bit_string(27)
-      message = "1 " << Domain::AIS::SixBitEncoding.encode(bits)
-      service.process_message(message)
-      vessels = Marshal.load(service.process_request(''))
+      # Only one vessel should be reported, and with the latest
+      # position
+      vessels = Marshal.load(service.process_request)
       vessels.length.should eq(1)
-      vessels[0].position.lat.should be_within(0.01).of(52.5)
-      vessels[0].position.lon.should be_within(0.01).of(4.2)
+      vessels[0].position.lat.should be_within(0.01).of(5.0)
+      vessels[0].position.lon.should be_within(0.01).of(6.0)
     end
     
-    it "returns a list of vessels" do
+    it "adds a vessels that are not known yet" do
       vessel1 = Domain::Vessel.new(1234, Domain::Vessel::CLASS_A)
       vessel1.position = Domain::LatLon.new(3.0, 4.0) 
       vessel2 = Domain::Vessel.new(5678, Domain::Vessel::CLASS_A)
       vessel2.position = Domain::LatLon.new(5.0, 6.0)
-  
+      
       service = VesselService.new(Platform::ServiceRegistry.new)
       service.receiveVessel(vessel1)
       service.receiveVessel(vessel2)
-      vessels = service.process_request('')
+      vessels = service.process_request
       vessels.should eq(Marshal.dump([vessel1, vessel2]))
     end
   end

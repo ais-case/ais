@@ -26,9 +26,7 @@ module Service
       message = Domain::AIS::MessageFactory.fromPayload(payload)
       vessel = Domain::Vessel.new(message.mmsi, message.vessel_class)
       vessel.position = Domain::LatLon.new(message.lat, message.lon)
-      @vessels_mutex.synchronize do
-        @vessels[vessel.mmsi] = vessel
-      end
+      receiveVessel(vessel)
     end
     
      def receiveVessel(vessel)
@@ -37,7 +35,7 @@ module Service
       end
     end
     
-    def process_request(request)
+    def process_request(request='')
       @vessels_mutex.synchronize do
         Marshal.dump(@vessels.values)
       end
