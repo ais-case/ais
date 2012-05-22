@@ -5,12 +5,10 @@ Before do
   Capybara.current_driver = Capybara.javascript_driver
   @manager = Service::Platform::ServiceManager.new
   @manager.start
-  sleep(1)
 end
 
 After do |scenario|
   @manager.stop
-  sleep(1)
 end
 
 Given /^vessel "([^"]*)" at position "([^"]*)"$/ do |name, coords_str|
@@ -21,7 +19,6 @@ Given /^vessel "([^"]*)" at position "([^"]*)"$/ do |name, coords_str|
 
   # Send position report for vessel
   registry = Service::Platform::ServiceRegistry.new 
-  sleep(1)
   registry.bind('ais/transmitter') do |service|
     service.send_position_report_for @vessel
   end
