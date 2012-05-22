@@ -11,16 +11,12 @@ module Service
       vessel2.position = Domain::LatLon.new(5.0, 6.0)
       vessels = [vessel1, vessel2] 
 
-      # Mock socket      
+      # Mock socket should be used correctly      
       socket = double('Socket')
-      socket.stub(:send_string)
-      socket.stub(:recv_string) do |str|
+      socket.should_receive(:send_string).with('')
+      socket.should_receive(:recv_string) do |str|
         str.replace(Marshal.dump(vessels))
       end
-      
-      # Socket should be used correctly
-      socket.should_receive(:send_string).with('')
-      socket.should_receive(:recv_string)
       
       # Mock should return correct list of vessels
       t = VesselServiceProxy.new(socket)

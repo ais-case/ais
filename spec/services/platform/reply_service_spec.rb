@@ -4,8 +4,7 @@ module Service::Platform
   describe ReplyService do
     it "accepts requests on a socket" do
       handler = double('Handler')
-      handler.stub(:handle_request) { "Test Response" }
-      handler.should_receive(:handle_request).with("Test Request")
+      handler.should_receive(:handle_request).with("Test Request") { "Test Response" }
       service = ReplyService.new(handler.method(:handle_request))
       service.start('tcp://*:22000')
        

@@ -37,7 +37,6 @@ module Service
     
     it "broadcasts published messages to subscribers" do
       handler = double('Subscriber')
-      handler.stub(:handle_request)
       handler.should_receive(:handle_request).with("1 13OF<80vh2wgiJJNes7EMGrD0<0e")
 
       subscr = Platform::SubscriberService.new(handler.method(:handle_request), ['1 '])
