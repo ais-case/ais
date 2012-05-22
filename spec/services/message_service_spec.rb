@@ -24,6 +24,7 @@ module Service
     after(:each) do
       @server.kill
       @server = nil
+      sleep(1)
     end
     
     it_behaves_like "a service"
