@@ -40,6 +40,8 @@ module Service
         end
       end
 
+      sleep(3)
+      
       Rails.configuration.ais_sources.each do |ais_source|
         @client_threads << Thread.new(ais_source) do |source|
           host, port = source
