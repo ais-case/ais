@@ -20,7 +20,7 @@ module Service
     
     def start
       get_bindings.each do |binding|
-        service = binding[:service].new(@registry)
+        service = binding[:service].new(get_registry)
         service.start(binding[:endpoint])
         @services << service
       end
