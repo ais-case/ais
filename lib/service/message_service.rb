@@ -7,11 +7,9 @@ module Service
       @pub_socket = context.socket(ZMQ::PUB)
       rc = @pub_socket.bind(endpoint)
       raise "Couldn't bind to socket" unless ZMQ::Util.resultcode_ok?(rc)
-      sleep(1)
       
-      @subscriber_thread = Thread.new do
-        socket = TCPSocket.new('localhost', 20000)
-        begin          
+      @subscriber_thread = Thread.new(TCPSocket.new('localhost', 20000)) do |socket|
+        begin
           loop do
             process_message(socket.gets)
           end
@@ -21,10 +19,7 @@ module Service
         ensure
           socket.close
         end
-      end
-      
-      # Extra time needed for this socket to connect
-      sleep(1)      
+      end      
     end
     
     def stop

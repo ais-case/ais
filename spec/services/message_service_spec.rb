@@ -8,13 +8,8 @@ module Service
       @sample_payload =               "13OF<80vh2wgiJJNes7EMGrD0<0e"
     end
     
-    it_behaves_like "a service"
-    
-    it "listens for raw AIS data from a local TCP server on port 20000" do
-      
-      # Set up a mock TCP server that sends out a single 
-      # message when the first client connects
-      server = Thread.new(TCPServer.new(20000)) do |socket|
+    before(:each) do 
+      @server = Thread.new(TCPServer.new(20000)) do |socket|
         begin
           client = socket.accept
           client.puts(@sample_message)
@@ -22,14 +17,23 @@ module Service
           socket.close
         end
       end
-      
+    end
+    
+    after(:each) do
+      @server.kill
+      @server = nil
+    end
+    
+    it_behaves_like "a service"
+    
+    it "listens for raw AIS data from a local TCP server on port 20000" do      
       service = MessageService.new(Platform::ServiceRegistry.new)
       service.should_receive(:process_message).with(@sample_message << "\n")        
       service.start('tcp://*:28000')
       
       # Wait for mock TCP server to finish request
       timeout(1) do
-        server.join
+        @server.join
       end
 
       service.stop
