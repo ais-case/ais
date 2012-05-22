@@ -11,15 +11,30 @@ module Service
       @transmitter = Thread.new do
         socket = TCPServer.new(20000)
         begin
-          client = socket.accept
+          clients = []
+          cli_mutex = Mutex.new
+          sender = Thread.new do
+            loop do
+              msg = @messages.pop
+              cli_mutex.synchronize do
+                clients.each do |client|
+                  client.puts(msg)
+                end
+              end
+            end
+          end
+
           loop do
-            client.puts(@messages.pop)
+            client = socket.accept
+            cli_mutex.synchronize do
+              clients << client
+            end
           end
         rescue
           puts $!
           raise
         ensure
-          client.close 
+          sender.kill
           socket.close
         end
       end
