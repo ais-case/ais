@@ -4,9 +4,11 @@ module Service
   describe MessageService do
     it_behaves_like "a service"
     
-    it "listens for raw AIS data" do
-      server = Thread.new do
-        socket = TCPServer.new(20000)
+    it "listens for raw AIS data from a local TCP server on port 20000" do
+      
+      # Set up a mock TCP server that sends out a single 
+      # message when the first client connects
+      server = Thread.new(TCPServer.new(20000)) do |socket|
         begin
           client = socket.accept
           client.puts("!AIVDM,1,1,,B,13OF<80vh2wgiJJNes7EMGrD0<0e,0*00")
@@ -15,38 +17,29 @@ module Service
         end
       end
       
-      sleep(1)
-
       service = MessageService.new(Platform::ServiceRegistry.new)
       service.should_receive(:process_message).with("!AIVDM,1,1,,B,13OF<80vh2wgiJJNes7EMGrD0<0e,0*00\n")        
       service.start('tcp://*:28000')
+      
+      # Wait for mock TCP server to finish request
+      timeout(1) do
+        server.join
+      end
 
-      # Give service time to receive and process message
-      sleep(0.1)
-        
       service.stop
     end
   
-    it "publishes incoming messages" do
+    it "publishes processed messages" do
       service = MessageService.new(Platform::ServiceRegistry.new)
       service.should_receive(:publish_message).with(1,"13OF<80vh2wgiJJNes7EMGrD0<0e")
       service.process_message("!AIVDM,1,1,,B,13OF<80vh2wgiJJNes7EMGrD0<0e,0*00")
     end
     
-    it "publishes messages" do
-      handler_class = Class.new do
-        attr_reader :data
-        
-        def initialize
-          @data = nil
-        end
-        
-        def handle_request(data)
-          @data = data
-        end
-      end
+    it "broadcasts published messages to subscribers" do
+      handler = double('Subscriber')
+      handler.stub(:handle_request)
+      handler.should_receive(:handle_request).with("1 13OF<80vh2wgiJJNes7EMGrD0<0e")
 
-      handler = handler_class.new
       subscr = Platform::SubscriberService.new(handler.method(:handle_request), ['1 '])
       
       service = MessageService.new(Platform::ServiceRegistry.new)
@@ -55,12 +48,12 @@ module Service
 
         subscr.start('tcp://localhost:29000')    
         service.publish_message(1,"13OF<80vh2wgiJJNes7EMGrD0<0e")
-        sleep(0.1)
         
-        handler.data.should eq("1 13OF<80vh2wgiJJNes7EMGrD0<0e")
+        # Wait a very short time to allow for message delivery 
+        sleep(0.05)
       ensure
-        subscr.stop
         service.stop
+        subscr.stop
       end
     end
   end
