@@ -15,7 +15,11 @@ module Service
           loop do
             client.puts(@messages.pop)
           end
-        ensure 
+        rescue
+          puts $!
+          raise
+        ensure
+          client.close 
           socket.close
         end
       end
@@ -37,6 +41,11 @@ module Service
     end
     
     def process_request(data)
+      
+      # Make sure Ruby knows about the unmarshalled classes
+      Domain::Vessel.class
+      Domain::LatLon.class
+      
       vessel = Marshal.load(data)
       int_class = Domain::AIS::Datatypes::Int 
       payload = ''
@@ -51,7 +60,7 @@ module Service
       message = "AIVDM,1,1,,A,#{Domain::AIS::SixBitEncoding.encode(payload)},0*"
       message << checksum(message).to_s(16)
       message = "!" << message
-      
+      puts message      
       @messages.push(message)
       
       ""
