@@ -9,33 +9,33 @@ module Service
     end
     
     before(:each) do
-      socket = TCPServer.new(20000)
-      @server = Thread.new() do  
+      @server_queue = Queue.new
+      @server = Thread.new(TCPServer.new(20000)) do |socket|
         begin
           client = socket.accept
-          client.puts(@sample_message)
+          client.puts(@server_queue.pop)
         ensure 
           socket.close
         end
       end
-      sleep(2)
     end
-    
+      
     after(:each) do
       @server.kill
       @server = nil
-      sleep(10)
+      @server_queue = nil
     end
     
     it_behaves_like "a service"
     
-    it "listens for raw AIS data from a local TCP server on port 20000" do      
+    it "listens for raw AIS data from a local TCP server on port 20000" do
       service = MessageService.new(Platform::ServiceRegistry.new)
-      service.should_receive(:process_message).with(@sample_message << "\n")        
+      service.should_receive(:process_message).with(@sample_message << "\n")
       service.start('tcp://*:28000')
       
       # Wait for mock TCP server to finish request
       timeout(1) do
+        @server_queue.push(@sample_message)
         @server.join
       end
 
