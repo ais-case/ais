@@ -51,9 +51,9 @@ module Service
       
       service = MessageService.new(Platform::ServiceRegistry.new)
       begin
-        service.start('tcp://*:28000')
+        service.start('tcp://*:29000')
 
-        subscr.start('tcp://localhost:28000')    
+        subscr.start('tcp://localhost:29000')    
         service.publish_message(1,"13OF<80vh2wgiJJNes7EMGrD0<0e")
         sleep(0.1)
         
