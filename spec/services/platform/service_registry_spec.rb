@@ -43,7 +43,7 @@ module Service::Platform
         expect { registry.bind 'ais/transmitter' }.to raise_error
       end
   
-      it "closes all sockets when stopped" do
+      it "closes sockets of proxies when stopped" do
         socket = double("Socket")
         socket.stub(:connect) { 0 }
         socket.should_receive(:close)
