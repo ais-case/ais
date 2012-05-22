@@ -23,7 +23,6 @@ module Service
 
     def process_message(data)
       payload = data.split(' ')[1]
-      puts payload
       message = Domain::AIS::MessageFactory.fromPayload(payload)
       vessel = Domain::Vessel.new(message.mmsi, message.vessel_class)
       vessel.position = Domain::LatLon.new(message.lat, message.lon)
