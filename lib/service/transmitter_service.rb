@@ -80,7 +80,11 @@ module Service
       return if data[0] == '#'
       i = data.index('!')
       return unless i
-      @messages.push(data[i..-1])
+      broadcast_message(data[i..-1])
+    end
+    
+    def broadcast_message(message)
+      @messages.push(message)      
     end
     
     def process_request(data)
@@ -101,10 +105,8 @@ module Service
       
       message = "AIVDM,1,1,,A,#{Domain::AIS::SixBitEncoding.encode(payload)},0*"
       message << checksum(message).to_s(16)
-      message = "!" << message 
-      @messages.push(message)
-      
-      ""
+      message = "!" << message
+      broadcast_message(message) 
     end  
   end
 end
