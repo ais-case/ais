@@ -51,7 +51,18 @@ module Service
     
     def process_request(request='')
       @vessels_mutex.synchronize do
-        Marshal.dump(@vessels.values)
+        if request.length == 0
+            Marshal.dump(@vessels.values)
+        else  
+          latlons = Marshal.load(request)
+          lats = [latlons[0].lat, latlons[1].lat]
+          lons = [latlons[0].lon, latlons[1].lon]
+          filtered = @vessels.values.select do |vessel|
+            vessel.position.lat.between?(lats.min, lats.max) and
+            vessel.position.lon.between?(lons.min, lons.max)
+          end
+          Marshal.dump(filtered)     
+        end
       end
     end
   end

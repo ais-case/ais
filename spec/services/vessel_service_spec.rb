@@ -11,6 +11,41 @@ module Service
       @registry.register('ais/message', 'tcp://localhost:21002')
     end
     
+    it "returns a list of vessels" do
+      # Add vessels as test data
+      vessel1 = Domain::Vessel.new(1234, Domain::Vessel::CLASS_A)
+      vessel1.position = Domain::LatLon.new(3.0, 4.0) 
+      vessel2 = Domain::Vessel.new(5678, Domain::Vessel::CLASS_A)
+      vessel2.position = Domain::LatLon.new(5.0, 6.0)
+
+      service = VesselService.new(@registry)
+      service.receiveVessel(vessel1)
+      service.receiveVessel(vessel2)
+      
+      vessels = Marshal.load(service.process_request)
+      vessels.length.should eq(2)
+    end
+
+    it "returns a filtered list of vessels when provided with an area" do
+      # Add vessels as test data
+      vessel1 = Domain::Vessel.new(1234, Domain::Vessel::CLASS_A)
+      vessel1.position = Domain::LatLon.new(3.0, 5.0) 
+      vessel2 = Domain::Vessel.new(5678, Domain::Vessel::CLASS_A)
+      vessel2.position = Domain::LatLon.new(3.0, 4.0)
+      vessel3 = Domain::Vessel.new(9012, Domain::Vessel::CLASS_B)
+      vessel3.position = Domain::LatLon.new(2.0, 4.0) 
+
+      service = VesselService.new(@registry)
+      service.receiveVessel(vessel1)
+      service.receiveVessel(vessel2)
+      service.receiveVessel(vessel3)
+      
+      latlons = Marshal.dump([Domain::LatLon.new(2.5, 4.5), Domain::LatLon.new(3.5, 3.5)]) 
+      vessels = Marshal.load(service.process_request(latlons))
+      vessels.length.should eq(1)
+      vessels[0].mmsi.should eq(5678)
+    end
+    
     it "listens for AIS position reports" do
       ctx = ZMQ::Context.new
       sock = ctx.socket(ZMQ::PUB)
@@ -77,6 +112,6 @@ module Service
       service.receiveVessel(vessel2)
       vessels = service.process_request
       vessels.should eq(Marshal.dump([vessel1, vessel2]))
-    end
+    end    
   end
 end
