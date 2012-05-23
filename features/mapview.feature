@@ -5,7 +5,7 @@ Feature: Map View
 
   Scenario: show map
      When I view the homepage
-     Then I should see a map of the area around "52.10N, 3.90E"
+     Then I should see a map of the area around "51.9N, 4.35E"
 
   Scenario: show vessel inside map area
     Given vessel "Seal" at position "52.01N, 3.99E"

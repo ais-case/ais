@@ -12,7 +12,7 @@ var parseLocations = function(s) {
 };
 
 $(document).ready(function() {
-  map = new Map('map', new LatLon(52.1, 3.9));
+  map = new Map('map', new LatLon(51.9, 4.35));
   map.loadMarkers(new AjaxDataLoader('/map/markers'));
   var locations;
   try {
