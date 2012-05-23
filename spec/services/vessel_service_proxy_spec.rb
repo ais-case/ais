@@ -22,5 +22,29 @@ module Service
       t = VesselServiceProxy.new(socket)
       t.vessels.should eq(vessels)
     end  
+
+    it "requests only vessels within the required area" do
+      
+      # Some test data
+      vessel1 = Domain::Vessel.new(1234, Domain::Vessel::CLASS_A)
+      vessel1.position = Domain::LatLon.new(3.0, 4.0) 
+      vessel2 = Domain::Vessel.new(5678, Domain::Vessel::CLASS_A)
+      vessel2.position = Domain::LatLon.new(5.0, 6.0)
+      vessels = [vessel1, vessel2] 
+
+      latlon1 = Domain::LatLon.new(3.0, 4.0)
+      latlon2 = Domain::LatLon.new(3.0, 4.0)
+
+      # Mock socket should be used correctly      
+      socket = double('Socket')
+      socket.should_receive(:send_string).with(Marshal.dump([latlon1, latlon2]))
+      socket.should_receive(:recv_string) do |str|
+        str.replace(Marshal.dump(vessels))
+      end
+      
+      # Mock should return correct list of vessels
+      t = VesselServiceProxy.new(socket)
+      t.vessels(latlon1, latlon2).should eq(vessels)
+    end  
   end
 end
