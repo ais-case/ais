@@ -9,9 +9,9 @@ class MapController < ApplicationController
     latlon1 = latlon2 = nil
     if params[:area]
       pairs = params[:area].split('_').map { |p| p.split(',') }
-      if pairs.length > 1  
-        latlon1 = LatLon.new(pairs[0][0].to_f, pairs[0][1].to_f)
-        latlon2 = LatLon.new(pairs[1][0].to_f, pairs[1][1].to_f)
+      if pairs.length > 1
+        latlon1 = Domain::LatLon.new(pairs[0][0].to_f, pairs[0][1].to_f)
+        latlon2 = Domain::LatLon.new(pairs[1][0].to_f, pairs[1][1].to_f)
       end 
     end
     
