@@ -1,5 +1,6 @@
 require 'ffi-rzmq'
 require 'socket'
+require_relative '../domain/ais/checksums'
 require_relative '../domain/ais/six_bit_encoding'
 require_relative 'platform/base_service'
 
@@ -40,18 +41,8 @@ module Service
       @subscriber_thread = nil
     end
     
-    def calc_checksum(msg)
-      sum = 0 
-      msg.each_byte do |c|
-        sum^=c
-      end
-      return sum
-    end
-
     def process_message(data)
-      packet, checksum = data[1..-1].split('*')
-      return unless calc_checksum(packet) == checksum.hex
-      
+      return unless Domain::AIS::Checksums::verify(data)
       preamble, fragment_count, fragment_number, id, channel, payload, suffix = data.split(',')
       
       type = Domain::AIS::SixBitEncoding.decode(payload[0]).to_i(2)
