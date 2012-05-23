@@ -95,14 +95,6 @@ module Service
       @client_threads = []
     end
         
-    def checksum(msg)
-      sum = 0 
-      msg.each_byte do |c|
-        sum^=c
-      end
-      return sum
-    end
-    
     def process_raw_message(data)
       return if data[0] == '#'
       i = data.index('!')
@@ -130,9 +122,8 @@ module Service
       payload << int_class.new(vessel.position.lat * 600_000).bit_string(27)
       payload << '0' * 51
       
-      message = "AIVDM,1,1,,A,#{Domain::AIS::SixBitEncoding.encode(payload)},0*"
-      message << checksum(message).to_s(16)
-      message = "!" << message << "\n"
+      message = "!AIVDM,1,1,,A,#{Domain::AIS::SixBitEncoding.encode(payload)},0"
+      message = Domain::AIS::Checksums::add(message) << "\n"
       broadcast_message(message) 
       
       # Empty response
