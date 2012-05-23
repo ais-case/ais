@@ -49,6 +49,14 @@ module Service
       service.should_receive(:publish_message).with(@sample_type, @sample_payload)
       service.process_message(@sample_message)
     end
+
+    it "does not publish messages with invalid checksums" do
+      message = @sample_message.dup
+      message[20] = 'E'
+      service = MessageService.new(@registry)
+      service.should_not_receive(:publish_message)
+      service.process_message(message)
+    end
     
     it "broadcasts published messages to subscribers" do
       handler = double('Subscriber')
