@@ -2,7 +2,7 @@ class MapController < ApplicationController
   attr_writer :registry
   
   def get_registry
-    @registry ||= Service::Platform::ServiceRegistryProxy.new
+    @registry ||= Service::Platform::ServiceRegistryProxy.new(Rails.configuration.registry_endpoint)
   end
   
   def markers

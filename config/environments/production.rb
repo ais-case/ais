@@ -62,4 +62,5 @@ Ais::Application.configure do
   config.active_support.deprecation = :notify
 
   config.ais_sources = [['82.210.120.176', 20000]]
+  config.registry_endpoint = 'tcp://localhost:21001' 
 end
