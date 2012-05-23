@@ -5,6 +5,7 @@ Before do
   Capybara.current_driver = Capybara.javascript_driver
   @manager = Service::Platform::ServiceManager.new
   @manager.start
+  @registry = @manager.registry_proxy
 end
 
 After do |scenario|
@@ -18,11 +19,9 @@ Given /^vessel "([^"]*)" at position "([^"]*)"$/ do |name, coords_str|
   @vessel.position = Domain::LatLon.from_str(coords_str)
 
   # Send position report for vessel
-  registry = Service::Platform::ServiceRegistryProxy.new 
-  registry.bind('ais/transmitter') do |service|
+  @registry.bind('ais/transmitter') do |service|
     service.send_position_report_for @vessel
   end
-  sleep(2)
 end
 
 When /^I view the homepage$/ do
