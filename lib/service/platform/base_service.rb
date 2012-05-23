@@ -10,6 +10,9 @@ module Service
       def start(endpoint)
       end
   
+      def wait
+      end
+  
       def stop
       end
       

@@ -1,3 +1,12 @@
+require 'socket'
+require 'thread'
+require_relative '../domain/vessel'
+require_relative '../domain/lat_lon'
+require_relative '../domain/ais/datatypes'
+require_relative '../domain/ais/six_bit_encoding'
+require_relative 'platform/base_service'
+require_relative 'platform/reply_service'
+
 module Service
   class TransmitterService < Platform::BaseService
     def initialize(registry)
@@ -10,8 +19,8 @@ module Service
       @reply_service.start(endpoint)
       
       @transmitter = Thread.new do
-        socket = TCPServer.new(20000)
         begin
+          socket = TCPServer.new(20000)
           clients = []
           cli_mutex = Mutex.new
           sender = Thread.new do
@@ -45,22 +54,27 @@ module Service
 
       sleep(3)
       
-      Rails.configuration.ais_sources.each do |ais_source|
-        @client_threads << Thread.new(ais_source) do |source|
-          host, port = source
-          socket = TCPSocket.new(host, port)
-          begin
-            loop do
-              process_raw_message(socket.gets)
-            end
-          rescue
-            puts $!
-            raise
-          ensure
-            socket.close
-          end
-        end
-      end
+      # Rails.configuration.ais_sources.each do |ais_source|
+        # @client_threads << Thread.new(ais_source) do |source|
+          # host, port = source
+          # socket = TCPSocket.new(host, port)
+          # begin
+            # loop do
+              # process_raw_message(socket.gets)
+            # end
+          # rescue
+            # puts $!
+            # raise
+          # ensure
+            # socket.close
+          # end
+        # end
+      # end
+    end
+    
+    def wait
+      @reply_service.wait
+      @transmitter.wait
     end
     
     def stop

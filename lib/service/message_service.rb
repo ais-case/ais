@@ -1,4 +1,7 @@
 require 'ffi-rzmq'
+require 'socket'
+require_relative '../domain/ais/six_bit_encoding'
+require_relative 'platform/base_service'
 
 module Service
   class MessageService < Platform::BaseService
@@ -20,6 +23,10 @@ module Service
           socket.close
         end
       end      
+    end
+    
+    def wait
+      @subscriber_thread.join
     end
     
     def stop

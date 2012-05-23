@@ -1,3 +1,10 @@
+require_relative '../domain/vessel'
+require_relative '../domain/lat_lon'
+require_relative '../domain/ais/message_factory'
+require_relative 'platform/base_service'
+require_relative 'platform/reply_service'
+require_relative 'platform/subscriber_service'
+
 module Service
   class VesselService < Platform::BaseService
     def initialize(registry)
