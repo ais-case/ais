@@ -2,7 +2,7 @@ require_relative 'platform/service_proxy'
 
 module Service
   class VesselServiceProxy < Platform::ServiceProxy
-    def vessels
+    def vessels(*args)
       @socket.send_string("")
       @socket.recv_string(message = "")
       

@@ -53,5 +53,26 @@ describe MapController do
       response.should be_success
       assigns[:markers].should eq([@vessel1])
     end      
+
+    it "only returns markers in a specific area when such an area is provided" do
+      vessels = [@vessel1, @vessel2, @vessel3]
+      proxy = double('Proxy')
+      proxy.should_receive(:vessels).with(LatLon.new(5.5, 5), LatLon.new(15.0, 11.3)) { [@vessel2] }
+      
+      a_registry = (Class.new(MockRegistry) do
+        def initialize(prox)
+          @prox = prox
+        end
+        
+        def bind(name)
+          yield @prox
+        end  
+      end).new(proxy)
+       
+      @controller.registry = a_registry
+      get :markers, {'area' => '5.5,5_15.0,11.3', :format => :json}
+      response.should be_success
+      assigns[:markers].should eq([@vessel2])
+    end      
   end
 end
