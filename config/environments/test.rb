@@ -33,6 +33,5 @@ Ais::Application.configure do
   # Print deprecation notices to the stderr
   config.active_support.deprecation = :stderr
   
-  config.ais_sources = []
   config.registry_endpoint = 'tcp://localhost:21001'
 end

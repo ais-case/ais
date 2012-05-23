@@ -55,8 +55,8 @@ module Service
 
       sleep(3)
       
-      if defined?(Rails)
-        ais_sources = Rails.configuration.ais_sources
+      if ENV.has_key?('RAILS_ENV') and ENV['RAILS_ENV'] == 'test'
+        ais_sources = [] 
       else
         ais_sources = [['82.210.120.176', 20000]] 
       end
