@@ -1,3 +1,5 @@
+require_relative 'reply_service'
+
 module Service
   module Platform
     class BaseService
