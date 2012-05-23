@@ -14,7 +14,9 @@ module Service
       @subscriber_thread = Thread.new(TCPSocket.new('localhost', 20000)) do |socket|
         begin
           loop do
-            process_message(socket.gets)
+            data = socket.gets
+            break if data == nil
+            process_message(data)
           end
        rescue
           puts $!
