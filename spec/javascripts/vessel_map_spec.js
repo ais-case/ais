@@ -53,16 +53,22 @@ describe("AjaxDataLoader", function() {
 	});
 
 	it("requests data", function() {
+    var latlon1 = new LatLon(52, 4);
+    var latlon2 = new LatLon(52.1, 4.1);
+
 		spyOn(window.jQuery, 'ajax').andCallThrough();
-		loader.load(function() {});
+		loader.load(function() {}, latlon1, latlon2);
 		expect(window.jQuery.ajax).toHaveBeenCalled();
-		expect(window.jQuery.ajax.mostRecentCall.args[0]).toEqual("http://example.com/some/path");
+		expect(window.jQuery.ajax.mostRecentCall.args[0]).toEqual("http://example.com/some/path?area=52,4_52.1,4.1");
 	});
 	
 	it("calls the callback after receiving data", function() {
+    var latlon1 = new LatLon(52, 4);
+    var latlon2 = new LatLon(52.1, 4.1);
+
 		var obj = {'cb': function (data) {}}
 		spyOn(obj, 'cb');
-		loader.load(obj.cb);
+		loader.load(obj.cb, latlon1, latlon2);
 		expect(obj.cb).toHaveBeenCalledWith("TestData");
 	});
 });
@@ -98,6 +104,10 @@ describe("Map", function() {
 	});
 	
 	it("loads markers", function() {
+    var latlon1 = new LatLon(52, 4);
+    var latlon2 = new LatLon(52.1, 4.1);
+    map.zoomToArea(latlon1, latlon2);
+
 		var loader = {'load': function(cb){
 			cb({'markers':[{'position': new LatLon(52.1, 3.9)}, {'position': new LatLon(52.2, 3.8)}]});
 		}};

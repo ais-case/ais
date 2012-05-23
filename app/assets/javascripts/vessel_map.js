@@ -31,8 +31,13 @@ function AjaxDataLoader(url) {
   this.url = url;
 }
 
-AjaxDataLoader.prototype.load = function(callback) {
-  jQuery.ajax(this.url, {
+AjaxDataLoader.prototype.load = function(callback, latlon1, latlon2) {
+  var url = this.url + '?area=';
+  url += latlon1.lat + ',' + latlon1.lon;
+  url += '_';
+  url += latlon2.lat + ',' + latlon2.lon;
+  
+  jQuery.ajax(url, {
     'success': function(data, status, xhr) {
       callback(data);
     }
@@ -55,15 +60,19 @@ function Map(id, centeredAt) {
   this.map.setCenter(centeredAt.getLonLat());
 }
 
-Map.prototype.loadMarkers = function(loader) {
+Map.prototype.loadMarkers = function(loader) {  
   var self = this;
+  var extent = this.map.getExtent().toArray();
+  var lonlat1 = new OpenLayers.LonLat(extent[0], extent[1])
+  var lonlat2 = new OpenLayers.LonLat(extent[2], extent[3])
+
   loader.load(function(data) {    
     var markers = data.markers;
     for (var i = 0; i < markers.length; i++) {
       var marker = new Marker(new LatLon(markers[i].position.lat, markers[i].position.lon));
       self.addMarker(marker);
     }
-  });
+  }, LatLon.fromLonLat(lonlat1), LatLon.fromLonLat(lonlat2));
 };
 
 Map.prototype.isCenteredAt = function(latlon) {
