@@ -47,7 +47,7 @@ module Service::Platform
     
     def stop
       @services.each do |pid|    
-        Process.kill('KILL', pid)
+        Process.kill('TERM', pid)
       end
       @services.clear
     end
