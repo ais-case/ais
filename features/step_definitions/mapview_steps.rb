@@ -45,3 +45,9 @@ Then /^I should see a vessel at position "([^"]*)"$/ do |point_str|
   has_vessel = page.evaluate_script('map.hasMarkerAt(new LatLon(' << position.lat.to_s << ',' << position.lon.to_s << '))')
   has_vessel.should eq true
 end
+
+Then /^I should not see vessel "(.*?)"$/ do |name|
+  @vessel.name.should eq name
+  has_vessel = page.evaluate_script('map.hasMarkerAt(new LatLon(' << @vessel.position.lat.to_s << ',' << @vessel.position.lon.to_s << '))')
+  has_vessel.should eq false
+end
