@@ -55,22 +55,28 @@ module Service
 
       sleep(3)
       
-      # Rails.configuration.ais_sources.each do |ais_source|
-        # @client_threads << Thread.new(ais_source) do |source|
-          # host, port = source
-          # socket = TCPSocket.new(host, port)
-          # begin
-            # loop do
-              # process_raw_message(socket.gets)
-            # end
-          # rescue
-            # puts $!
-            # raise
-          # ensure
-            # socket.close
-          # end
-        # end
-      # end
+      if defined?(Rails)
+        ais_sources = Rails.configuration.ais_sources
+      else
+        ais_sources = [['82.210.120.176', 20000]] 
+      end
+      
+      ais_sources.each do |ais_source|
+        @client_threads << Thread.new(ais_source) do |source|
+          begin
+            host, port = source
+            socket = TCPSocket.new(host, port)
+            loop do
+              process_raw_message(socket.gets)
+            end
+          rescue
+            puts $!
+            raise
+          ensure
+            socket.close
+          end
+        end
+      end
       register_self('ais/transmitter', endpoint)
     end
     
