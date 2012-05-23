@@ -1,3 +1,5 @@
+require_relative 'platform/service_proxy'
+
 module Service
   class TransmitterProxy < Platform::ServiceProxy
     def send_position_report_for(vessel)

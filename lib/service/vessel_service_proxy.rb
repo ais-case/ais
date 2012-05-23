@@ -1,3 +1,5 @@
+require_relative 'platform/service_proxy'
+
 module Service
   class VesselServiceProxy < Platform::ServiceProxy
     def vessels

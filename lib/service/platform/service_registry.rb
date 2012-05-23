@@ -1,34 +1,56 @@
 require 'ffi-rzmq'
+require_relative 'base_service'
+require_relative 'reply_service'
+require_relative '../vessel_service_proxy'
+require_relative '../transmitter_proxy'
 
-module Service::Platform
-  class ServiceRegistry
-    ENDPOINTS = { 
-      'ais/transmitter' => { :endpoint => 'tcp://localhost:21000', :class => Service::TransmitterProxy},
-      'ais/vessels'     => { :endpoint => 'tcp://localhost:21001', :class => Service::VesselServiceProxy},
-      'ais/message'     => { :endpoint => 'tcp://localhost:21002', :class => nil}
-    }
-  
-    def initialize(context=ZMQ::Context.new)
-      @context = context
-    end
-  
-    def lookup(name)
-      ENDPOINTS[name][:endpoint]
-    end
-  
-    def bind(name)
-      endpoint = lookup(name)
-      socket = @context.socket(ZMQ::REQ)
-      rc = socket.connect(endpoint)
-      if ZMQ::Util.resultcode_ok?(rc)
-        proxy = ENDPOINTS[name][:class].new(socket) 
-        begin
-          yield proxy
-        ensure
-          socket.close
+module Service
+  module Platform
+    class ServiceRegistry < BaseService
+      def initialize(registry=nil)
+        @reply_service = ReplyService.new(method(:process_request))
+        @endpoints = {}
+      end
+    
+      def start(endpoint)
+        @reply_service.start(endpoint)
+      end
+      
+      def wait
+        @reply_service.wait
+      end
+      
+      def stop
+        @reply_service.stop
+      end
+    
+      def lookup(name)
+        if @endpoints.has_key?(name)
+          @endpoints[name]
+        else
+          nil
         end
-      else
-        raise RuntimeError, "Couldn't connect to #{ep}"
+      end    
+      
+      def register(name, endpoint)
+        @endpoints[name] = endpoint
+      end
+      
+      def unregister(name)
+        @endpoints.delete(name) if @endpoints.has_key?(name)
+      end
+      
+      def process_request(data)
+        type, *args = data.split(' ')
+        if type == 'LOOKUP'
+          lookup(args[0])   
+        elsif type == 'REGISTER'
+          register(args[0], args[1])
+        elsif type == 'UNREGISTER'
+          unregister(args[0])
+        else
+          raise "Unknown request type '#{type}'"          
+        end
       end
     end
   end

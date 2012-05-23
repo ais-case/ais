@@ -4,7 +4,7 @@ shared_examples_for "a reply service" do
     reply_service.should_receive(:start).with('tcp://*:21000')
     reply_service.should_receive(:stop)
 
-    service = described_class.new(Service::Platform::ServiceRegistry.new)
+    service = described_class.new(Service::Platform::ServiceRegistryProxy.new)
     service.reply_service = reply_service
     service.start('tcp://*:21000')
     service.stop

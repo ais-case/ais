@@ -15,7 +15,7 @@ module Service::Platform
     end
     
     def get_registry
-      @registry ||= ServiceRegistry.new
+      @registry ||= ServiceRegistryProxy.new
     end
     
     def start
