@@ -1,22 +1,30 @@
 #!/usr/bin/env ruby
-if ARGV.length != 3
-  raise 'Not enough arguments'
+if ARGV.length != 4
+  raise 'Invalid number of arguments'
 end
 
 require_relative 'platform/service_registry_proxy'
 require_relative ARGV[0]
 service_class = ARGV[1]
 endpoint = ARGV[2]
+registry_endpoint = ARGV[3]
 
 klass = Kernel
 service_class.split('::').each do |name|
   klass = klass.const_get(name)   
 end
+
+if endpoint.end_with?(':0')
+  port = 22000 + Process.pid
+  endpoint = endpoint.dup
+  endpoint[-1] = port.to_s
+end
   
-r = klass.new Service::Platform::ServiceRegistryProxy.new
+registry = Service::Platform::ServiceRegistryProxy.new registry_endpoint
 begin
-  r.start(endpoint)
-  r.wait
+  service = klass.new registry
+  service.start(endpoint)
+  service.wait
 ensure
-  r.stop
+  service.stop
 end

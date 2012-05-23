@@ -1,4 +1,5 @@
 require 'ffi-rzmq'
+require 'timeout'
 require_relative 'base_service'
 require_relative '../vessel_service_proxy'
 require_relative '../transmitter_proxy'
@@ -10,7 +11,7 @@ module Service
       
       PROXIES = { 
         'ais/transmitter' => Service::TransmitterProxy,
-        'ais/vessels'     => Service::VesselServiceProxy,
+        'ais/vessel'      => Service::VesselServiceProxy,
         'ais/message'     => nil
       }
     
@@ -26,14 +27,13 @@ module Service
           begin
             socket.send_string(req)
             socket.recv_string(res = '')
-            response = nil if res == ''
+            res = nil if res == ''
           ensure
             socket.close
           end
         else
           raise RuntimeError, "Couldn't connect to #{ep}"
         end
-        
         res
       end
  
@@ -41,8 +41,14 @@ module Service
         request("REGISTER #{name} #{endpoint}")
       end
       
-      def lookup(name)
-        request("LOOKUP #{name}")
+      def lookup(name, seconds = 5)
+          timeout(seconds) do
+          loop do
+            endpoint = request("LOOKUP #{name}")
+            return endpoint unless endpoint == nil
+            sleep(0.1)
+          end
+        end
       end
     
       def bind(name)

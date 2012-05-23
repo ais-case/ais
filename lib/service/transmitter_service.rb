@@ -10,6 +10,7 @@ require_relative 'platform/reply_service'
 module Service
   class TransmitterService < Platform::BaseService
     def initialize(registry)
+      super(registry)
       @reply_service = Platform::ReplyService.new(method(:process_request))
       @messages = Queue.new
       @client_threads = []
@@ -70,6 +71,7 @@ module Service
           # end
         # end
       # end
+      register_self('ais/transmitter', endpoint)
     end
     
     def wait

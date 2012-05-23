@@ -19,6 +19,10 @@ module Service
       def stop
       end
       
+      def register_self(name, endpoint)
+        @registry.register(name, endpoint.gsub(/\*/, 'localhost'))
+      end
+      
       def reply_service(handler)
         @reply_service ||= ReplyService.new(handler)
       end

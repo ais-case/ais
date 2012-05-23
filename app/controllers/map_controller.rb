@@ -8,7 +8,7 @@ class MapController < ApplicationController
   def markers
     vessels = []
     registry = get_registry
-    registry.bind('ais/vessels') do |service|
+    registry.bind('ais/vessel') do |service|
       vessels = service.vessels()
     end
 

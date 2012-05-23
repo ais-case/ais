@@ -18,8 +18,11 @@ module Service
     def start(endpoint)
       super(endpoint)
       
-      @message_service.start(@registry.lookup('ais/message'))
+      message_endpoint = @registry.lookup('ais/message')
+      @message_service.start(message_endpoint) if message_endpoint
       @reply_service.start(endpoint)
+      
+      register_self('ais/vessel', endpoint)
     end
     
     def wait

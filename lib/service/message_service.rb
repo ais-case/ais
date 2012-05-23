@@ -25,6 +25,8 @@ module Service
           socket.close
         end
       end      
+      
+      register_self('ais/message', endpoint)
     end
     
     def wait

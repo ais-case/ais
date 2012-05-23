@@ -14,6 +14,7 @@ module Service
     
       def start(endpoint)
         @reply_service.start(endpoint)
+        register_self('ais/registry', endpoint)
       end
       
       def wait
@@ -22,6 +23,10 @@ module Service
       
       def stop
         @reply_service.stop
+      end
+
+      def register_self(name, endpoint)
+        # Not required to register self
       end
     
       def lookup(name)
