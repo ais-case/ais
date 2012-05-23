@@ -9,10 +9,10 @@ Feature: Map View
 
   Scenario: show vessel inside map area
     Given vessel "Seal" at position "52.01N, 3.99E"
-     When I see the map area between "52.01N, 3.99E" and "52.01N, 3.99E"
+     When I see the map area between "52.10N, 3.90E" and "51.90N, 4.10E"
      Then I should see a vessel at position "52.01N, 3.99E"
 
   Scenario: vessels outside the map area should not be visible
-    Given vessel "Seagull" at position "51.97N, 2.12E"
-     When I see the map area between "52.01N, 3.99E" and "52.01N, 3.99E"
-     Then I should not see vessel "Seagull" 
+    Given vessel "Seagull" at position "51.97N, 3.12E"
+     When I see the map area between "52.10N, 3.90E" and "51.90N, 4.10E"
+     Then I should not see vessel "Seagull"
