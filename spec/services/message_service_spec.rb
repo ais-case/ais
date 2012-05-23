@@ -9,6 +9,7 @@ module Service
     end
     
     before(:each) do
+      @registry = MockRegistry.new
       sleep(0.1)
       @server_queue = Queue.new
       @server = Thread.new(TCPServer.new(20000)) do |socket|
@@ -30,7 +31,7 @@ module Service
     it_behaves_like "a service"
     
     it "listens for raw AIS data from a local TCP server on port 20000" do
-      service = MessageService.new(Platform::ServiceRegistryProxy.new)
+      service = MessageService.new(@registry)
       service.should_receive(:process_message).with(@sample_message << "\n")
       service.start('tcp://*:28000')
       
@@ -44,7 +45,7 @@ module Service
     end
   
     it "publishes processed messages" do
-      service = MessageService.new(Platform::ServiceRegistryProxy.new)
+      service = MessageService.new(@registry)
       service.should_receive(:publish_message).with(@sample_type, @sample_payload)
       service.process_message(@sample_message)
     end
@@ -55,7 +56,7 @@ module Service
 
       subscr = Platform::SubscriberService.new(handler.method(:handle_request), ['1 '])
       
-      service = MessageService.new(Platform::ServiceRegistryProxy.new)
+      service = MessageService.new(@registry)
       begin
         service.start('tcp://*:29000')
 
