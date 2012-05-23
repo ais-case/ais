@@ -12,9 +12,9 @@ module Service::Platform
       @done_queue.clear
       
       @thread = Thread.new(@done_queue) do |queue|
-        ctx = ZMQ::Context.new
-        socket = ctx.socket(ZMQ::SUB)
         begin
+          ctx = ZMQ::Context.new
+          socket = ctx.socket(ZMQ::SUB)
           @filters.each do |filter|
             socket.setsockopt(ZMQ::SUBSCRIBE, filter)
           end
