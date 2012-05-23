@@ -21,6 +21,10 @@ module Service
       @message_service.start(@registry.lookup('ais/message'))
       @reply_service.start(endpoint)
     end
+    
+    def wait
+      @reply_service.wait
+    end
 
     def stop
       @reply_service.stop

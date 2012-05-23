@@ -11,6 +11,7 @@ module Service
       end
   
       def wait
+        raise "Wait not implemented"
       end
   
       def stop
