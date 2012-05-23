@@ -22,7 +22,7 @@ Given /^vessel "([^"]*)" at position "([^"]*)"$/ do |name, coords_str|
   registry.bind('ais/transmitter') do |service|
     service.send_position_report_for @vessel
   end
-  sleep(1)
+  sleep(2)
 end
 
 When /^I view the homepage$/ do
