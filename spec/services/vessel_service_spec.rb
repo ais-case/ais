@@ -81,6 +81,15 @@ module Service
       service.should_receive(:receiveVessel).with(vessel)
       service.process_message(message)      
     end
+
+    it "don't processes invalid AIS messages" do
+      message = "1 13`wgT0P5fPGmDfN>"
+
+      # Send position report
+      service = VesselService.new(@registry)
+      service.should_not_receive(:receiveVessel)
+      service.process_message(message)      
+    end
     
     it "updates the existing vessel when the position of a known vessel is reported" do
       vessel1 = Domain::Vessel.new(1234, Domain::Vessel::CLASS_A)
