@@ -15,7 +15,7 @@ service_class.split('::').each do |name|
 end
 
 if endpoint.end_with?(':0')
-  port = 22000 + Process.pid
+  port = 22000 + (Process.pid % 20000)
   endpoint = endpoint.dup
   endpoint[-1] = port.to_s
 end
