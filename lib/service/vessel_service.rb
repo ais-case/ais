@@ -4,14 +4,16 @@ require_relative '../domain/ais/message_factory'
 require_relative 'platform/base_service'
 require_relative 'platform/reply_service'
 require_relative 'platform/subscriber_service'
+require_relative '../util'
 
 module Service
   class VesselService < Platform::BaseService
     def initialize(registry)
       super(registry)
+      @log = Util::get_log('vessel')
       @vessels = {}
       @vessels_mutex = Mutex.new
-      @reply_service = Platform::ReplyService.new(method(:process_request))
+      @reply_service = Platform::ReplyService.new(method(:process_request), @log)
       @message_service = Platform::SubscriberService.new(method(:process_message), ['1 ', '2 ', '3 '])
     end
     

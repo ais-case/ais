@@ -5,7 +5,7 @@ module Service::Platform
     it "accepts requests on a socket" do
       handler = double('Handler')
       handler.should_receive(:handle_request).with("Test Request") { "Test Response" }
-      service = ReplyService.new(handler.method(:handle_request))
+      service = ReplyService.new(handler.method(:handle_request), MockLogger.new)
       service.start('tcp://*:22000')
        
       ctx = ZMQ::Context.new

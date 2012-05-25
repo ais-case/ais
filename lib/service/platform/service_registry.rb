@@ -3,12 +3,14 @@ require_relative 'base_service'
 require_relative 'reply_service'
 require_relative '../vessel_proxy'
 require_relative '../transmitter_proxy'
+require_relative '../../util'
 
 module Service
   module Platform
     class ServiceRegistry < BaseService
       def initialize(registry=nil)
-        @reply_service = ReplyService.new(method(:process_request))
+        @log = Util::get_log('registry')
+        @reply_service = ReplyService.new(method(:process_request), @log)
         @endpoints = {}
       end
     

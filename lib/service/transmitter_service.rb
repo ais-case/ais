@@ -1,5 +1,6 @@
 require 'socket'
 require 'thread'
+require_relative '../util'
 require_relative '../domain/vessel'
 require_relative '../domain/lat_lon'
 require_relative '../domain/ais/checksums'
@@ -12,12 +13,14 @@ module Service
   class TransmitterService < Platform::BaseService
     def initialize(registry)
       super(registry)
-      @reply_service = Platform::ReplyService.new(method(:process_request))
+      @log = Util::get_log('transmitter')
+      @reply_service = Platform::ReplyService.new(method(:process_request), @log)
       @messages = Queue.new
       @client_threads = []
     end
     
     def start(endpoint)
+      @log.debug("Starting service")
       @reply_service.start(endpoint)
       
       @transmitter = Thread.new do
@@ -26,23 +29,30 @@ module Service
           clients = []
           cli_mutex = Mutex.new
           sender = Thread.new do
-            loop do
-              msg = @messages.pop
-              cli_mutex.synchronize do
-                clients.each do |client|
-                  client.puts(msg)
+            begin
+              loop do
+                msg = @messages.pop
+                @log.debug("Broadcasting message #{msg} to #{clients.length} client(s)")
+                cli_mutex.synchronize do
+                  clients.each do |client|
+                    client.puts(msg)
+                  end
                 end
               end
+            rescue
+              @log.fatal("Sender thread raised exception: #{$!}")            
             end
           end
 
           loop do
             client = socket.accept
+            @log.debug("Accepted client")
             cli_mutex.synchronize do
               clients << client
             end
           end
         rescue
+          @log.fatal("Transmitter thread raised exception: #{$!}")            
           puts $!
           raise
         ensure
@@ -63,6 +73,7 @@ module Service
       end
       
       ais_sources.each do |ais_source|
+        @log.debug("Added AIS source #{ais_sources[0]}:#{ais_sources[1]}")
         @client_threads << Thread.new(ais_source) do |source|
           begin
             host, port = source
@@ -79,6 +90,7 @@ module Service
         end
       end
       register_self('ais/transmitter', endpoint)
+      @log.info("Service started")
     end
     
     def wait
@@ -94,6 +106,7 @@ module Service
       end
       @transmitter = nil
       @client_threads = []
+      @log.info("Service stopped")
     end
         
     def process_raw_message(data)
