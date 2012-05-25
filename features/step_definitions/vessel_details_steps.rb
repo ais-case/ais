@@ -1,18 +1,18 @@
 Given /^vessel "(.*?)" with details:$/ do |name, table|
   @fields = table.rows_hash 
   
-  if fields['Class'] == 'A'
+  if @fields['Class'] == 'A'
     vessel_class = Domain::Vessel::CLASS_A
   else
     vessel_class = Domain::Vessel::CLASS_B
   end
     
-  @vessel = Domain::Vessel.new(fields['MMSI'], vessel_class)
+  @vessel = Domain::Vessel.new(@fields['MMSI'], vessel_class)
   @vessel.name =  name
-  @vessel.type = Domain::VesselType.from_str(fields['Type'])
-  @vessel.heading = fields['Heading'].to_f
-  @vessel.speed = fields['Speed'].to_f
-  @vessel.position = Domain::LatLon.from_str(fields['Position'])
+  @vessel.type = Domain::VesselType.from_str(@fields['Type'])
+  @vessel.heading = @fields['Heading'].to_f
+  @vessel.speed = @fields['Speed'].to_f
+  @vessel.position = Domain::LatLon.from_str(@fields['Position'])
 end
 
 
