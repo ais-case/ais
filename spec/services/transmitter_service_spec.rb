@@ -3,7 +3,7 @@ require 'spec_helper'
 module Service
   describe TransmitterService do
     before(:all) do
-      @sample_message = "!AIVDM,1,1,,A,10004lP0000BCp01eo@00000000,0*15\n" 
+      @sample_message = "!AIVDM,1,1,,A,10004lP0000BCp01eo@000000000,0*25\n" 
     end
     
     before(:each) do
