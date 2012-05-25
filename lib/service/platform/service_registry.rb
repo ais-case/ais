@@ -1,7 +1,7 @@
 require 'ffi-rzmq'
 require_relative 'base_service'
 require_relative 'reply_service'
-require_relative '../vessel_service_proxy'
+require_relative '../vessel_proxy'
 require_relative '../transmitter_proxy'
 
 module Service

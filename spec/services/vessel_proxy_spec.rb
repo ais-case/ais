@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 module Service
-  describe VesselServiceProxy do
+  describe VesselProxy do
     it "requests vessel information from the Vessel service" do
       
       # Some test data
@@ -19,7 +19,7 @@ module Service
       end
       
       # Mock should return correct list of vessels
-      t = VesselServiceProxy.new(socket)
+      t = VesselProxy.new(socket)
       t.vessels.should eq(vessels)
     end  
 
@@ -43,7 +43,7 @@ module Service
       end
       
       # Mock should return correct list of vessels
-      t = VesselServiceProxy.new(socket)
+      t = VesselProxy.new(socket)
       t.vessels(latlon1, latlon2).should eq(vessels)
     end  
   end

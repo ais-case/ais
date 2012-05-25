@@ -1,7 +1,7 @@
 require 'ffi-rzmq'
 require 'timeout'
 require_relative 'base_service'
-require_relative '../vessel_service_proxy'
+require_relative '../vessel_proxy'
 require_relative '../transmitter_proxy'
 
 module Service
@@ -11,7 +11,7 @@ module Service
       
       PROXIES = { 
         'ais/transmitter' => Service::TransmitterProxy,
-        'ais/vessel'      => Service::VesselServiceProxy,
+        'ais/vessel'      => Service::VesselProxy,
         'ais/message'     => nil
       }
     

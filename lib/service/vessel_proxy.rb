@@ -1,7 +1,7 @@
 require_relative 'platform/service_proxy'
 
 module Service
-  class VesselServiceProxy < Platform::ServiceProxy
+  class VesselProxy < Platform::ServiceProxy
     def vessels(*args)
       if args.length == 2
         req = Marshal.dump([args[0], args[1]]) 
