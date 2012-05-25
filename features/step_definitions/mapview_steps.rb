@@ -1,16 +1,4 @@
 require 'uri'
-require 'capybara/rails'
-
-Before do
-  Capybara.current_driver = Capybara.javascript_driver
-  @manager = Service::Platform::ServiceManager.new
-  @manager.start
-  @registry = @manager.registry_proxy
-end
-
-After do |scenario|
-  @manager.stop
-end
 
 Given /^vessel "([^"]*)" at position "([^"]*)"$/ do |name, coords_str|
   # Create vessel with given info
