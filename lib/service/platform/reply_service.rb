@@ -19,9 +19,9 @@ module Service
           context = ZMQ::Context.new
           socket = context.socket(ZMQ::REP)
           begin
-            @log.debug("Reply service started")
             socket.bind(endpoint)
             queue.push(true)
+            @log.debug("Reply service thread started")
             loop do 
               data = ''
               socket.recv_string(data)

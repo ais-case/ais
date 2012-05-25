@@ -2,10 +2,11 @@ require 'ffi-rzmq'
 
 module Service::Platform
   class SubscriberService
-    def initialize(handler, filters)
+    def initialize(handler, filters, log)
       @handler = handler
       @filters = filters
       @done_queue = Queue.new
+      @log = log
     end
     
     def start(endpoint)
@@ -23,15 +24,18 @@ module Service::Platform
           
           # For some reason the socket needs some time before it's functional
           sleep(0.1)
-          
+          @log.debug("Subscribed service thread started")
           queue.push(true)
           loop do
             data = ''
             socket.recv_string(data)
+            @log.debug("Received message")
             @handler.call(data)
+            @log.debug("Message handled")
           end
         rescue
           queue.push(false)
+          @log.fatal("Subscriber service thread exception: #{$!}")
           puts $!
           raise
         ensure

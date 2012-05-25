@@ -14,10 +14,11 @@ module Service
       @vessels = {}
       @vessels_mutex = Mutex.new
       @reply_service = Platform::ReplyService.new(method(:process_request), @log)
-      @message_service = Platform::SubscriberService.new(method(:process_message), ['1 ', '2 ', '3 '])
+      @message_service = Platform::SubscriberService.new(method(:process_message), ['1 ', '2 ', '3 '], @log)
     end
     
     def start(endpoint)
+      @log.debug("Starting service")
       super(endpoint)
       
       message_endpoint = @registry.lookup('ais/message')
@@ -25,6 +26,7 @@ module Service
       @reply_service.start(endpoint)
       
       register_self('ais/vessel', endpoint)
+      @log.info("Service started")
     end
     
     def wait
@@ -38,35 +40,44 @@ module Service
     end
 
     def process_message(data)
+      @log.debug("Message incoming: #{data}")
       payload = data.split(' ')[1]
       message = Domain::AIS::MessageFactory.fromPayload(payload)
-      if not message.nil?
+      if message.nil?
+        @log.debug("Message rejected: #{data}")
+      else        
         vessel = Domain::Vessel.new(message.mmsi, message.vessel_class)
         vessel.position = Domain::LatLon.new(message.lat, message.lon)
         receiveVessel(vessel)
       end
     end
     
-     def receiveVessel(vessel)
+    def receiveVessel(vessel)
+      @log.debug("Adding vessel with MMSI #{vessel.mmsi}")
       @vessels_mutex.synchronize do
         @vessels[vessel.mmsi] = vessel
       end
     end
     
-    def process_request(request='')
+    def process_request(request='')      
       @vessels_mutex.synchronize do
         if request.length == 0
-            Marshal.dump(@vessels.values)
-        else  
+          @log.debug("Processing request for all vessels")
+          vessels = @vessels.values
+        else
+          @log.debug("Processing request for filtered set of vessels")
           latlons = Marshal.load(request)
+          @log.debug("Latlons: #{latlons}")
           lats = [latlons[0].lat, latlons[1].lat]
           lons = [latlons[0].lon, latlons[1].lon]
-          filtered = @vessels.values.select do |vessel|
+          vessels = @vessels.values.select do |vessel|
+            @log.debug("Vessel: #{vessel.position}")
             vessel.position.lat.between?(lats.min, lats.max) and
             vessel.position.lon.between?(lons.min, lons.max)
           end
-          Marshal.dump(filtered)     
         end
+        @log.debug("#{vessels.length} vessels returned")
+        Marshal.dump(vessels)     
       end
     end
   end

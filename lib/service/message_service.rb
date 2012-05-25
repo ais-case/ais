@@ -1,11 +1,18 @@
 require 'ffi-rzmq'
 require 'socket'
+require_relative '../util'
 require_relative '../domain/ais/checksums'
 require_relative '../domain/ais/six_bit_encoding'
 require_relative 'platform/base_service'
 
 module Service
   class MessageService < Platform::BaseService
+    
+    def initialize(registry)
+      super(registry)
+      @log = Util::get_log('message')
+    end
+    
     def start(endpoint)
       context = ZMQ::Context.new
       @pub_socket = context.socket(ZMQ::PUB)
@@ -17,6 +24,7 @@ module Service
           loop do
             data = socket.gets
             break if data == nil
+            @log.debug("Received raw message: #{data}")
             process_message(data)
           end
        rescue
@@ -28,6 +36,7 @@ module Service
       end      
       
       register_self('ais/message', endpoint)
+      @log.info("Service started")
     end
     
     def wait
@@ -50,6 +59,7 @@ module Service
     end
     
     def publish_message(type, payload)
+      @log.debug("Publishing #{payload} under type #{type}")
       rc = @pub_socket.send_string("#{type.to_s} #{payload}")
     end
   end

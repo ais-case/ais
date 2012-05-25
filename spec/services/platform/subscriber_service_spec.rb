@@ -5,7 +5,7 @@ module Service::Platform
     it "accepts lists for updates on a socket" do
       handler = double('Handler')
       handler.should_receive(:handle_request).with("TEST Hello World!")
-      service = SubscriberService.new(handler.method(:handle_request), ["TEST"])
+      service = SubscriberService.new(handler.method(:handle_request), ["TEST"], MockLogger.new)
        
       ctx = ZMQ::Context.new
       sock = ctx.socket ZMQ::PUB

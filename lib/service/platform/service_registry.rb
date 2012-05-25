@@ -17,6 +17,7 @@ module Service
       def start(endpoint)
         @reply_service.start(endpoint)
         register_self('ais/registry', endpoint)
+        @log.info("Started service")
       end
       
       def wait
@@ -25,6 +26,7 @@ module Service
       
       def stop
         @reply_service.stop
+        @log.info("Stopped service")
       end
 
       def register_self(name, endpoint)
@@ -48,6 +50,7 @@ module Service
       end
       
       def process_request(data)
+        @log.debug("Received request: #{data}")
         type, *args = data.split(' ')
         if type == 'LOOKUP'
           lookup(args[0])   

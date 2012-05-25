@@ -62,7 +62,7 @@ module Service
       handler = double('Subscriber')
       handler.should_receive(:handle_request).with("#{@sample_type} #{@sample_payload}")
 
-      subscr = Platform::SubscriberService.new(handler.method(:handle_request), ['1 '])
+      subscr = Platform::SubscriberService.new(handler.method(:handle_request), ['1 '], MockLogger.new)
       
       service = MessageService.new(@registry)
       begin
@@ -72,7 +72,7 @@ module Service
         service.publish_message(@sample_type, @sample_payload)
         
         # Wait a very short time to allow for message delivery 
-        sleep(0.05)
+        sleep(0.1)
       ensure
         service.stop
         subscr.stop

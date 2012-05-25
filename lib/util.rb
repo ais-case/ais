@@ -7,7 +7,7 @@ module Util
     if ENV.has_key?('LOGLEVEL') and Logger::Severity.const_defined?(ENV['LOGLEVEL']) 
       log.level = Logger::Severity.const_get(ENV['LOGLEVEL'])
     else
-      log.level = Logger::WARN
+      log.level = Logger::ERROR
     end
     log
   end
