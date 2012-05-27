@@ -15,24 +15,22 @@ class MapController < ApplicationController
       end
     end
     
-    logger.info("Controller received marker request with latlons #{latlon1} and #{latlon2}")
+    logger.debug("Controller received marker request with latlons #{latlon1} and #{latlon2}")
     
     vessels = []
     registry = get_registry
     registry.bind('ais/vessel') do |service|
       if latlon1 and latlon2
-        logger.info("Use vessel service with latlon restrictions")
         vessels = service.vessels(latlon1, latlon2)
       else
-        logger.info("Use vessel service without latlon restrictions")
         vessels = service.vessels
       end
     end
-    logger.info("Controller received #{vessels.length} vessels")
+    logger.debug("Controller received #{vessels.length} vessels")
 
     @markers = vessels.keep_if { |vessel| vessel.position }
 
-    logger.info("Controller generated #{@markers.length} markers")
+    logger.debug("Controller generated #{@markers.length} markers")
     
     respond_to do |format| 
       format.json
