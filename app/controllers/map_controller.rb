@@ -32,7 +32,7 @@ class MapController < ApplicationController
 
     @markers = vessels.keep_if { |vessel| vessel.position }
 
-    logger.info("Controller generated #{markers.length} markers")
+    logger.info("Controller generated #{@markers.length} markers")
     
     respond_to do |format| 
       format.json
