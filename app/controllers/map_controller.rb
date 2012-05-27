@@ -15,7 +15,7 @@ class MapController < ApplicationController
       end
     end
     
-    logger.info("Controller received marker request with latlons #{latlon1} and #{latlong2}")
+    logger.info("Controller received marker request with latlons #{latlon1} and #{latlon2}")
     
     vessels = []
     registry = get_registry
