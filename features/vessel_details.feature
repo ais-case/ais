@@ -8,7 +8,7 @@ Feature: Vessel Details
     Given vessel "Sea Lion" with details:
        | MMSI     | 245000000     |
        | Class    | A             |
-       | Type     | Cargo ship    |
+       | Type     | Cargo         |
        | Position | 51.99N, 4.05E |
        | Heading  | 290.1         |
        | Speed    | 13.1          |
