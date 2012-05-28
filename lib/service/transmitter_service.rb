@@ -23,6 +23,8 @@ module Service
       @log.debug("Starting service")
       @reply_service.start(endpoint)
       
+      ready_queue = Queue.new
+      ready_queue.clear
       @transmitter = Thread.new do
         begin
           socket = TCPServer.new(20000)
@@ -30,6 +32,7 @@ module Service
           cli_mutex = Mutex.new
           sender = Thread.new do
             begin
+              ready_queue.push true
               loop do
                 msg = @messages.pop
                 @log.debug("Broadcasting message #{msg} to #{clients.length} client(s)")
@@ -64,7 +67,9 @@ module Service
         end
       end
 
-      sleep(3)
+      timeout(3) do
+        ready_queue.pop
+      end
       
       if ENV.has_key?('RAILS_ENV') and ENV['RAILS_ENV'] == 'test'
         ais_sources = [] 
