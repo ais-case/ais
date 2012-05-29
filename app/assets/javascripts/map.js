@@ -12,7 +12,7 @@ var parseLocations = function(s) {
 };
 
 $(document).ready(function() {
-  map = new Map('map', new LatLon(51.9, 4.35));
+  map = new Map('map', new LatLon(51.9, 4.35), new AjaxDataLoader('/map/'));
   var locations;
   try {
     locations = parseLocations(window.location.hash.substring(1));
@@ -22,5 +22,5 @@ $(document).ready(function() {
   if (locations != null) {
     map.zoomToArea(locations[0], locations[1]);
   }
-  map.loadMarkers(new AjaxDataLoader('/map/markers'));
+  map.loadMarkers();
 });

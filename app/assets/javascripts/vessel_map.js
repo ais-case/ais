@@ -5,7 +5,7 @@ function Marker(id, position) {
   this.position = position;
 }
 
-function Map(id, centeredAt) {
+function Map(id, centeredAt, loader) {
   this.markerLayer = new OpenLayers.Layer.Markers('Markers');
 
   OpenLayers.ImgPath = '/ol/img/';
@@ -19,15 +19,16 @@ function Map(id, centeredAt) {
   });
   this.map.zoomTo(11);
   this.map.setCenter(centeredAt.getLonLat());
+  this.loader = loader;
 }
 
-Map.prototype.loadMarkers = function(loader) {  
+Map.prototype.loadMarkers = function() {  
   var self = this;
   var extent = this.map.getExtent().toArray();
   var lonlat1 = new OpenLayers.LonLat(extent[0], extent[1])
   var lonlat2 = new OpenLayers.LonLat(extent[2], extent[3])
 
-  loader.load(function(data) {
+  this.loader.loadMarkers(function(data) {
     var markers = data.markers;
     for (var i = 0; i < markers.length; i++) {
       var marker = new Marker(markers[i].id, new LatLon(markers[i].position.lat, markers[i].position.lon));

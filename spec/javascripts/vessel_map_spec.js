@@ -11,11 +11,21 @@ describe("Map", function() {
   var latlon;
 	var map;
 	var marker;
+	var loader;
 	
 	beforeEach(function() {
+    marker = new Marker(42, new LatLon(52, 4));
 		latlon = new LatLon(52, 4);
-		map = new Map('map', latlon);
-		marker = new Marker(42, new LatLon(52, 4));		
+		
+		loader = {
+		  'loadMarkers': function(cb) {
+		    cb({
+		      'markers': [{'position': new LatLon(52.1, 3.9)}, {'position': new LatLon(52.2, 3.8)}]
+		    });
+		  },
+		}		
+
+    map = new Map('map', latlon, loader);
 	});
 	
 	it("checks whether it is centered at a given point", function() {
@@ -43,12 +53,9 @@ describe("Map", function() {
     var latlon2 = new LatLon(52.1, 4.1);
     map.zoomToArea(latlon1, latlon2);
 
-		var loader = {'load': function(cb){
-			cb({'markers':[{'position': new LatLon(52.1, 3.9)}, {'position': new LatLon(52.2, 3.8)}]});
-		}};
-		spyOn(loader, 'load').andCallThrough(); 
-		map.loadMarkers(loader);
-		expect(loader.load).toHaveBeenCalled();
+		spyOn(loader, 'loadMarkers').andCallThrough(); 
+		map.loadMarkers();
+		expect(loader.loadMarkers).toHaveBeenCalled();
 		expect(map.markerLayer.markers.length).toBe(2);
 	});
 	
