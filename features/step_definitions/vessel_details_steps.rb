@@ -29,6 +29,7 @@ When /^"(.*?)" sends a voyage report$/ do |arg1|
 end
 
 When /^I select vessel "(.*?)" on the map$/ do |name|
+  point = @vessel.position
   page.evaluate_script('map.clickMarker(new LatLon(' << point.lat.to_s << ',' << point.lon.to_s << '))')
 end
 
