@@ -3,7 +3,7 @@ require 'spec_helper'
 module Service
   describe TransmitterService do
     before(:all) do
-      @sample_message = "!AIVDM,1,1,,A,10004lP0000BCp01eo@000000000,0*25\n" 
+      @sample_message = "!AIVDM,1,1,,A,10004lP0000BCp01eo@000000000,0*25\n"
     end
     
     before(:each) do
@@ -37,21 +37,34 @@ module Service
     end
     
     describe "process_request" do
-      it "accepts requests" do  
+      it "accepts position report requests" do  
         service = TransmitterService.new(@registry)
-        service.process_request(Marshal.dump(@vessel))
+        service.process_request('POSITION ' << Marshal.dump(@vessel))
+      end
+
+      it "accepts static info report requests" do  
+        service = TransmitterService.new(@registry)
+        service.process_request('STATIC ' << Marshal.dump(@vessel))
       end
 
       it "returns an empy response" do  
         service = TransmitterService.new(@registry)
-        service.process_request(Marshal.dump(@vessel)).should eq('')
+        service.process_request('POSITION ' << Marshal.dump(@vessel)).should eq('')
       end
       
-      it "broadcasts the encoded message" do
-        raw = Marshal.dump(@vessel)
+      it "broadcasts the encoded position report" do
+        raw = 'POSITION ' << Marshal.dump(@vessel)
   
         service = TransmitterService.new(@registry)
         service.should_receive(:broadcast_message).with(@sample_message)
+        service.process_request(raw)
+      end
+
+      it "broadcasts the encoded static info report" do
+        raw = 'STATIC ' << Marshal.dump(@vessel)
+  
+        service = TransmitterService.new(@registry)
+        service.should_receive(:broadcast_message).twice
         service.process_request(raw)
       end
     end
