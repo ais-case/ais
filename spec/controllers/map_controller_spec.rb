@@ -22,6 +22,10 @@ class MockProxy
   def vessels
     @vessels
   end
+  
+  def info(id)
+    @vessels
+  end
 end
 
 describe MapController do
@@ -78,5 +82,17 @@ describe MapController do
       response.should be_success
       assigns[:markers].should eq([Marker.from_vessel(@vessel2)])
     end      
+  end
+
+  describe "GET info" do
+    it "assigns a vessel" do
+      vessel = Domain::Vessel.new(1234, Domain::Vessel::CLASS_A)
+      vessel.position = Domain::LatLon.new(20, 10)
+
+      @controller.registry = MockServiceRegistry.new(vessel)            
+      get :info, :id => 1234
+      response.should be_success
+      assigns[:vessel].should eq(vessel)
+    end
   end
 end

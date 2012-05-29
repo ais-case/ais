@@ -48,6 +48,7 @@ Ais::Application.routes.draw do
 
   match 'map/' => 'map#index', :as => 'map' 
   match 'map/markers' => 'map#markers', :as => 'map_markers'
+  match 'map/info/:id' => 'map#info', :as => 'map_info'
   
   # You can have the root of your site routed with "root"
   # just remember to delete public/index.html.

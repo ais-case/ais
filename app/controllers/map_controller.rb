@@ -37,4 +37,18 @@ class MapController < ApplicationController
       format.json
     end
   end
+  
+  def info
+    logger.debug("Controller received info request for #{params[:id]}")
+    
+    vessels = []
+    registry = get_registry
+    registry.bind('ais/vessel') do |service|
+      @vessel = service.info(params[:id].to_i)
+    end
+
+    respond_to do |format| 
+      format.html
+    end
+  end
 end
