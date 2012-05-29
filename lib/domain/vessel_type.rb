@@ -2,16 +2,44 @@ module Domain
   class VesselType
     attr_reader :code, :description
     
-    TYPES = [
-              {:code => 60, :description => "Passenger"},
-              {:code => 70, :description => "Cargo"},
-              {:code => 80, :description => "Tanker"},
-            ]
-            
+    TYPES = {
+      0 => "Not available (default)",
+      (1..19) => "Reserved for future use",
+      (20..29) => "Wing in ground",
+      30 => "Fishing",
+      (31..32) => "Towing",
+      33 => "Dredging or underwater ops",
+      34 => "Diving ops",
+      35 => "Military ops",
+      36 => "Saling",
+      37 => "Pleasure craft",
+      (38..39) => "Reserved",
+      (40..49) => "High speed craft",    
+      50 => "Pilot vessel",
+      51 => "Search and rescure",
+      52 => "Tug",
+      53 => "Port tender",
+      54 => "Anti-polution equipment",
+      55 => "Law enforcement",
+      (56..57) => "Local vessel",
+      58 => "Medical transport",
+      59 => "Noncombatant vessel according to RR resolution no. 18",
+      (60..69) => "Passenger",
+      (70..79) => "Cargo",
+      (80..89) => "Tanker",
+      (90..99) => "Other",    
+    }
+
     def self.from_str(description)
-      index = TYPES.index {|t| t[:description] == description}
-      type = TYPES[index]
-      VesselType.new(type[:code], type[:description]) 
+      codes = TYPES.key(description)
+      raise ArgumentError, "Invalid description" if codes == nil
+      if codes.is_a? Integer
+        code = codes
+      else
+        code = codes.begin  
+      end
+      
+      VesselType.new(code, description) 
     end
     
     def initialize(code, description)
