@@ -11,6 +11,7 @@ module Service
     def initialize(registry)
       super(registry)
       @log = Util::get_log('message')
+      @payload = ''
     end
     
     def start(endpoint)
@@ -54,8 +55,13 @@ module Service
       return unless Domain::AIS::Checksums::verify(data)
       preamble, fragment_count, fragment_number, id, channel, payload, suffix = data.split(',')
       
-      type = Domain::AIS::SixBitEncoding.decode(payload[0]).to_i(2)
-      publish_message(type, payload)
+      @payload << payload
+      
+      if fragment_count == fragment_number
+        type = Domain::AIS::SixBitEncoding.decode(@payload[0]).to_i(2)
+        publish_message(type, @payload.dup)
+        @payload = ''
+      end
     end
     
     def publish_message(type, payload)

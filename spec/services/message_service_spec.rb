@@ -57,6 +57,15 @@ module Service
       service.should_not_receive(:publish_message)
       service.process_message(message)
     end
+
+    it "aggregates multi-fragment messages before publishing" do
+      payload1 = "53aaW@00000000000000000000000000000000160000000000000000"
+      payload2 = "00000000000000"
+      service = MessageService.new(@registry)
+      service.should_receive(:publish_message).with(5, payload1 + payload2)
+      service.process_message("!AIVDM,2,1,,A,#{payload1},0*33")
+      service.process_message("!AIVDM,2,2,,A,#{payload2},0*26")
+    end
     
     it "broadcasts published messages to subscribers" do
       handler = double('Subscriber')
