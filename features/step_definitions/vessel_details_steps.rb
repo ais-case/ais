@@ -36,6 +36,9 @@ end
 
 Then /^I should see all details of vessel "(.*?)"$/ do |name|
   @fields.each do |_, value|
-    page.has_content?(value).should be_true
+    if not page.has_content?(value)
+      error = "Text '#{value}' not found on page"
+      raise error
+    end
   end
 end
