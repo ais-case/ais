@@ -1,7 +1,7 @@
 module Domain
   class Vessel
     attr_reader :mmsi, :vessel_class
-    attr_accessor :name, :position
+    attr_accessor :name, :position, :heading, :speed, :type
   
     CLASS_A = 'A'
     CLASS_B = 'B'

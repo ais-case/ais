@@ -2,20 +2,33 @@ require 'spec_helper'
 
 module Domain
   describe Vessel do
+    before(:each) do
+      @vessel = Vessel.new(1234, Vessel::CLASS_A)
+    end
+    
     it "requires a mmsi and class" do
-      vessel = Vessel.new(1234, Vessel::CLASS_A)
-      vessel.mmsi.should eq 1234
-      vessel.vessel_class.should eq Vessel::CLASS_A
+      @vessel.mmsi.should eq 1234
+      @vessel.vessel_class.should eq Vessel::CLASS_A
     end
     
     it "has name and position attributes" do
-      vessel = Vessel.new(1234, Vessel::CLASS_A)
-      vessel.name = "Seal"
-      vessel.position = LatLon.new(50.0, 4.0)
+      @vessel.name = "Seal"
+      @vessel.position = LatLon.new(50.0, 4.0)
   
-      vessel.name.should eq "Seal"
-      vessel.position.lat.should eq 50.0
-      vessel.position.lon.should eq 4.0
+      @vessel.name.should eq "Seal"
+      @vessel.position.lat.should eq 50.0
+      @vessel.position.lon.should eq 4.0
+    end
+
+    it "has heading, speed and type attributes" do
+      type = VesselType.from_str("Passenger")
+      @vessel.heading = 193
+      @vessel.speed = 46.3
+      @vessel.type = type
+  
+      @vessel.heading.should eq(193)
+      @vessel.speed.should be_within(0.1).of(46.3)
+      @vessel.type.should eq(type)
     end
     
     it "can be compared to other vessels" do
