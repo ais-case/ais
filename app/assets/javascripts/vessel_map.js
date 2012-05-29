@@ -51,8 +51,11 @@ Map.prototype.zoomToArea = function(latlon1, latlon2) {
 
 Map.prototype.addMarker = function(marker) {
   var osmMarker = new OpenLayers.Marker(marker.position.getLonLat());
+  var self = this;
+  
   osmMarker.events.register('click', osmMarker, function(evt) {
-    marker.id;
+    var popup = new PopUp(marker, self.loader);
+    popup.addToMap(self.map);  
   });
   this.markerLayer.addMarker(osmMarker);
 };

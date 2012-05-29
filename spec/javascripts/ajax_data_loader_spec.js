@@ -30,5 +30,19 @@ describe("AjaxDataLoader", function() {
     });    
   });
 
+  describe("loadInfo", function() {
+    it("requests data", function() {
+      spyOn(window.jQuery, 'ajax').andCallThrough();
+      loader.loadInfo(function() {}, 35);
+      expect(window.jQuery.ajax).toHaveBeenCalled();
+      expect(window.jQuery.ajax.mostRecentCall.args[0]).toEqual("http://example.com/path/info/35");
+    });
+    
+    it("calls the callback after receiving data", function() {
+      var obj = {'cb': function (data) {}}
+      spyOn(obj, 'cb');
+      loader.loadInfo(obj.cb, 35);
+      expect(obj.cb).toHaveBeenCalledWith("TestData");
+    });    
   });
 });

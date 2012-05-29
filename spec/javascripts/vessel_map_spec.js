@@ -23,6 +23,9 @@ describe("Map", function() {
 		      'markers': [{'position': new LatLon(52.1, 3.9)}, {'position': new LatLon(52.2, 3.8)}]
 		    });
 		  },
+		  'loadInfo': function(cb) {
+		    cb('Some info');
+		  }
 		}		
 
     map = new Map('map', latlon, loader);

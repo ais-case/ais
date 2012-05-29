@@ -17,3 +17,12 @@ AjaxDataLoader.prototype.loadMarkers = function(callback, latlon1, latlon2) {
   });
 };
 
+AjaxDataLoader.prototype.loadInfo = function(callback, info_id) {
+  var url = this.baseUrl + 'info/' + info_id;
+  
+  jQuery.ajax(url, {
+    'success': function(data, status, xhr) {
+      callback(data);
+    }
+  });
+};
