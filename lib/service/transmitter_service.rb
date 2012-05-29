@@ -6,6 +6,7 @@ require_relative '../domain/lat_lon'
 require_relative '../domain/ais/checksums'
 require_relative '../domain/ais/datatypes'
 require_relative '../domain/ais/six_bit_encoding'
+require_relative '../domain/ais/message_factory'
 require_relative 'platform/base_service'
 require_relative 'platform/reply_service'
 
