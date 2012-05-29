@@ -30,5 +30,19 @@ module Domain::AIS
       msg.lat.should eq(3.0)
       msg.lon.should eq(4.0)
     end
+
+    it "can create static info messages from vessel info" do
+      vessel_type = VesselType.from_str("Tanker")
+      vessel = Domain::Vessel.new(1234, Domain::Vessel::CLASS_A)
+      vessel.position = Domain::LatLon.new(3.0, 4.0)
+      vessel.type = vessel_type  
+
+      mf = MessageFactory.new
+      msg = mf.create_static_info(vessel)
+      msg.type.should eq(5)
+      msg.mmsi.should eq(1234)
+      msg.vessel_type.should eq(vessel_type)
+    end
+
   end
 end

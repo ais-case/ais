@@ -2,7 +2,7 @@ require_relative '../vessel'
 
 module Domain
   module AIS
-    class Message
+    class Message1
       attr_reader :mmsi, :vessel_class, :type
       attr_accessor :lat, :lon
       

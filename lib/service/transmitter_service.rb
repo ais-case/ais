@@ -136,59 +136,27 @@ module Service
       vessel = Marshal.load(data[(type_end + 1)..-1])
       
       fragments = []
+      message_factory = Domain::AIS::MessageFactory.new
       if type == 'POSITION'
-        message_factory = Domain::AIS::MessageFactory.new
         message = message_factory.create_position_report(vessel)
-        fragments << "!AIVDM,1,1,,A,#{Domain::AIS::SixBitEncoding.encode(message.payload)},0"
       elsif type == 'STATIC'
-        int_class = Domain::AIS::Datatypes::Int 
-        payload = ''
-        
-        # type
-        payload << int_class.new(5).bit_string(6)
-        
-        # repeat 
-        payload << '00'
-        
-        # mmsi
-        payload << int_class.new(vessel.mmsi).bit_string(30)
-        
-        # version, imo, call sign
-        payload << '0' * 74
-        
-        # name
-        payload << '0' * 120
-        
-        # type
-        if vessel.type
-          code = vessel.type.code
-        else
-          code = 0  
-        end
-         
-        payload << int_class.new(code).bit_string(8)
-        
-        # rest of message
-        payload << '0' * 184
-        
-        # Create the fragments
-        encoded = Domain::AIS::SixBitEncoding.encode(payload)
-
-        chunk_no = 1
-        chunks = encoded.scan(/.{1,56}/)
-        chunks.each do |chunk|
-          fragments << "!AIVDM,#{chunks.length},#{chunk_no},,A,#{chunk},0"
-          chunk_no += 1  
-        end 
+        message = message_factory.create_static_info(vessel)
       else
         @log.error("Invalid request type: #{type}")
         return ''        
       end
+      
+      # Create the fragments
+      encoded = Domain::AIS::SixBitEncoding.encode(message.payload)
 
-      fragments.each do |fragment|
+      chunk_no = 1
+      chunks = encoded.scan(/.{1,56}/)
+      chunks.each do |chunk|
+        fragment = "!AIVDM,#{chunks.length},#{chunk_no},,A,#{chunk},0"
         packet = Domain::AIS::Checksums::add(fragment) << "\n"
         broadcast_message(packet)
-      end
+        chunk_no += 1  
+      end 
       
       # Empty response
       ''
