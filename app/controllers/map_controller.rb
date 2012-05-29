@@ -28,7 +28,8 @@ class MapController < ApplicationController
     end
     logger.debug("Controller received #{vessels.length} vessels")
 
-    @markers = vessels.keep_if { |vessel| vessel.position }
+    filtered_vessels = vessels.keep_if { |vessel| vessel.position }
+    @markers = filtered_vessels.map { |v| Marker.from_vessel(v) }
 
     logger.debug("Controller generated #{@markers.length} markers")
     

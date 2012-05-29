@@ -23,7 +23,8 @@ LatLon.prototype.equals = function(that) {
   return ((this.lat == that.lat) && (this.lon == that.lon));
 };
 
-function Marker(position) {
+function Marker(id, position) {
+  this.id = id;
   this.position = position;
 }
 
@@ -66,10 +67,10 @@ Map.prototype.loadMarkers = function(loader) {
   var lonlat1 = new OpenLayers.LonLat(extent[0], extent[1])
   var lonlat2 = new OpenLayers.LonLat(extent[2], extent[3])
 
-  loader.load(function(data) {    
+  loader.load(function(data) {
     var markers = data.markers;
     for (var i = 0; i < markers.length; i++) {
-      var marker = new Marker(new LatLon(markers[i].position.lat, markers[i].position.lon));
+      var marker = new Marker(markers[i].id, new LatLon(markers[i].position.lat, markers[i].position.lon));
       self.addMarker(marker);
     }
   }, LatLon.fromLonLat(lonlat1), LatLon.fromLonLat(lonlat2));
@@ -101,3 +102,13 @@ Map.prototype.hasMarkerAt = function(latlon) {
   }
   return false;
 };
+
+Map.prototype.clickMarker = function(latlon) {
+  for (var i = 0; i < this.markerLayer.markers.length; i++) {
+    var marker = this.markerLayer.markers[i];
+    var position = LatLon.fromLonLat(marker.lonlat);
+    if (position.equals(latlon)) {
+      $(marker.icon.imageDiv).click();
+    }
+  }
+}

@@ -2,7 +2,9 @@
 	"markers": [
 	<% first = true %>
 	<% @markers.each_with_index do |marker,i| %>
-		{ "position": <%=raw(ActiveSupport::JSON.encode(marker.position)) %> }<%=
+		{ 
+			"id": <%=raw(ActiveSupport::JSON.encode(marker.id))%>, 
+			"position": <%=raw(ActiveSupport::JSON.encode(marker.position)) %> }<%=
 		"," unless i == (@markers.size - 1) 
 		%>
 	<% end %>

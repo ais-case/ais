@@ -3,19 +3,18 @@ require 'spec_helper'
 describe "map/markers.json.erb" do
   it "renders a list of markers" do
     
-     class MarkerMock
-        def initialize(i)
-          @position = LatLon.new(50.0 + i/10, 4.0 + i/10)
-        end
-        
-        def position 
-          @position
-        end
+    marker_mock_class = Class.new do
+      attr_reader :id, :position
+             
+      def initialize(i)
+        @id = i
+        @position = Domain::LatLon.new(50.0 + i/10, 4.0 + i/10)
+      end  
     end
         
     markers = []
     for i in 1..5 do
-      markers << MarkerMock.new(i) 
+      markers << marker_mock_class.new(i) 
     end
     assign(:markers, markers)
     render

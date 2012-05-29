@@ -35,9 +35,10 @@ describe("LatLon", function() {
 });
 
 describe("Marker", function() {
-	it("has position property", function() {
+	it("has id and position property", function() {
 		var latlon = new LatLon(52, 4);
-		var marker = new Marker(latlon);
+		var marker = new Marker(42, latlon);
+		expect(marker.id).toBe(42);
 		expect(marker.position).toBe(latlon);
 	});
 });
@@ -74,13 +75,14 @@ describe("AjaxDataLoader", function() {
 });
 
 describe("Map", function() {
+  var latlon;
 	var map;
 	var marker;
 	
 	beforeEach(function() {
-		var latlon = new LatLon(52, 4);
+		latlon = new LatLon(52, 4);
 		map = new Map('map', latlon);
-		marker = new Marker(new LatLon(52, 4));		
+		marker = new Marker(42, new LatLon(52, 4));		
 	});
 	
 	it("checks whether it is centered at a given point", function() {
@@ -117,4 +119,14 @@ describe("Map", function() {
 		expect(map.markerLayer.markers.length).toBe(2);
 	});
 	
+	it("can trigger the click event of a marker", function() {
+	  var handler = jasmine.createSpy('handler');
+
+    map.addMarker(marker);
+    var osmMarker = map.markerLayer.markers[0];
+    osmMarker.events.register('click', osmMarker, handler);
+    
+	  map.clickMarker(latlon);
+	  expect(handler).toHaveBeenCalled();
+	});
 });
