@@ -1,49 +1,9 @@
 'use strict';
 
-function LatLon(lat, lon) {
-  this.lat = lat;
-  this.lon = lon;
-}
-
-LatLon.OSM_PROJ = new OpenLayers.Projection('EPSG:900913');
-LatLon.OUR_PROJ = new OpenLayers.Projection('EPSG:4326');
-
-LatLon.fromLonLat = function(lonlat) {
-  var ol = lonlat.transform(LatLon.OSM_PROJ, LatLon.OUR_PROJ);
-  return new LatLon(lonlat.lat, lonlat.lon);
-};
-
-LatLon.prototype.getLonLat = function() {
-  var ol = new OpenLayers.LonLat(this.lon, this.lat);
-  ol.transform(LatLon.OUR_PROJ, LatLon.OSM_PROJ);
-  return ol;
-};
-
-LatLon.prototype.equals = function(that) {
-  return ((this.lat == that.lat) && (this.lon == that.lon));
-};
-
 function Marker(id, position) {
   this.id = id;
   this.position = position;
 }
-
-function AjaxDataLoader(url) {
-  this.url = url;
-}
-
-AjaxDataLoader.prototype.load = function(callback, latlon1, latlon2) {
-  var url = this.url + '?area=';
-  url += latlon1.lat + ',' + latlon1.lon;
-  url += '_';
-  url += latlon2.lat + ',' + latlon2.lon;
-  
-  jQuery.ajax(url, {
-    'success': function(data, status, xhr) {
-      callback(data);
-    }
-  });
-};
 
 function Map(id, centeredAt) {
   this.markerLayer = new OpenLayers.Layer.Markers('Markers');
@@ -90,6 +50,9 @@ Map.prototype.zoomToArea = function(latlon1, latlon2) {
 
 Map.prototype.addMarker = function(marker) {
   var osmMarker = new OpenLayers.Marker(marker.position.getLonLat());
+  osmMarker.events.register('click', osmMarker, function(evt) {
+    marker.id;
+  });
   this.markerLayer.addMarker(osmMarker);
 };
 
