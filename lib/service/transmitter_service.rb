@@ -136,30 +136,9 @@ module Service
       
       fragments = []
       if type == 'POSITION'
-        int_class = Domain::AIS::Datatypes::Int 
-        payload = ''
-        
-        # type
-        payload << int_class.new(1).bit_string(6)
-        
-        # repeat 
-        payload << '00'
-        
-        # mmsi
-        payload << int_class.new(vessel.mmsi).bit_string(30)
-        
-        # nav status, rot, sog, accuracy
-        payload << '0' * 23
-        
-        # long
-        payload << int_class.new(vessel.position.lon * 600_000).bit_string(28)
-        
-        # lat
-        payload << int_class.new(vessel.position.lat * 600_000).bit_string(27)
-        
-        # rest of message
-        payload << '0' * 53
-        fragments << "!AIVDM,1,1,,A,#{Domain::AIS::SixBitEncoding.encode(payload)},0"
+        message_factory = Domain::AIS::MessageFactory.new
+        message = message_factory.create_position_report(vessel)
+        fragments << "!AIVDM,1,1,,A,#{Domain::AIS::SixBitEncoding.encode(message.payload)},0"
       elsif type == 'STATIC'
         int_class = Domain::AIS::Datatypes::Int 
         payload = ''

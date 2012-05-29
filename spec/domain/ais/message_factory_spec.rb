@@ -18,5 +18,17 @@ module Domain::AIS
       msg = MessageFactory.fromPayload(payload)
       msg.should eq(nil)
     end
+    
+    it "can create position report messages from vessel info" do
+      vessel = Domain::Vessel.new(1234, Domain::Vessel::CLASS_A)
+      vessel.position = Domain::LatLon.new(3.0, 4.0)  
+
+      mf = MessageFactory.new
+      msg = mf.create_position_report(vessel)
+      msg.type.should eq(1)
+      msg.mmsi.should eq(1234)
+      msg.lat.should eq(3.0)
+      msg.lon.should eq(4.0)
+    end
   end
 end

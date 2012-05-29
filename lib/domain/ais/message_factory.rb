@@ -20,6 +20,13 @@ module Domain
           nil
         end
       end
+      
+      def create_position_report(vessel)
+        message = Message.new(vessel.mmsi)
+        message.lon = vessel.position.lon
+        message.lat = vessel.position.lat
+        message
+      end
     end
   end
 end
