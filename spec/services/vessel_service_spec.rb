@@ -9,41 +9,42 @@ module Service
     before(:each) do
       @registry = MockRegistry.new
       @registry.register('ais/message', 'tcp://localhost:21002')
+      
+      @vessel1 = Domain::Vessel.new(1234, Domain::Vessel::CLASS_A)
+      @vessel1.position = Domain::LatLon.new(3.0, 5.0) 
+      @vessel2 = Domain::Vessel.new(5678, Domain::Vessel::CLASS_A)
+      @vessel2.position = Domain::LatLon.new(3.0, 4.0)
+      @vessel3 = Domain::Vessel.new(9012, Domain::Vessel::CLASS_B)
+      @vessel3.position = Domain::LatLon.new(2.0, 4.0) 
+            
     end
     
     it "returns a list of vessels" do
-      # Add vessels as test data
-      vessel1 = Domain::Vessel.new(1234, Domain::Vessel::CLASS_A)
-      vessel1.position = Domain::LatLon.new(3.0, 4.0) 
-      vessel2 = Domain::Vessel.new(5678, Domain::Vessel::CLASS_A)
-      vessel2.position = Domain::LatLon.new(5.0, 6.0)
-
       service = VesselService.new(@registry)
-      service.receiveVessel(vessel1)
-      service.receiveVessel(vessel2)
-      
-      vessels = Marshal.load(service.process_request)
+      service.receiveVessel(@vessel1)
+      service.receiveVessel(@vessel2)
+
+      vessels = Marshal.load(service.process_request('LIST'))
       vessels.length.should eq(2)
     end
 
     it "returns a filtered list of vessels when provided with an area" do
-      # Add vessels as test data
-      vessel1 = Domain::Vessel.new(1234, Domain::Vessel::CLASS_A)
-      vessel1.position = Domain::LatLon.new(3.0, 5.0) 
-      vessel2 = Domain::Vessel.new(5678, Domain::Vessel::CLASS_A)
-      vessel2.position = Domain::LatLon.new(3.0, 4.0)
-      vessel3 = Domain::Vessel.new(9012, Domain::Vessel::CLASS_B)
-      vessel3.position = Domain::LatLon.new(2.0, 4.0) 
-
       service = VesselService.new(@registry)
-      service.receiveVessel(vessel1)
-      service.receiveVessel(vessel2)
-      service.receiveVessel(vessel3)
+      service.receiveVessel(@vessel1)
+      service.receiveVessel(@vessel2)
+      service.receiveVessel(@vessel3)
       
       latlons = Marshal.dump([Domain::LatLon.new(2.5, 4.5), Domain::LatLon.new(3.5, 3.5)]) 
-      vessels = Marshal.load(service.process_request(latlons))
+      vessels = Marshal.load(service.process_request('LIST ' + latlons))
       vessels.length.should eq(1)
       vessels[0].mmsi.should eq(5678)
+    end
+    
+    it "returns vessel info for a single vessel" do
+      service = VesselService.new(@registry)
+      service.receiveVessel(@vessel3)      
+      vessel = Marshal.load(service.process_request('INFO 9012'))
+      vessel.should eq(@vessel3)
     end
     
     it "listens for AIS position reports" do
@@ -104,7 +105,7 @@ module Service
       
       # Only one vessel should be reported, and with the latest
       # position
-      vessels = Marshal.load(service.process_request)
+      vessels = Marshal.load(service.process_request('LIST'))
       vessels.length.should eq(1)
       vessels[0].position.lat.should be_within(0.01).of(5.0)
       vessels[0].position.lon.should be_within(0.01).of(6.0)
@@ -119,7 +120,7 @@ module Service
       service = VesselService.new(@registry)
       service.receiveVessel(vessel1)
       service.receiveVessel(vessel2)
-      vessels = service.process_request
+      vessels = service.process_request('LIST')
       vessels.should eq(Marshal.dump([vessel1, vessel2]))
     end    
   end

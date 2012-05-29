@@ -59,14 +59,28 @@ module Service
       end
     end
     
-    def process_request(request='')      
+    def process_request(request='')
+      index = request.index(' ')
+      if index
+        cmd = request[0..(index - 1)]
+        args = request[(index + 1)..-1]
+      else
+        cmd = request
+        args = nil
+      end
+
+      if cmd == 'LIST'
+        process_list_request(args)
+      elsif cmd == 'INFO'
+        process_info_request(args)
+      end
+    end
+    
+    def process_list_request(args)
       @vessels_mutex.synchronize do
-        if request.length == 0
-          @log.debug("Processing request for all vessels")
-          vessels = @vessels.values
-        else
+        if args
           @log.debug("Processing request for filtered set of vessels")
-          latlons = Marshal.load(request)
+          latlons = Marshal.load(args)
           @log.debug("Latlons: #{latlons}")
           lats = [latlons[0].lat, latlons[1].lat]
           lons = [latlons[0].lon, latlons[1].lon]
@@ -75,10 +89,32 @@ module Service
             vessel.position.lat.between?(lats.min, lats.max) and
             vessel.position.lon.between?(lons.min, lons.max)
           end
+        else
+          @log.debug("Processing request for all vessels")          
+          vessels = @vessels.values          
         end
         @log.debug("#{vessels.length} vessels returned")
-        Marshal.dump(vessels)     
-      end
+        Marshal.dump(vessels)
+      end      
+    end
+    
+    def process_info_request(args)
+      if args
+        mmsi = args.to_i
+        @log.debug("Processing info request for vessel #{mmsi}")
+        
+        @vessels_mutex.synchronize do
+          vessels = @vessels.values.select { |v| v.mmsi == mmsi }
+          
+          if vessels.length == 1
+            Marshal.dump(vessels[0])
+          else
+            @log.error("No vessel found with mmsi #{mmsi}")
+          end
+        end
+      else
+        @log.error("Info request without mmsi")
+      end      
     end
   end
 end
