@@ -59,7 +59,7 @@ module Service
       end
     end
     
-    def process_request(request='')
+    def process_request(request)
       index = request.index(' ')
       if index
         cmd = request[0..(index - 1)]
