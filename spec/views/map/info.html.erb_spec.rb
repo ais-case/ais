@@ -20,4 +20,11 @@ describe "map/info.html.erb" do
       end 
     end
   end
+  
+  it "handles vessel with only minimal info" do
+    vessel = Domain::Vessel.new(898989, Domain::Vessel::CLASS_A)
+    
+    assign(:vessel, vessel)
+    render
+  end
 end
