@@ -104,7 +104,7 @@ module Service
       # Send position report
       message = "1 13`wgT0P5fPGmDfN>o?TN2NN2<05"
       vessel = Domain::Vessel.new(244314000, Domain::Vessel::CLASS_A)
-      vessel.speed = 36.0
+      vessel.speed = 36.6
       vessel.heading = 79
 
       service = VesselService.new(@registry)

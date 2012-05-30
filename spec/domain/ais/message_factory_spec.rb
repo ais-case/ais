@@ -11,7 +11,7 @@ module Domain::AIS
         msg.vessel_class.should eq(Domain::Vessel::CLASS_A)
         msg.lat.should be_within(1.0/1_000_000).of(52.834663)
         msg.lon.should be_within(1.0/1_000_000).of(5.206438)
-        msg.speed.should be_within(0.1).of(36.0)
+        msg.speed.should be_within(0.1).of(36.6)
         msg.heading.should be(79)
       end
   
