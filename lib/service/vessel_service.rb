@@ -50,6 +50,12 @@ module Service
         if message.respond_to?(:lat) and message.respond_to?(:lon)
           vessel.position = Domain::LatLon.new(message.lat, message.lon)
         end
+        if message.respond_to?(:speed)
+          vessel.speed = message.speed
+        end
+        if message.respond_to?(:heading)
+          vessel.heading = message.heading
+        end
         if message.respond_to?(:vessel_type)
           vessel.type = message.vessel_type
         end
@@ -62,11 +68,12 @@ module Service
       @log.debug("Adding vessel with MMSI #{vessel.mmsi}")
       @vessels_mutex.synchronize do
         if @vessels.has_key?(vessel.mmsi)
+          @log.debug("Updating vessel #{vessel.class.name}")
           @vessels[vessel.mmsi].update_from(vessel)
         else
-          @vessels[vessel.mmsi] = vessel  
+          @log.debug("Adding vessel #{vessel.class.name}")
+          @vessels[vessel.mmsi] = vessel
         end
-        
       end
     end
     

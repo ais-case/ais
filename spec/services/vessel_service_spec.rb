@@ -102,20 +102,33 @@ module Service
     
     it "processes incoming AIS messages into vessel information" do
       # Send position report
-      message = "1 13`wgT0P5fPGmDfN>o?TN?vN2<05"
+      message = "1 13`wgT0P5fPGmDfN>o?TN2NN2<05"
       vessel = Domain::Vessel.new(244314000, Domain::Vessel::CLASS_A)
+      vessel.speed = 36.0
+      vessel.heading = 79
 
       service = VesselService.new(@registry)
-      service.stub(:receiveVessel)
-      service.should_receive(:receiveVessel).with(vessel)
+      service.stub(:receiveVessel) do |v|
+        if v.mmsi != vessel.mmsi or v.speed != vessel.speed or
+           v.heading != vessel.heading
+          raise "Properties of vessel not as expected"
+        end 
+      end
+      service.should_receive(:receiveVessel)
       service.process_message(message)
       
       vessel = Domain::Vessel.new(265505410, Domain::Vessel::CLASS_A)
+      vessel.type = Domain::VesselType.new(50)
       message = "5 53u=:PP00001<H?G7OI0ThuB37G61<F22222220j1042240Ht2P00000000000000000008"
 
       service = VesselService.new(@registry)
-      service.stub(:receiveVessel)
-      service.should_receive(:receiveVessel).with(vessel)
+      service.stub(:receiveVessel) do |v|
+        if v.mmsi != vessel.mmsi or v.type != vessel.type
+          raise "Properties of vessel not as expected"
+        end 
+      end
+      
+      service.should_receive(:receiveVessel)
       service.process_message(message)
     end
 
