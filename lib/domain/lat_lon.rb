@@ -32,8 +32,10 @@ module Domain
   
     def to_s
       lat_suffix = @lat > 0 ? 'N' : 'S'
-      lon_suffix = @lon > 0 ? 'E' : 'W' 
-      "%1.4f%s, %1.4f%s" % [@lat.abs, lat_suffix, @lon.abs, lon_suffix]
+      lon_suffix = @lon > 0 ? 'E' : 'W'
+      lat = (@lat.abs * 10_000).round.to_f / 10_000
+      lon = (@lon.abs * 10_000).round.to_f / 10_000
+      "%s%s, %s%s" % [lat, lat_suffix, lon, lon_suffix]
     end
   end
 end
