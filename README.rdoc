@@ -8,9 +8,10 @@ on your system to prevent any version conflicts.
 
 == Setting up an environment with RVM
 
-RVM allows you to install and run the project without conflict with other Ruby-based
+RVM allows you to install and run the project without conflicts with other Ruby-based
 projects you might have installed. Instructions for the installation can be found at 
-the {RVM website}[https://rvm.io/rvm/install/]. 
+the {RVM website}[https://rvm.io/rvm/install/]. A quick overview of RVM installation 
+and setup for this project:
 
 1. Download and install RVM: 
 	$ curl -L get.rvm.io | bash -s stable
@@ -21,7 +22,11 @@ the {RVM website}[https://rvm.io/rvm/install/].
 4. Create a separated gemset for this project:
 	$ rvm gemset create ais
 5. Switch to the newly created environment: 
-	$ rvm use "1.9.3@ais1"
+	$ rvm use "1.9.3@ais"
+
+Before you work with the project you will always have to switch to this gemset. This
+can be automated by updating <tt>environment_id</tt> in the .rvmrc file of the project with the 
+information about your environment. 
 
 == Installing dependencies
 
@@ -51,7 +56,7 @@ Note that sources of raw AIS messages are currently hardcoded in lib/services/tr
 There are three separate test suites:
 * Acceptance tests use the {Cucumber}[http://cukes.info/] tool, and
   are driven by browser automation with 
-  {Capybara}[http://jnicklas.github.com/capybara/}. This requires Firefox to be
+  {Capybara}[http://jnicklas.github.com/capybara/]. This requires Firefox to be
   installed. The tests are defined in the <tt>features</tt> subdirectory. Run 
   the acceptance tests with: 
 	$ rake cucumber
