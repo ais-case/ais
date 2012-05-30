@@ -10,7 +10,7 @@ Feature: Vessel Details
        | Class    | A             |
        | Type     | Cargo         |
        | Position | 51.99N, 4.05E |
-       | Heading  | 290.1         |
+       | Heading  | 290           |
        | Speed    | 13.1          |
      When "Sea Lion" sends a position report
       And "Sea Lion" sends a voyage report 
