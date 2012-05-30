@@ -29,10 +29,11 @@ module Service
               socket.send_string(@handler.call(data))
               @log.debug("Reply service replied to request")
             end
-          rescue
+          rescue => e
+            @log.fatal("Subscriber service thread exception: #{e.message}")
+            e.backtrace.each { |line| @log.fatal(line) }
+            puts e.message
             queue.push(false)
-            @log.debug("Reply service exception: #{$!}")
-            puts $!
             raise
           ensure
             socket.close

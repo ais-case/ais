@@ -33,10 +33,11 @@ module Service::Platform
             @handler.call(data)
             @log.debug("Message handled")
           end
-        rescue
+        rescue => e
+          @log.fatal("Subscriber service thread exception: #{e.message}")
+          e.backtrace.each { |line| @log.fatal(line) }
+          puts e.message
           queue.push(false)
-          @log.fatal("Subscriber service thread exception: #{$!}")
-          puts $!
           raise
         ensure
           socket.close
