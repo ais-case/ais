@@ -55,7 +55,7 @@ module Domain
         payload << int_class.new(heading).bit_string(9)
 
         # rest of message
-        payload << '0' * 32
+        payload << '0' * 31
         
         payload
       end

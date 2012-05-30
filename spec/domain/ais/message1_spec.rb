@@ -28,7 +28,14 @@ module Domain::AIS
         m.lon = 4.0
         m.speed = 54.1
         m.heading = 253
-        Domain::AIS::SixBitEncoding.encode(m.payload).should eq("10004lP08M0BCp01eo@007r000000")
+        Domain::AIS::SixBitEncoding.encode(m.payload).should eq("10004lP08M0BCp01eo@007r00000")
+      end
+
+      it "correctly encodes when no speed and heading are provided" do
+        m = Message1.new(1234)
+        m.lat = 3.0
+        m.lon = 4.0
+        Domain::AIS::SixBitEncoding.encode(m.payload).should eq("10004lP0?w0BCp01eo@00?v00000")
       end
     end
   end
