@@ -9,14 +9,14 @@
 	</tr>
 	<tr>
 		<th>Position:</th>
-		<td><% if @vessel.type %><%=@vessel.position%><% else %>Unknown<% end %></td>
+		<td><% if @vessel.position %><%=@vessel.position%><% else %>Unknown<% end %></td>
 	</tr>
 	<tr>
 		<th>Heading:</th>
-		<td><% if @vessel.type %><%=@vessel.heading%><% else %>Unknown<% end %></td>
+		<td><% if @vessel.heading %><%=@vessel.heading%><% else %>Unknown<% end %></td>
 	</tr>
 	<tr>
 		<th>Speed:</th>
-		<td><% if @vessel.type %><%=@vessel.speed%><% else %>Unknown<% end %></td>
+		<td><% if @vessel.speed %><%=@vessel.speed%><% else %>Unknown<% end %></td>
 	</tr>
 </table>
