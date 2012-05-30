@@ -14,6 +14,10 @@ module Service
       @socket.send_string(req)
       @socket.recv_string(message = "")
       
+      Domain::LatLon
+      Domain::Vessel
+      Domain::VesselType
+      
       return Marshal.load(message)
     end
 
@@ -21,6 +25,10 @@ module Service
       @socket.send_string("INFO #{mmsi}")
       @socket.recv_string(message = "")
       
+      Domain::LatLon
+      Domain::Vessel
+      Domain::VesselType
+
       return Marshal.load(message)
     end
   end
