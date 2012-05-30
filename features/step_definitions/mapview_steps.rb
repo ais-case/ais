@@ -1,15 +1,18 @@
 require 'uri'
 
-Given /^vessel "([^"]*)" at position "([^"]*)"$/ do |name, coords_str|
+Given /^class "([^"]*)" vessel "([^"]*)" at position "([^"]*)"$/ do |class_str, name, coords_str|
   # Create vessel with given info
-  @vessel = Domain::Vessel.new(1234, Domain::Vessel::CLASS_A)
-  @vessel.name = name
-  @vessel.position = Domain::LatLon.from_str(coords_str)
+  vessel_class = (class_str == 'B') ? Domain::Vessel::CLASS_B : Domain::Vessel::CLASS_A
+  vessel = Domain::Vessel.new(rand(1_000_000), vessel_class)
+  vessel.name = name
+  vessel.position = Domain::LatLon.from_str(coords_str)
 
   # Send position report for vessel
   @registry.bind('ais/transmitter') do |service|
-    service.send_position_report_for @vessel
+    service.send_position_report_for vessel
   end
+  @vessels ||= {}
+  @vessels[vessel.name] = vessel
 end
 
 When /^I view the homepage$/ do
@@ -35,7 +38,8 @@ Then /^I should see a vessel at position "([^"]*)"$/ do |point_str|
 end
 
 Then /^I should not see vessel "(.*?)"$/ do |name|
-  @vessel.name.should eq name
-  has_vessel = page.evaluate_script('map.hasMarkerAt(new LatLon(' << @vessel.position.lat.to_s << ',' << @vessel.position.lon.to_s << '))')
+  @vessels.has_key?(name).should be_true
+  vessel = @vessels[name]
+  has_vessel = page.evaluate_script('map.hasMarkerAt(new LatLon(' << vessel.position.lat.to_s << ',' << vessel.position.lon.to_s << '))')
   has_vessel.should eq false
 end

@@ -15,3 +15,16 @@ Feature: Vessel Details
       And "Sea Lion" sends a voyage report 
       And I select vessel "Sea Lion" on the map
      Then I should see all details of vessel "Sea Lion"
+     
+  Scenario:
+    Given vessel "Seal" with details:
+       | MMSI     | 246000000     |
+       | Class    | B             |
+       | Type     | Tanker        |
+       | Position | 52.01N, 4.01E |
+       | Heading  | 9             |
+       | Speed    | 70.5          |
+     When "Sea Lion" sends a position report
+      And "Sea Lion" sends a voyage report 
+      And I select vessel "Sea Lion" on the map
+     Then I should see all details of vessel "Sea Lion"
