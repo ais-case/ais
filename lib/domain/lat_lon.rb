@@ -33,7 +33,7 @@ module Domain
     def to_s
       lat_suffix = @lat > 0 ? 'N' : 'S'
       lon_suffix = @lon > 0 ? 'E' : 'W' 
-      "#{@lat.abs}#{lat_suffix}, #{@lon.abs}#{lon_suffix}"
+      "%1.4f%s, %1.4f%s" % [@lat.abs, lat_suffix, @lon.abs, lon_suffix]
     end
   end
 end

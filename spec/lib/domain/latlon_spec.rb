@@ -31,8 +31,8 @@ module Domain
       end
       
       it 'can be converted to a string' do
-        latlon = LatLon.new(47.16, -9.66)
-        latlon.to_s.should eq "47.16N, 9.66W"
+        latlon = LatLon.new(47.16, -9.66666666)
+        latlon.to_s.should eq "47.1600N, 9.6667W"
       end
       
       it "can be compared to other LatLon objects" do
