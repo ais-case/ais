@@ -23,7 +23,7 @@ module Domain
             lat = Datatypes::Int.from_bit_string(decoded[89..115])
             message.lon = lon.value / 600000.0
             message.lat = lat.value / 600000.0
-
+  
             speed = Datatypes::UInt.from_bit_string(decoded[50..59]).value
             message.speed = (speed == 1023) ? nil : speed / 10
             
@@ -51,6 +51,8 @@ module Domain
         message = Message1.new(vessel.mmsi)
         message.lon = vessel.position.lon
         message.lat = vessel.position.lat
+        message.speed = vessel.speed
+        message.heading = vessel.heading
         message
       end
 

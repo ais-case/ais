@@ -34,7 +34,9 @@ module Domain::AIS
     
     it "can create position report messages from vessel info" do
       vessel = Domain::Vessel.new(1234, Domain::Vessel::CLASS_A)
-      vessel.position = Domain::LatLon.new(3.0, 4.0)  
+      vessel.position = Domain::LatLon.new(3.0, 4.0)
+      vessel.speed = 15.3
+      vessel.heading = 90  
 
       mf = MessageFactory.new
       msg = mf.create_position_report(vessel)
@@ -42,6 +44,8 @@ module Domain::AIS
       msg.mmsi.should eq(1234)
       msg.lat.should eq(3.0)
       msg.lon.should eq(4.0)
+      msg.speed.should eq(15.3)
+      msg.heading.should eq(90)
     end
 
     it "can create static info messages from vessel info" do
