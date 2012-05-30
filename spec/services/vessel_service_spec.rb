@@ -50,8 +50,9 @@ module Service
       ctx = ZMQ::Context.new
       sock = ctx.socket(ZMQ::PUB)
       begin
-        rc = sock.bind('tcp://*:21002')
+        rc = sock.bind('tcp://*:21012')
         ZMQ::Util.resultcode_ok?(rc).should be_true
+        @registry.register('ais/message', 'tcp://localhost:21012')
         
         service = (Class.new(VesselService) do
           attr_reader :received_data
