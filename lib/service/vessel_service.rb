@@ -14,7 +14,8 @@ module Service
       @vessels = {}
       @vessels_mutex = Mutex.new
       @reply_service = Platform::ReplyService.new(method(:process_request), @log)
-      @message_service = Platform::SubscriberService.new(method(:process_message), ['1 ', '2 ', '3 ', '5 '], @log)
+      filter = ['1 ', '2 ', '3 ', '5 ', '18 ', '19 ', '24 ']
+      @message_service = Platform::SubscriberService.new(method(:process_message), filter, @log)
     end
     
     def start(endpoint)

@@ -46,7 +46,15 @@ module Service
       vessel.should eq(@vessel3)
     end
     
-    it "listens for AIS position reports" do
+    it "listens for AIS messages reports" do
+      raw = {1 => "13`wgT0P5fPGmDfN>o?TN?vN2<05",
+             2 => "23`wgT0P5fPGmDfN>o?TN?vN2<05",
+             3 => "33`wgT0P5fPGmDfN>o?TN?vN2<05",
+             5 => "53u=:PP00001<H?G7OI0ThuB37G61<F22222220j1042240Ht2P00000000000000000008",
+             18 => "B6:ChG0001v=3fRoEMlmwwlTkP06",
+             19 => "C69rr800021pib3C9b19KwkRVbB>2L>@b2L42O1U0@2NK0L:1RP7",
+             24 => "H44?BB4lDB1>C1CEC130001@F270"}
+
       ctx = ZMQ::Context.new
       sock = ctx.socket(ZMQ::PUB)
       begin
@@ -60,44 +68,19 @@ module Service
             @received_data = data
           end
         end).new(@registry)
-        service.start('tcp://localhost:23000')
-        sock.send_string("1 13`wgT0P5fPGmDfN>o?TN?vN2<05")
 
-        # Give service time to receive and process message
-        sleep(0.1)
-        service.received_data.should eq("1 13`wgT0P5fPGmDfN>o?TN?vN2<05")
+        service.start('tcp://localhost:23000')
+        raw.each do |type,data|
+          sock.send_string("#{type} " << data)
+
+          # Give service time to receive and process message
+          sleep(0.1)
+          service.received_data.should eq("#{type} " << data)  
+        end
         service.stop
       ensure
         sock.close
       end
-    end
-    
-    it "listens for AIS static info reports" do
-      raw = "53u=:PP00001<H?G7OI0ThuB37G61<F22222220j1042240Ht2P00000000000000000008"
-
-      ctx = ZMQ::Context.new
-      sock = ctx.socket(ZMQ::PUB)
-      begin
-        rc = sock.bind('tcp://*:21002')
-        ZMQ::Util.resultcode_ok?(rc).should be_true
-        
-        service = (Class.new(VesselService) do
-          attr_reader :received_data
-          def process_message(data)
-            @received_data = data
-          end
-        end).new(@registry)
-        service.start('tcp://localhost:23000')
-        sock.send_string("5 " << raw)
-
-        # Give service time to receive and process message
-        sleep(0.1)
-        service.received_data.should eq("5 " << raw)
-        service.stop
-      ensure
-        sock.close
-      end
-      
     end
     
     it "processes incoming AIS messages into vessel information" do
