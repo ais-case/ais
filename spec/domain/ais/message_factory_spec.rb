@@ -4,13 +4,15 @@ module Domain::AIS
   describe MessageFactory do
     describe "fromPayload" do
       it "can create a position report message from a payload" do
-        payload = "13`wgT0P5fPGmDfN>o?TN?vN2<05"
+        payload = "13`wgT0P5fPGmDfN>o?TN2NN2<05"
         mf = MessageFactory.new
         msg = MessageFactory.fromPayload(payload)
         msg.mmsi.should eq(244314000)
         msg.vessel_class.should eq(Domain::Vessel::CLASS_A)
         msg.lat.should be_within(1.0/1_000_000).of(52.834663)
         msg.lon.should be_within(1.0/1_000_000).of(5.206438)
+        msg.speed.should be_within(0.1).of(36.0)
+        msg.heading.should be(79)
       end
   
       it "can create a static info message from a payload" do
@@ -27,7 +29,7 @@ module Domain::AIS
         mf = MessageFactory.new
         msg = MessageFactory.fromPayload(payload)
         msg.should eq(nil)
-      end      
+      end
     end
     
     it "can create position report messages from vessel info" do
