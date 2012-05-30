@@ -2,21 +2,32 @@ require 'spec_helper'
 
 module Domain::AIS
   describe MessageFactory do
-    it "can create a message object from a payload" do
-      payload = "13`wgT0P5fPGmDfN>o?TN?vN2<05"
-      mf = MessageFactory.new
-      msg = MessageFactory.fromPayload(payload)
-      msg.mmsi.should eq(244314000)
-      msg.vessel_class.should eq(Domain::Vessel::CLASS_A)
-      msg.lat.should be_within(1.0/1_000_000).of(52.834663)
-      msg.lon.should be_within(1.0/1_000_000).of(5.206438)
-    end
-    
-    it "returns null for messages of incorrect length" do
-      payload = "13`wgT0P5"
-      mf = MessageFactory.new
-      msg = MessageFactory.fromPayload(payload)
-      msg.should eq(nil)
+    describe "fromPayload" do
+      it "can create a position report message from a payload" do
+        payload = "13`wgT0P5fPGmDfN>o?TN?vN2<05"
+        mf = MessageFactory.new
+        msg = MessageFactory.fromPayload(payload)
+        msg.mmsi.should eq(244314000)
+        msg.vessel_class.should eq(Domain::Vessel::CLASS_A)
+        msg.lat.should be_within(1.0/1_000_000).of(52.834663)
+        msg.lon.should be_within(1.0/1_000_000).of(5.206438)
+      end
+  
+      it "can create a static info message from a payload" do
+        payload = "53u=:PP00001<H?G7OI0ThuB37G61<F22222220j1042240Ht2P00000000000000000008"
+        mf = MessageFactory.new
+        msg = MessageFactory.fromPayload(payload)
+        msg.mmsi.should eq(265505410)
+        msg.vessel_class.should eq(Domain::Vessel::CLASS_A)
+        msg.vessel_type.should eq(Domain::VesselType.new(50))
+      end
+      
+      it "returns null for messages of incorrect length" do
+        payload = "13`wgT0P5"
+        mf = MessageFactory.new
+        msg = MessageFactory.fromPayload(payload)
+        msg.should eq(nil)
+      end      
     end
     
     it "can create position report messages from vessel info" do

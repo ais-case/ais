@@ -7,7 +7,12 @@ module Domain::AIS
       m.type.should eq(5)
     end
     
-    it "has vessel_type property" do
+    it "has a vessel_class property" do
+      m = Message5.new(244314000)
+      m.vessel_class.should eq(Domain::Vessel::CLASS_A)  
+    end
+    
+    it "has a vessel_type property" do
       vt = Domain::VesselType.from_str('Passenger')
         
       m = Message5.new(244314000)

@@ -3,11 +3,12 @@ require_relative '../vessel'
 module Domain
   module AIS
     class Message5
-      attr_reader :mmsi, :type
+      attr_reader :mmsi, :vessel_class, :type
       attr_accessor :vessel_type
       
       def initialize(mmsi)
         @mmsi = mmsi
+        @vessel_class = Domain::Vessel::CLASS_A
         @type = 5
       end
       

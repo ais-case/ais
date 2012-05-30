@@ -39,12 +39,25 @@ module Domain
         code = codes.begin  
       end
       
-      VesselType.new(code, description) 
+      VesselType.new(code) 
     end
     
-    def initialize(code, description)
+    def initialize(code)
       @code = code
-      @description = description
+      
+      TYPES.each do |k,description|
+        if k.is_a?(Integer) and k == code then
+          @description = description
+          break  
+        elsif not k.is_a?(Integer) and k.include?(code) then
+          @description = description  
+          break
+        end
+      end
+    end
+    
+    def ==(other)
+      (@code == other.code)
     end
   end  
 end
