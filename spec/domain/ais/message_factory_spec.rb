@@ -32,22 +32,39 @@ module Domain::AIS
       end
     end
     
-    it "can create position report messages from vessel info" do
-      vessel = Domain::Vessel.new(1234, Domain::Vessel::CLASS_A)
-      vessel.position = Domain::LatLon.new(3.0, 4.0)
-      vessel.speed = 15.3
-      vessel.heading = 90  
+    describe "create_position_report" do
+      it "creates position reports from class A vessel objects" do
+        vessel = Domain::Vessel.new(1234, Domain::Vessel::CLASS_A)
+        vessel.position = Domain::LatLon.new(3.0, 4.0)
+        vessel.speed = 15.3
+        vessel.heading = 90  
+  
+        mf = MessageFactory.new
+        msg = mf.create_position_report(vessel)
+        msg.type.should eq(1)
+        msg.mmsi.should eq(1234)
+        msg.lat.should eq(3.0)
+        msg.lon.should eq(4.0)
+        msg.speed.should eq(15.3)
+        msg.heading.should eq(90)
+      end
 
-      mf = MessageFactory.new
-      msg = mf.create_position_report(vessel)
-      msg.type.should eq(1)
-      msg.mmsi.should eq(1234)
-      msg.lat.should eq(3.0)
-      msg.lon.should eq(4.0)
-      msg.speed.should eq(15.3)
-      msg.heading.should eq(90)
+      it "creates position reports from class B vessel objects" do
+        vessel = Domain::Vessel.new(1234, Domain::Vessel::CLASS_B)
+        vessel.position = Domain::LatLon.new(3.0, 4.0)
+        vessel.speed = 15.3
+        vessel.heading = 90  
+  
+        mf = MessageFactory.new
+        msg = mf.create_position_report(vessel)
+        msg.type.should eq(18)
+        msg.mmsi.should eq(1234)
+        msg.lat.should eq(3.0)
+        msg.lon.should eq(4.0)
+        msg.speed.should eq(15.3)
+        msg.heading.should eq(90)
+      end
     end
-
     it "can create static info messages from vessel info" do
       vessel_type = Domain::VesselType.from_str("Tanker")
       vessel = Domain::Vessel.new(1234, Domain::Vessel::CLASS_A)

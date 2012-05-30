@@ -2,6 +2,9 @@ require_relative 'six_bit_encoding'
 require_relative 'datatypes'
 require_relative 'message1'
 require_relative 'message5'
+require_relative 'message18'
+require_relative 'message19'
+require_relative '../vessel'
 require_relative '../vessel_type'
 
 module Domain
@@ -48,7 +51,11 @@ module Domain
       end
       
       def create_position_report(vessel)
-        message = Message1.new(vessel.mmsi)
+        if vessel.vessel_class == Domain::Vessel::CLASS_B
+          message = Message18.new(vessel.mmsi)
+        else
+          message = Message1.new(vessel.mmsi)
+        end
         message.lon = vessel.position.lon
         message.lat = vessel.position.lat
         message.speed = vessel.speed
