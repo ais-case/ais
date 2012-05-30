@@ -23,7 +23,7 @@ module Domain::AIS
     
     describe "payload" do
       it "returns the payload as bit string" do
-        expected = "50004lP00000000000000000000000000000000t000000000000000000000000000000"
+        expected = "50004lP00000000000000000000000000000000t0000000000000000000000000000000"
         m = Message5.new(1234)
         m.vessel_type = Domain::VesselType.from_str('Passenger')
         Domain::AIS::SixBitEncoding.encode(m.payload).should eq(expected)

@@ -22,7 +22,7 @@ module Domain::AIS
         m = Message1.new(1234)
         m.lat = 3.0
         m.lon = 4.0
-        Domain::AIS::SixBitEncoding.encode(m.payload).should eq("10004lP0000BCp01eo@000000000")
+        Domain::AIS::SixBitEncoding.encode(m.payload).should eq("10004lP0000BCp01eo@0000000000")
       end
     end
   end
