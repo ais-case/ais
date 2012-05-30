@@ -13,16 +13,25 @@ projects you might have installed. Instructions for the installation can be foun
 the {RVM website}[https://rvm.io/rvm/install/]. A quick overview of RVM installation 
 and setup for this project:
 
-1. Download and install RVM: 
-	$ curl -L get.rvm.io | bash -s stable
+1. Download and install RVM:
+ 
+    $ curl -L get.rvm.io | bash -s stable
+    
 2. Load RVM into current session:
-	$ source ~/.rvm/scripts/rvm
+
+    $ source ~/.rvm/scripts/rvm
+    
 3. Download and install Ruby 1.9:
-	$ rvm install 1.9.3
+
+    $ rvm install 1.9.3
+
 4. Create a separated gemset for this project:
-	$ rvm gemset create ais
+
+    $ rvm gemset create ais
+    
 5. Switch to the newly created environment: 
-	$ rvm use "1.9.3@ais"
+
+    $ rvm use "1.9.3@ais"
 
 Before you work with the project you will always have to switch to this gemset. This
 can be automated by updating <tt>environment_id</tt> in the .rvmrc file of the project with the 
@@ -33,36 +42,51 @@ information about your environment.
 The dependencies of the project are documented in the Gemfile. To install all 
 dependencies, use the bundler gem:
 
-1. Install bundler: 
-	$ gem install bundler
+1. Install bundler:
+
+    $ gem install bundler
+    
 2. Then from inside the project directory run bundler to download and install all dependencies:
-	$ bundle install
+
+    $ bundle install
 
 = Running the system
 
 == Running the system
 
 From the main project folder, start the service platform:
-	$ rake services:start
+
+    $ rake services:start
+
 The process will keep running, keeping the service processes alive in the
 background until you kill the rake task with <tt>CTRL-C</tt>.
 To launch the web interface run the Rails webserver:
-	$ rails s
+
+    $ rails s
+	
 You should now be able to access the web interface from http://localhost:3000/.
 Note that sources of raw AIS messages are currently hardcoded in lib/services/transmitter_service.rb
 
 == Running the tests
 
-There are three separate test suites:
+There are three separate test suites, using a variety of tools. These tools 
+are automatically installed when you run <tt>bundle install</tt>. The suites
+can be run with:
+
 * Acceptance tests use the {Cucumber}[http://cukes.info/] tool, and
   are driven by browser automation with 
   {Capybara}[http://jnicklas.github.com/capybara/]. This requires Firefox to be
   installed. The tests are defined in the <tt>features</tt> subdirectory. Run 
-  the acceptance tests with: 
-	$ rake cucumber
+  the acceptance tests with:
+   
+    $ rake cucumber
+   
 * Ruby unit tests use the {RSpec}[http://rspec.info/] tool, and can be found
   in the <tt>spec/</tt> subdirectory. Run the unit tests with:
-	$ rake spec
+
+    $ rake spec
+	
 * Javascript unit tests use the {Jasmine}[http://pivotal.github.com/jasmine/] 
   tool, and can be found in <tt>spec/javascript/</tt>. To run the tests use:
-  	$ rake jasmine:ci
+
+    $ rake jasmine:ci
