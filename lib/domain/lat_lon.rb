@@ -31,7 +31,9 @@ module Domain
     end
   
     def to_s
-      "#{@lat},#{@lon}"
+      lat_suffix = @lat > 0 ? 'N' : 'S'
+      lon_suffix = @lon > 0 ? 'E' : 'W' 
+      "#{@lat.abs}#{lat_suffix}, #{@lon.abs}#{lon_suffix}"
     end
   end
 end
