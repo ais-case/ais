@@ -24,16 +24,9 @@ module Domain
         if msg_type == 1 or msg_type == 2 or msg_type == 3
           if decoded.length >= 168
             message = Message1.new(Datatypes::UInt.from_bit_string(decoded[8..37]).value)
-            lon = Datatypes::Int.from_bit_string(decoded[61..88])
-            lat = Datatypes::Int.from_bit_string(decoded[89..115])
-            message.lon = lon.value / 600000.0
-            message.lat = lat.value / 600000.0
-  
-            speed = Datatypes::UInt.from_bit_string(decoded[50..59]).value
-            message.speed = (speed == 1023) ? nil : speed.to_f / 10.0
-            
-            heading = Datatypes::UInt.from_bit_string(decoded[128..136]).value
-            message.heading = (heading == 511) ? nil : heading
+            message.lat, message.lon = decode_latlon(decoded[89..115], decoded[61..88])
+            message.speed = decode_speed(decoded[50..59])
+            message.heading = decode_heading(decoded[128..136])            
           end
         elsif msg_type == 5
           if decoded.length >= 424
@@ -43,30 +36,16 @@ module Domain
         elsif msg_type == 18
           if decoded.length >= 168
             message = Message18.new(Datatypes::UInt.from_bit_string(decoded[8..37]).value)
-            lon = Datatypes::Int.from_bit_string(decoded[57..84])
-            lat = Datatypes::Int.from_bit_string(decoded[85..111])
-            message.lon = lon.value / 600000.0
-            message.lat = lat.value / 600000.0
-  
-            speed = Datatypes::UInt.from_bit_string(decoded[46..55]).value
-            message.speed = (speed == 1023) ? nil : speed.to_f / 10.0
-            
-            heading = Datatypes::UInt.from_bit_string(decoded[124..132]).value
-            message.heading = (heading == 511) ? nil : heading
+            message.lat, message.lon = decode_latlon(decoded[85..111], decoded[57..84])
+            message.speed = decode_speed(decoded[46..55])
+            message.heading = decode_heading(decoded[124..132])
           end
         elsif msg_type == 19
           if decoded.length >= 312
             message = Message19.new(Datatypes::UInt.from_bit_string(decoded[8..37]).value)
-            lon = Datatypes::Int.from_bit_string(decoded[57..84])
-            lat = Datatypes::Int.from_bit_string(decoded[85..111])
-            message.lon = lon.value / 600000.0
-            message.lat = lat.value / 600000.0
-  
-            speed = Datatypes::UInt.from_bit_string(decoded[46..55]).value
-            message.speed = (speed == 1023) ? nil : speed.to_f / 10.0
-            
-            heading = Datatypes::UInt.from_bit_string(decoded[124..132]).value
-            message.heading = (heading == 511) ? nil : heading
+            message.lat, message.lon = decode_latlon(decoded[85..111], decoded[57..84])
+            message.speed = decode_speed(decoded[46..55])
+            message.heading = decode_heading(decoded[124..132])
           end
         elsif msg_type == 24
           if decoded.length >= 168 and decoded[38..39] == '01'
@@ -78,6 +57,23 @@ module Domain
         end
         
         message
+      end
+      
+      def self.decode_latlon(lat_bits, lon_bits)
+        [lat_bits, lon_bits].map do |bits|
+          val = Datatypes::Int.from_bit_string(bits).value
+          val.to_f / 600_000.0          
+        end
+      end
+      
+      def self.decode_speed(bits)
+        speed = Datatypes::UInt.from_bit_string(bits).value
+        (speed == 1023) ? nil : speed.to_f / 10.0
+      end
+      
+      def self.decode_heading(bits)
+        heading = Datatypes::UInt.from_bit_string(bits).value
+        (heading == 511) ? nil : heading
       end
       
       def create_position_report(vessel)
