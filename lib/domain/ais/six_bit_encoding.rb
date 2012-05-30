@@ -16,6 +16,12 @@ module Domain
       end
     
       def encode(binary_string)
+            
+        # Add padding zeroes to end
+        if binary_string.length % 6 > 0
+          binary_string << '0' * (6 - binary_string.length % 6) 
+        end
+        
         chunk_count = binary_string.length / 6
         encoded = ""
         1.upto(chunk_count) do |i|
