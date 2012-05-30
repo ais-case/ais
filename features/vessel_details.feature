@@ -3,7 +3,6 @@ Feature: Vessel Details
   As a coast guard
   I want to be able to select a vessel and see its details
   
-  @wip
   Scenario:
     Given vessel "Sea Lion" with details:
        | MMSI     | 245000000     |
