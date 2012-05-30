@@ -6,7 +6,7 @@ the Gemfile in the root directory of the project. You may want to install and
 use a RVM gemset. This keeps to the installed gems separated from other gems
 on your system to prevent any version conflicts.
 
-== Setting up an environment with RVM
+== Optional: setting up an environment with RVM
 
 RVM allows you to install and run the project without conflicts with other Ruby-based
 projects you might have installed. Instructions for the installation can be found at 
@@ -63,28 +63,29 @@ To launch the web interface run the Rails webserver:
     $ rails s
 	
 You should now be able to access the web interface from http://localhost:3000/.
-Note that sources of raw AIS messages are currently hardcoded in lib/services/transmitter_service.rb
+
+Note that sources of raw AIS messages are currently hardcoded in 
+<tt>lib/services/transmitter_service.rb</tt>.
 
 == Running tests
 
 There are three separate test suites, using a variety of tools. These tools 
-are automatically installed when you run <tt>bundle install</tt>. The suites
-can be run with:
+are automatically installed when you run <tt>bundle install</tt>.
 
 * Acceptance tests use the {Cucumber}[http://cukes.info/] tool, and
   are driven by browser automation with 
-  {Capybara}[http://jnicklas.github.com/capybara/]. This requires Firefox to be
-  installed. The tests are defined in the <tt>features</tt> subdirectory. Run 
-  the acceptance tests with:
+  {Capybara}[http://jnicklas.github.com/capybara/]. Browser automation requires 
+  Firefox to be installed. The tests are defined in the <tt>features</tt> 
+  subdirectory. Run the acceptance tests with:
    
     $ rake cucumber
    
 * Ruby unit tests use the {RSpec}[http://rspec.info/] tool, and can be found
-  in the <tt>spec/</tt> subdirectory. Run the unit tests with:
+  in the <tt>spec</tt> subdirectory. Run the unit tests with:
 
     $ rake spec
 	
 * Javascript unit tests use the {Jasmine}[http://pivotal.github.com/jasmine/] 
-  tool, and can be found in <tt>spec/javascript/</tt>. To run the tests use:
+  tool, and can be found in <tt>spec/javascript</tt>. To run the tests use:
 
     $ rake jasmine:ci
