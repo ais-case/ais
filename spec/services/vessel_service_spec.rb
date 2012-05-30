@@ -16,7 +16,6 @@ module Service
       @vessel2.position = Domain::LatLon.new(3.0, 4.0)
       @vessel3 = Domain::Vessel.new(9012, Domain::Vessel::CLASS_B)
       @vessel3.position = Domain::LatLon.new(2.0, 4.0) 
-            
     end
     
     it "returns a list of vessels" do
@@ -72,15 +71,51 @@ module Service
       end
     end
     
+    it "listens for AIS static info reports" do
+      raw = "53u=:PP00001<H?G7OI0ThuB37G61<F22222220j1042240Ht2P00000000000000000008"
+
+      ctx = ZMQ::Context.new
+      sock = ctx.socket(ZMQ::PUB)
+      begin
+        rc = sock.bind('tcp://*:21002')
+        ZMQ::Util.resultcode_ok?(rc).should be_true
+        
+        service = (Class.new(VesselService) do
+          attr_reader :received_data
+          def process_message(data)
+            @received_data = data
+          end
+        end).new(@registry)
+        service.start('tcp://localhost:23000')
+        sock.send_string("5 " << raw)
+
+        # Give service time to receive and process message
+        sleep(0.1)
+        service.received_data.should eq("5 " << raw)
+        service.stop
+      ensure
+        sock.close
+      end
+      
+    end
+    
     it "processes incoming AIS messages into vessel information" do
+      # Send position report
       message = "1 13`wgT0P5fPGmDfN>o?TN?vN2<05"
       vessel = Domain::Vessel.new(244314000, Domain::Vessel::CLASS_A)
 
-      # Send position report
       service = VesselService.new(@registry)
       service.stub(:receiveVessel)
       service.should_receive(:receiveVessel).with(vessel)
-      service.process_message(message)      
+      service.process_message(message)
+      
+      vessel = Domain::Vessel.new(265505410, Domain::Vessel::CLASS_A)
+      message = "5 53u=:PP00001<H?G7OI0ThuB37G61<F22222220j1042240Ht2P00000000000000000008"
+
+      service = VesselService.new(@registry)
+      service.stub(:receiveVessel)
+      service.should_receive(:receiveVessel).with(vessel)
+      service.process_message(message)
     end
 
     it "don't processes invalid AIS messages" do

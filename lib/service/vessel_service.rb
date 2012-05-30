@@ -14,7 +14,7 @@ module Service
       @vessels = {}
       @vessels_mutex = Mutex.new
       @reply_service = Platform::ReplyService.new(method(:process_request), @log)
-      @message_service = Platform::SubscriberService.new(method(:process_message), ['1 ', '2 ', '3 '], @log)
+      @message_service = Platform::SubscriberService.new(method(:process_message), ['1 ', '2 ', '3 ', '5 '], @log)
     end
     
     def start(endpoint)
@@ -45,9 +45,15 @@ module Service
       message = Domain::AIS::MessageFactory.fromPayload(payload)
       if message.nil?
         @log.debug("Message rejected: #{data}")
-      else        
+      else  
         vessel = Domain::Vessel.new(message.mmsi, message.vessel_class)
-        vessel.position = Domain::LatLon.new(message.lat, message.lon)
+        if message.respond_to?(:lat) and message.respond_to?(:lon)
+          vessel.position = Domain::LatLon.new(message.lat, message.lon)
+        end
+        if message.respond_to?(:vessel_type)
+          vessel.type = message.vessel_type
+        end
+          
         receiveVessel(vessel)
       end
     end
@@ -55,7 +61,12 @@ module Service
     def receiveVessel(vessel)
       @log.debug("Adding vessel with MMSI #{vessel.mmsi}")
       @vessels_mutex.synchronize do
-        @vessels[vessel.mmsi] = vessel
+        if @vessels.has_key?(vessel.mmsi)
+          @vessels[vessel.mmsi].update_from(vessel)
+        else
+          @vessels[vessel.mmsi] = vessel  
+        end
+        
       end
     end
     
