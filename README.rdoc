@@ -1,4 +1,4 @@
-= Installation
+= Getting started
 
 The main dependencies are Ruby 1.9.x and the bundler gem. Once the bundler gem
 is installed, bundler can be used to install the remaining dependencies using
@@ -50,8 +50,6 @@ dependencies, use the bundler gem:
 
     $ bundle install
 
-= Running the system
-
 == Running the system
 
 From the main project folder, start the service platform:
@@ -67,7 +65,7 @@ To launch the web interface run the Rails webserver:
 You should now be able to access the web interface from http://localhost:3000/.
 Note that sources of raw AIS messages are currently hardcoded in lib/services/transmitter_service.rb
 
-== Running the tests
+== Running tests
 
 There are three separate test suites, using a variety of tools. These tools 
 are automatically installed when you run <tt>bundle install</tt>. The suites
