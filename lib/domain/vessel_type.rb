@@ -57,7 +57,7 @@ module Domain
     end
     
     def ==(other)
-      (@code == other.code)
+      (other != nil) and (@code == other.code)
     end
   end  
 end

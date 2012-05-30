@@ -15,6 +15,7 @@ module Domain
       
       vt1.should eq(vt2)
       vt1.should_not eq(vt3)
+      vt1.should_not eq(nil)
     end
 
     it "can be created from its description" do
