@@ -43,7 +43,7 @@ module Domain::AIS
     end
 
     it "can create static info messages from vessel info" do
-      vessel_type = VesselType.from_str("Tanker")
+      vessel_type = Domain::VesselType.from_str("Tanker")
       vessel = Domain::Vessel.new(1234, Domain::Vessel::CLASS_A)
       vessel.position = Domain::LatLon.new(3.0, 4.0)
       vessel.type = vessel_type  
