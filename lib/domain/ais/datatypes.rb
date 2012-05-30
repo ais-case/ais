@@ -1,13 +1,7 @@
 module Domain
   module AIS
     module Datatypes
-      class Int
-        attr_reader :value
-        
-        def initialize(value)
-          @value = value.to_i
-        end
-        
+      class Int        
         def self.from_bit_string(s)
           n = s.bytesize
           first = s[0].to_i
@@ -18,13 +12,14 @@ module Domain
             sum += 2**i * rem[i].to_i
           end
           
-          Int.new(sum)
+          sum
         end
         
-        def bit_string(bit_count)
+        def self.bit_string(value, bit_count)
+          intval = value.to_i
           s = ''
           (bit_count - 1).downto(0) do |i|
-            s << @value[i].to_s
+            s << intval[i].to_s
           end
           s
         end
@@ -32,7 +27,7 @@ module Domain
       
       class UInt < Int
         def self.from_bit_string(s)
-          UInt.new(s.to_i(2))
+          s.to_i(2)
         end
       end
     end

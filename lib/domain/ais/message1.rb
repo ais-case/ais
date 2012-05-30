@@ -13,18 +13,18 @@ module Domain
       end
       
       def payload
-        int_class = Domain::AIS::Datatypes::Int
-        uint_class = Domain::AIS::Datatypes::UInt 
+        int = Domain::AIS::Datatypes::Int
+        uint = Domain::AIS::Datatypes::UInt 
         payload = ''
         
         # type
-        payload << uint_class.new(@type).bit_string(6)
+        payload << uint.bit_string(@type, 6)
         
         # repeat 
         payload << '00'
         
         # mmsi
-        payload << uint_class.new(@mmsi).bit_string(30)
+        payload << uint.bit_string(@mmsi, 30)
         
         # nav status, rot
         payload << '0' * 12
@@ -37,23 +37,23 @@ module Domain
         else
           speed = (@speed * 10).to_i
         end
-        payload << uint_class.new(speed).bit_string(10)
+        payload << uint.bit_string(speed, 10)
         
         # accuracy
         payload << '0'
         
         # long
-        payload << int_class.new(@lon * 600_000).bit_string(28)
+        payload << int.bit_string(@lon * 600_000, 28)
         
         # lat
-        payload << int_class.new(@lat * 600_000).bit_string(27)
+        payload << int.bit_string(@lat * 600_000, 27)
         
         # course
         payload << '0' * 12 
         
         # heading
         heading = @heading ? @heading : 511
-        payload << uint_class.new(heading).bit_string(9)
+        payload << uint.bit_string(heading, 9)
 
         # rest of message
         payload << '0' * 31

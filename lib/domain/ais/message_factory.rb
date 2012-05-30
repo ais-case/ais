@@ -21,7 +21,7 @@ module Domain
         decoded = SixBitEncoding.decode(payload)
         msg_type = decoded[0..5].to_i(2)
         message = nil
-        mmsi = Datatypes::UInt.from_bit_string(decoded[8..37]).value
+        mmsi = Datatypes::UInt.from_bit_string(decoded[8..37])
         if msg_type == 1 or msg_type == 2 or msg_type == 3
           if decoded.length >= 168
             message = Message1.new(mmsi)
@@ -32,7 +32,7 @@ module Domain
         elsif msg_type == 5
           if decoded.length >= 424
             message = Message5.new(mmsi)
-            message.vessel_type = Domain::VesselType::new(Datatypes::UInt.from_bit_string(decoded[232..239]).value)
+            message.vessel_type = Domain::VesselType::new(Datatypes::UInt.from_bit_string(decoded[232..239]))
           end
         elsif msg_type == 18
           if decoded.length >= 168
@@ -51,7 +51,7 @@ module Domain
         elsif msg_type == 24
           if decoded.length >= 168 and decoded[38..39] == '01'
             message = Message24.new(mmsi)
-            message.vessel_type = Domain::VesselType::new(Datatypes::UInt.from_bit_string(decoded[40..47]).value)
+            message.vessel_type = Domain::VesselType::new(Datatypes::UInt.from_bit_string(decoded[40..47]))
           end
         else
           raise "Unknown message type #{msg_type}"
@@ -62,18 +62,18 @@ module Domain
       
       def self.decode_latlon(lat_bits, lon_bits)
         [lat_bits, lon_bits].map do |bits|
-          val = Datatypes::Int.from_bit_string(bits).value
+          val = Datatypes::Int.from_bit_string(bits)
           val.to_f / 600_000.0          
         end
       end
       
       def self.decode_speed(bits)
-        speed = Datatypes::UInt.from_bit_string(bits).value
+        speed = Datatypes::UInt.from_bit_string(bits)
         (speed == 1023) ? nil : speed.to_f / 10.0
       end
       
       def self.decode_heading(bits)
-        heading = Datatypes::UInt.from_bit_string(bits).value
+        heading = Datatypes::UInt.from_bit_string(bits)
         (heading == 511) ? nil : heading
       end
       

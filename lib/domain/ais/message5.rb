@@ -13,17 +13,17 @@ module Domain
       end
       
       def payload
-        uint_class = Domain::AIS::Datatypes::UInt 
+        uint = Domain::AIS::Datatypes::UInt 
         payload = ''
         
         # type
-        payload << uint_class.new(@type).bit_string(6)
+        payload << uint.bit_string(@type, 6)
         
         # repeat 
         payload << '00'
         
         # mmsi
-        payload << uint_class.new(@mmsi).bit_string(30)
+        payload << uint.bit_string(@mmsi, 30)
         
         # version, imo, call sign
         payload << '0' * 74
@@ -38,7 +38,7 @@ module Domain
           code = 0  
         end
          
-        payload << uint_class.new(code).bit_string(8)
+        payload << uint.bit_string(code, 8)
         
         # rest of message
         payload << '0' * 184
