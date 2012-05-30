@@ -29,6 +29,12 @@ module Domain
           s
         end
       end
+      
+      class UInt < Int
+        def self.from_bit_string(s)
+          UInt.new(s.to_i(2))
+        end
+      end
     end
   end
 end
