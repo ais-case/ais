@@ -104,9 +104,13 @@ module Service
           lats = [latlons[0].lat, latlons[1].lat]
           lons = [latlons[0].lon, latlons[1].lon]
           vessels = @vessels.values.select do |vessel|
-            @log.debug("Vessel: #{vessel.position}")
-            vessel.position.lat.between?(lats.min, lats.max) and
-            vessel.position.lon.between?(lons.min, lons.max)
+            if vessel.position
+              @log.debug("Vessel #{vessel.mmsi}: #{vessel.position}")
+              vessel.position.lat.between?(lats.min, lats.max) and
+              vessel.position.lon.between?(lons.min, lons.max)
+            else
+              @log.debug("Vessel #{vessel.mmsi}: no position known")
+            end
           end
         else
           @log.debug("Processing request for all vessels")          
