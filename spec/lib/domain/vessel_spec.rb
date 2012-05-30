@@ -41,6 +41,7 @@ module Domain
       v3 = Vessel.new(5678, Vessel::CLASS_A)
       v3.position = LatLon.new(10.0, 4.0)
       v2.should_not eq(v3)
+      v1.should_not eq(nil)
     end
     
     it "can be updated with info from another Vessel object" do

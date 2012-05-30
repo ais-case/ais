@@ -42,6 +42,7 @@ module Domain
     end
     
     def ==(other)
+      (other != nil) and
       (@mmsi == other.mmsi) and 
       (@vessel_class == other.vessel_class)
     end
