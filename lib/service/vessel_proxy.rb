@@ -1,4 +1,7 @@
 require_relative 'platform/service_proxy'
+require_relative '../domain/lat_lon'
+require_relative '../domain/vessel'
+require_relative '../domain/vessel_type'
 
 module Service
   class VesselProxy < Platform::ServiceProxy
@@ -11,11 +14,6 @@ module Service
       @socket.send_string(req)
       @socket.recv_string(message = "")
       
-      # Make sure Ruby knows about the unmarshalled classes
-      Domain::Vessel.class
-      Domain::VesselType.class
-      Domain::LatLon.class
-
       return Marshal.load(message)
     end
 
@@ -23,11 +21,6 @@ module Service
       @socket.send_string("INFO #{mmsi}")
       @socket.recv_string(message = "")
       
-      # Make sure Ruby knows about the unmarshalled classes
-      Domain::Vessel.class
-      Domain::VesselType.class
-      Domain::LatLon.class
-
       return Marshal.load(message)
     end
   end

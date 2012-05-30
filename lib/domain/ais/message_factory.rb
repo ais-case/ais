@@ -2,6 +2,7 @@ require_relative 'six_bit_encoding'
 require_relative 'datatypes'
 require_relative 'message1'
 require_relative 'message5'
+require_relative '../vessel_type'
 
 module Domain
   module AIS
