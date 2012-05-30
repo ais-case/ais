@@ -11,6 +11,36 @@ module Domain
       @vessel_class = vessel_class
     end
     
+    def update_from(other)
+      if @mmsi != other.mmsi
+        raise "Trying to update vessel with information from vessel with other MMSI"
+      end
+      
+      if other.vessel_class
+        @vessel_class = other.vessel_class
+      end
+      
+      if other.name
+        @name = other.name
+      end
+      
+      if other.position
+        @position = other.position
+      end
+      
+      if other.heading
+        @heading = other.heading
+      end
+      
+      if other.speed
+        @speed = other.speed
+      end
+      
+      if other.type
+        @type = other.type
+      end
+    end
+    
     def ==(other)
       (@mmsi == other.mmsi) and 
       (@vessel_class == other.vessel_class)

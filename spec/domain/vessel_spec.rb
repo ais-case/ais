@@ -42,5 +42,17 @@ module Domain
       v3.position = LatLon.new(10.0, 4.0)
       v2.should_not eq(v3)
     end
+    
+    it "can be updated with info from another Vessel object" do
+      v1 = Vessel.new(1234, Vessel::CLASS_A)
+      v1.position = LatLon.new(10.0, 4.0)
+      v2 = Vessel.new(1234, Vessel::CLASS_A)
+      v2.position = LatLon.new(4.0, 7.0)
+      v2.type = VesselType.new(50)
+      
+      v1.update_from(v2)
+      v1.position.should eq(v2.position)
+      v1.type.should eq(v2.type)
+    end
   end
 end
