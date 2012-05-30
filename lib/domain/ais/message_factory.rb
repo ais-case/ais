@@ -21,35 +21,36 @@ module Domain
         decoded = SixBitEncoding.decode(payload)
         msg_type = decoded[0..5].to_i(2)
         message = nil
+        mmsi = Datatypes::UInt.from_bit_string(decoded[8..37]).value
         if msg_type == 1 or msg_type == 2 or msg_type == 3
           if decoded.length >= 168
-            message = Message1.new(Datatypes::UInt.from_bit_string(decoded[8..37]).value)
+            message = Message1.new(mmsi)
             message.lat, message.lon = decode_latlon(decoded[89..115], decoded[61..88])
             message.speed = decode_speed(decoded[50..59])
             message.heading = decode_heading(decoded[128..136])            
           end
         elsif msg_type == 5
           if decoded.length >= 424
-            message = Message5.new(Datatypes::UInt.from_bit_string(decoded[8..37]).value)
+            message = Message5.new(mmsi)
             message.vessel_type = Domain::VesselType::new(Datatypes::UInt.from_bit_string(decoded[232..239]).value)
           end
         elsif msg_type == 18
           if decoded.length >= 168
-            message = Message18.new(Datatypes::UInt.from_bit_string(decoded[8..37]).value)
+            message = Message18.new(mmsi)
             message.lat, message.lon = decode_latlon(decoded[85..111], decoded[57..84])
             message.speed = decode_speed(decoded[46..55])
             message.heading = decode_heading(decoded[124..132])
           end
         elsif msg_type == 19
           if decoded.length >= 312
-            message = Message19.new(Datatypes::UInt.from_bit_string(decoded[8..37]).value)
+            message = Message19.new(mmsi)
             message.lat, message.lon = decode_latlon(decoded[85..111], decoded[57..84])
             message.speed = decode_speed(decoded[46..55])
             message.heading = decode_heading(decoded[124..132])
           end
         elsif msg_type == 24
           if decoded.length >= 168 and decoded[38..39] == '01'
-            message = Message24.new(Datatypes::UInt.from_bit_string(decoded[8..37]).value)
+            message = Message24.new(mmsi)
             message.vessel_type = Domain::VesselType::new(Datatypes::UInt.from_bit_string(decoded[40..47]).value)
           end
         else
