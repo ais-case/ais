@@ -5,7 +5,7 @@
 		{ 
 			"id": <%=raw(ActiveSupport::JSON.encode(marker.id))%>, 
 			"position": <%=raw(ActiveSupport::JSON.encode(marker.position)) %>,
-			"icon": "/ol/img/marker.png" }<%=
+			"icon": <%=raw(ActiveSupport::JSON.encode(marker.icon)) %> }<%=
 		"," unless i == (@markers.size - 1) 
 		%>
 	<% end %>

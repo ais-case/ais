@@ -9,7 +9,7 @@ describe "map/markers.json.erb" do
       def initialize(i)
         @id = i
         @position = Domain::LatLon.new(50.0 + i/10, 4.0 + i/10)
-        @icon = '/ol/img/marker.png'
+        @icon = "/ol/img/marker#{i}.png"
       end  
     end
         
