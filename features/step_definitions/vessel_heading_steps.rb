@@ -20,7 +20,7 @@ When /^I view the map$/ do
   visit map_path
 end
 
-Then /^I should see vessels:$/ do |table|
+Then /^I should see vessels with the following headings:$/ do |table|
   dirmap = {'up' => 'n', 'down' => 's', 'right' => 'e'}
   
   table.rows_hash.each do |name,direction|

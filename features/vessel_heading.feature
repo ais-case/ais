@@ -11,7 +11,7 @@ Feature: Vessel Heading
       | Seagull   | 180.0   |
       | Seal      |  90.0   |
      When I view the map
-     Then I should see vessels:
+     Then I should see vessels with the following headings:
       | name      | pointing |
       | Sea Lion  | up       |
       | Seagull   | down     |

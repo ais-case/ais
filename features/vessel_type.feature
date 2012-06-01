@@ -13,7 +13,7 @@ Feature: Vessel Type
       | Seahawk     | Military  |
       | Seal        | Other     |
     When I view the map
-    Then I should see vessels:
+    Then I should see vessels with the following colors:
       | name        | color     |
       | Sea Lion    | green     |
       | Sea Otter   | grey      |
