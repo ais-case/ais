@@ -3,7 +3,6 @@ Feature: Vessel Heading
   As a coast guard
   I want to to see the heading of each vessel marked on the map
 
-  @wip
   Scenario: orientation of vessel icon changes with heading
     Given vessels:
       | name      | heading |
