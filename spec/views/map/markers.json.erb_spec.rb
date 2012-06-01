@@ -4,21 +4,26 @@ describe "map/markers.json.erb" do
   it "renders a list of markers" do
     
     marker_mock_class = Class.new do
-      attr_reader :id, :position, :icon
+      attr_accessor :id, :position, :icon
              
       def initialize(i)
         @id = i
         @position = Domain::LatLon.new(50.0 + i/10, 4.0 + i/10)
-        @icon = "/ol/img/marker#{i}.png"
+        @icon = "v.png"
       end  
     end
         
     markers = []
     for i in 1..5 do
-      markers << marker_mock_class.new(i) 
+      markers << marker_mock_class.new(i)
     end
     assign(:markers, markers)
     render
+    
+    markers.each do |marker|
+      marker.icon = ActionController::Base.helpers.asset_path(marker.icon)
+    end
+    
     expected = ActiveSupport::JSON.encode({:markers => markers})
     normalized = ActiveSupport::JSON.encode(ActiveSupport::JSON.decode rendered)  
     normalized.should eql(expected)

@@ -9,23 +9,32 @@ class Marker
   
   def self.icon_from_vessel(vessel)
     dir = case vessel.heading
-    when (0..45)
+    when (0..23)
       'n'
-    when (46..134)
+    when (24..68)
+      'ne'
+    when (67..113)
       'e'
-    when (135..225)
+    when (114..156)
+      'se'
+    when (157..203)
       's'
-    when (226..314)
+    when (204..246)
+      'sw'
+    when (247..293)
       'w'
-    when (315..360)
+    when (294..336)
+      'nw'
+    when (337..360)
+      'n'
     else 
       nil
     end
     
     if dir
-      "/markers/v_#{dir}.png"
+      "v_#{dir}.png"
     else
-      "/markers/v.png"
+      "v.png"
     end
   end
   
