@@ -1,3 +1,5 @@
+require_relative 'domain/vessel'
+
 class Marker
   attr_reader :id, :position, :icon
   
@@ -31,10 +33,12 @@ class Marker
       nil
     end
     
+    cls = (vessel.vessel_class == Domain::Vessel::CLASS_A) ? 'a' : 'b'
+    
     if dir
-      "v_a_#{dir}.png"
+      "v_#{cls}_#{dir}.png"
     else
-      "v_a.png"
+      "v_#{cls}.png"
     end
   end
   

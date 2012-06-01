@@ -8,7 +8,6 @@ Feature: Vessel Class
      When I view the map
      Then vessel "Sea Lion" should have shape "Professional" 
 
-  @wip
   Scenario: leisure vessel
     Given vessel "Seal" of class "B"
      When I view the map

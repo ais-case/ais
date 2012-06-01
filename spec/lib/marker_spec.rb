@@ -26,7 +26,6 @@ describe Marker do
   describe "from_vessel" do
     it "can create a marker from a Domain::Vessel" do
       vessel = Domain::Vessel.new(4321, Domain::Vessel::CLASS_A)
-      vessel.position = Domain::LatLon.new(30, 40)
       marker = Marker.from_vessel(vessel)
       marker.id.should eq(vessel.mmsi)
       marker.position.should eq(vessel.position)
@@ -37,7 +36,6 @@ describe Marker do
   describe "icon_from_vessel" do
     it "chooses the correct icon based on heading" do
       vessel = Domain::Vessel.new(4321, Domain::Vessel::CLASS_A)
-      vessel.position = Domain::LatLon.new(30, 40)
       marker = Marker.from_vessel(vessel)
       
       {10 => 'n', 80 => 'e', 138 => 'se'}.each do |heading,icon|
@@ -45,6 +43,18 @@ describe Marker do
         marker = Marker.from_vessel(vessel)
         marker.icon.should eq("v_a_#{icon}.png")
       end
+    end
+    
+    it "chooses the correct icon based on vessel class" do
+      vessel_a = Domain::Vessel.new(4321, Domain::Vessel::CLASS_A)
+      vessel_a.heading = 90
+      marker = Marker.from_vessel(vessel_a)
+      marker.icon.should eq("v_a_e.png")
+
+      vessel_b = Domain::Vessel.new(4321, Domain::Vessel::CLASS_B)
+      vessel_b.heading = 90
+      marker = Marker.from_vessel(vessel_b)
+      marker.icon.should eq("v_b_e.png")      
     end
   end
 end
