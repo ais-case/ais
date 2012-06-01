@@ -4,11 +4,12 @@ describe "map/markers.json.erb" do
   it "renders a list of markers" do
     
     marker_mock_class = Class.new do
-      attr_reader :id, :position
+      attr_reader :id, :position, :icon
              
       def initialize(i)
         @id = i
         @position = Domain::LatLon.new(50.0 + i/10, 4.0 + i/10)
+        @icon = '/ol/img/marker.png'
       end  
     end
         

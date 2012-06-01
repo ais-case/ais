@@ -9,7 +9,7 @@ describe("Popup", function() {
       this.loaded = true;
     }};
     
-    marker = new Marker(33, new LatLon(10, 20));
+    marker = new Marker(33, new LatLon(10, 20), '/ol/img/marker.png');
     map = {'addPopup': function(popup) {}}
   });
   

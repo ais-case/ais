@@ -4,7 +4,8 @@
 	<% @markers.each_with_index do |marker,i| %>
 		{ 
 			"id": <%=raw(ActiveSupport::JSON.encode(marker.id))%>, 
-			"position": <%=raw(ActiveSupport::JSON.encode(marker.position)) %> }<%=
+			"position": <%=raw(ActiveSupport::JSON.encode(marker.position)) %>,
+			"icon": "/ol/img/marker.png" }<%=
 		"," unless i == (@markers.size - 1) 
 		%>
 	<% end %>

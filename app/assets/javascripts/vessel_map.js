@@ -1,8 +1,12 @@
 'use strict';
 
-function Marker(id, position) {
+function Marker(id, position, icon) {
+  if (!id || !position || !icon) {
+    throw 'Incorrect number of arguments passed to Marker constructor';
+  }
   this.id = id;
   this.position = position;
+  this.icon = icon;
 }
 
 function Map(id, centeredAt, loader) {
@@ -22,7 +26,7 @@ function Map(id, centeredAt, loader) {
   this.loader = loader;
 }
 
-Map.prototype.loadMarkers = function() {  
+Map.prototype.loadMarkers = function() {
   var self = this;
   var extent = this.map.getExtent().toArray();
   var lonlat1 = new OpenLayers.LonLat(extent[0], extent[1])
@@ -31,7 +35,8 @@ Map.prototype.loadMarkers = function() {
   this.loader.loadMarkers(function(data) {
     var markers = data.markers;
     for (var i = 0; i < markers.length; i++) {
-      var marker = new Marker(markers[i].id, new LatLon(markers[i].position.lat, markers[i].position.lon));
+      var latlon = new LatLon(markers[i].position.lat, markers[i].position.lon)
+      var marker = new Marker(markers[i].id, latlon, markers[i].icon);
       self.addMarker(marker);
     }
   }, LatLon.fromLonLat(lonlat1), LatLon.fromLonLat(lonlat2));
@@ -50,9 +55,11 @@ Map.prototype.zoomToArea = function(latlon1, latlon2) {
 };
 
 Map.prototype.addMarker = function(marker) {
-  var osmMarker = new OpenLayers.Marker(marker.position.getLonLat());
+  var size = new OpenLayers.Size(20,20);
+  var offset = new OpenLayers.Pixel(-(size.w / 2), -(size.h / 2));
+  var icon = new OpenLayers.Icon(marker.icon, size, offset);
+  var osmMarker = new OpenLayers.Marker(marker.position.getLonLat(), icon); 
   var self = this;
-  
   osmMarker.events.register('click', osmMarker, function(evt) {
     var popup = new PopUp(marker, self.loader);
     popup.addToMap(self.map);  
@@ -61,12 +68,19 @@ Map.prototype.addMarker = function(marker) {
 };
 
 Map.prototype.hasMarkerAt = function(latlon, icon) {
-  if (icon) return false;
+  var endsWith = function(str, suffix) {
+    return (str.indexOf(suffix, str.length - suffix.length) !== -1);
+  }
   
   for (var i = 0; i < this.markerLayer.markers.length; i++) {
-    var position = LatLon.fromLonLat(this.markerLayer.markers[i].lonlat);
+    var marker = this.markerLayer.markers[i];
+    var position = LatLon.fromLonLat(marker.lonlat);
     if (position.equals(latlon)) {
-      return true;
+      if (!icon) {
+        return true;
+      } else if (endsWith(marker.icon.url, '_' + icon + '.png')) {
+        return true;      
+      }
     }
   }
   return false;

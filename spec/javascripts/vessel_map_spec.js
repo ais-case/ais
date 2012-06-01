@@ -1,9 +1,10 @@
 describe("Marker", function() {
-	it("has id and position property", function() {
+	it("has id, position and icon properties", function() {
 		var latlon = new LatLon(52, 4);
-		var marker = new Marker(42, latlon);
+		var marker = new Marker(42, latlon, '/ol/img/marker.png');
 		expect(marker.id).toBe(42);
 		expect(marker.position).toBe(latlon);
+		expect(marker.icon).toBe('/ol/img/marker.png');
 	});
 });
 
@@ -14,13 +15,16 @@ describe("Map", function() {
 	var loader;
 	
 	beforeEach(function() {
-    marker = new Marker(42, new LatLon(52, 4));
+    marker = new Marker(42, new LatLon(52, 4), '/ol/img/marker.png');
 		latlon = new LatLon(52, 4);
 		
 		loader = {
 		  'loadMarkers': function(cb) {
 		    cb({
-		      'markers': [{'position': new LatLon(52.1, 3.9)}, {'position': new LatLon(52.2, 3.8)}]
+		      'markers': [
+		        {'id': 1, 'position': new LatLon(52.1, 3.9), 'icon': '/ol/img/marker.png'}, 
+		        {'id': 2, 'position': new LatLon(52.2, 3.8), 'icon': '/ol/img/marker.png'}
+		        ]
 		    });
 		  },
 		  'loadInfo': function(cb) {
@@ -44,13 +48,22 @@ describe("Map", function() {
 	it("allows adding markers", function() {
 		map.addMarker(marker);
 		expect(map.markerLayer.markers.length).toBe(1);
+		expect(map.markerLayer.markers[0].icon.url).toBe('/ol/img/marker.png');
 	});
 
-	it("checks whether a marker is at a given location", function() {
-		map.addMarker(marker);
-		expect(map.hasMarkerAt(new LatLon(52, 4))).toBeTruthy();
-	});
-	
+  it("checks whether a marker is at a given location", function() {
+    map.addMarker(marker);
+    expect(map.hasMarkerAt(new LatLon(52, 4))).toBeTruthy();
+  });
+  
+  it("checks whether a marker with a specific icon type is at a given location", function() {
+    map.addMarker(marker);
+    expect(map.hasMarkerAt(new LatLon(52, 4), 'n')).toBeFalsy();
+    marker = new Marker(43, new LatLon(51, 3), '/ol/img/marker_n.png');
+    map.addMarker(marker);
+    expect(map.hasMarkerAt(new LatLon(51, 3), 'n')).toBeTruthy();
+  });
+  
 	it("loads markers", function() {
     var latlon1 = new LatLon(52, 4);
     var latlon2 = new LatLon(52.1, 4.1);
