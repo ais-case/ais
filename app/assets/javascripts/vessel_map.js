@@ -60,7 +60,9 @@ Map.prototype.addMarker = function(marker) {
   this.markerLayer.addMarker(osmMarker);
 };
 
-Map.prototype.hasMarkerAt = function(latlon) {
+Map.prototype.hasMarkerAt = function(latlon, icon) {
+  if (icon) return false;
+  
   for (var i = 0; i < this.markerLayer.markers.length; i++) {
     var position = LatLon.fromLonLat(this.markerLayer.markers[i].lonlat);
     if (position.equals(latlon)) {
