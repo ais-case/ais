@@ -58,13 +58,13 @@ Map.prototype.addMarker = function(marker) {
   var size = new OpenLayers.Size(20, 20);
   var offset = new OpenLayers.Pixel(-(size.w / 2), -(size.h / 2));
   var icon = new OpenLayers.Icon(marker.icon, size, offset);
-  var osmMarker = new OpenLayers.Marker(marker.position.getLonLat(), icon);
+  var olMarker = new OpenLayers.Marker(marker.position.getLonLat(), icon);
   var self = this;
-  osmMarker.events.register('click', osmMarker, function(evt) {
+  olMarker.events.register('click', olMarker, function(evt) {
     var popup = new PopUp(marker, self.loader);
     popup.addToMap(self.map);
   });
-  this.markerLayer.addMarker(osmMarker);
+  this.markerLayer.addMarker(olMarker);
 };
 
 Map.prototype.hasMarkerAt = function(latlon, icon) {
