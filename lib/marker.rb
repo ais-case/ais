@@ -32,9 +32,9 @@ class Marker
     end
     
     if dir
-      "v_#{dir}.png"
+      "v_a_#{dir}.png"
     else
-      "v.png"
+      "v_a.png"
     end
   end
   

@@ -30,7 +30,7 @@ describe Marker do
       marker = Marker.from_vessel(vessel)
       marker.id.should eq(vessel.mmsi)
       marker.position.should eq(vessel.position)
-      marker.icon.should eq('v.png')
+      marker.icon.should eq('v_a.png')
     end
   end
   
@@ -40,10 +40,10 @@ describe Marker do
       vessel.position = Domain::LatLon.new(30, 40)
       marker = Marker.from_vessel(vessel)
       
-      {10 => 'n', 80 => 'e', 138 => 'se'}.each do |heading,icon|    
+      {10 => 'n', 80 => 'e', 138 => 'se'}.each do |heading,icon|
         vessel.heading = heading
         marker = Marker.from_vessel(vessel)
-        marker.icon.should eq("v_#{icon}.png")
+        marker.icon.should eq("v_a_#{icon}.png")
       end
     end
   end
