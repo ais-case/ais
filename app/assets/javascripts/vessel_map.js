@@ -29,13 +29,13 @@ function Map(id, centeredAt, loader) {
 Map.prototype.loadMarkers = function() {
   var self = this;
   var extent = this.map.getExtent().toArray();
-  var lonlat1 = new OpenLayers.LonLat(extent[0], extent[1])
-  var lonlat2 = new OpenLayers.LonLat(extent[2], extent[3])
+  var lonlat1 = new OpenLayers.LonLat(extent[0], extent[1]);
+  var lonlat2 = new OpenLayers.LonLat(extent[2], extent[3]);
 
   this.loader.loadMarkers(function(data) {
     var markers = data.markers;
     for (var i = 0; i < markers.length; i++) {
-      var latlon = new LatLon(markers[i].position.lat, markers[i].position.lon)
+      var latlon = new LatLon(markers[i].position.lat, markers[i].position.lon);
       var marker = new Marker(markers[i].id, latlon, markers[i].icon);
       self.addMarker(marker);
     }
@@ -55,14 +55,14 @@ Map.prototype.zoomToArea = function(latlon1, latlon2) {
 };
 
 Map.prototype.addMarker = function(marker) {
-  var size = new OpenLayers.Size(20,20);
+  var size = new OpenLayers.Size(20, 20);
   var offset = new OpenLayers.Pixel(-(size.w / 2), -(size.h / 2));
   var icon = new OpenLayers.Icon(marker.icon, size, offset);
-  var osmMarker = new OpenLayers.Marker(marker.position.getLonLat(), icon); 
+  var osmMarker = new OpenLayers.Marker(marker.position.getLonLat(), icon);
   var self = this;
   osmMarker.events.register('click', osmMarker, function(evt) {
     var popup = new PopUp(marker, self.loader);
-    popup.addToMap(self.map);  
+    popup.addToMap(self.map);
   });
   this.markerLayer.addMarker(osmMarker);
 };
@@ -71,7 +71,7 @@ Map.prototype.hasMarkerAt = function(latlon, icon) {
   var endsWith = function(str, suffix) {
     return (str.indexOf(suffix, str.length - suffix.length) !== -1);
   }
-  
+
   for (var i = 0; i < this.markerLayer.markers.length; i++) {
     var marker = this.markerLayer.markers[i];
     var position = LatLon.fromLonLat(marker.lonlat);
@@ -79,7 +79,7 @@ Map.prototype.hasMarkerAt = function(latlon, icon) {
       if (!icon) {
         return true;
       } else if (endsWith(marker.icon.url, '_' + icon + '.png')) {
-        return true;      
+        return true;
       }
     }
   }
@@ -94,4 +94,4 @@ Map.prototype.clickMarker = function(latlon) {
       $(marker.icon.imageDiv).click();
     }
   }
-}
+};
