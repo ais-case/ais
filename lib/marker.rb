@@ -1,12 +1,13 @@
 require_relative 'domain/vessel'
 
 class Marker
-  attr_reader :id, :position, :icon
+  attr_reader :id, :position, :icon, :line
   
   def initialize(id, position, icon)
     @id = id
     @position = position
     @icon = icon
+    @line = nil
   end
   
   def self.icon_from_vessel(vessel)

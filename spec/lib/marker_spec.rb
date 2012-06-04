@@ -7,7 +7,8 @@ describe Marker do
     marker = Marker.new(id, position, 'v.png')
     marker.id.should eq(id)
     marker.position.should eq(position)
-    marker.icon.should eq('v.png');
+    marker.icon.should eq('v.png')
+    marker.line.should eq(nil)
   end
 
   it "can be compared to other markers" do
@@ -24,6 +25,13 @@ describe Marker do
   end
 
   describe "from_vessel" do
+    it "can create a marker from a Domain::Vessel" do
+      vessel = Domain::Vessel.new(4321, Domain::Vessel::CLASS_A)
+      marker = Marker.from_vessel(vessel)
+      marker.id.should eq(vessel.mmsi)
+      marker.position.should eq(vessel.position)
+      marker.icon.should eq('v_a.png')
+    end
     it "can create a marker from a Domain::Vessel" do
       vessel = Domain::Vessel.new(4321, Domain::Vessel::CLASS_A)
       marker = Marker.from_vessel(vessel)
