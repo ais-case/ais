@@ -133,7 +133,9 @@ Map.prototype.getLineLength = function(latlon) {
     var line = this.lineLayer.features[i].geometry;
     var points = line.getVertices(true);
     for (var j = 0; j < points.length; j++) {
-      if (points[j].x == latlon.lon && points[i].y == latlon.lat) {
+      var lonlat = new OpenLayers.LonLat(points[j].x, points[j].y);
+      var point = LatLon.fromLonLat(lonlat);
+      if (point.lon == latlon.lon && point.lat == latlon.lat) {
         lineFound = line;
         break;
       }
@@ -147,7 +149,12 @@ Map.prototype.getLineLength = function(latlon) {
     if (points.length != 2) {
       throw "Feature is not a line";
     }
-    return Math.sqrt(Math.pow(points[0].x - points[1].x, 2) + 
-                     Math.pow(points[0].y - points[1].y, 2));     
+    var lonlat1 = new OpenLayers.LonLat(points[0].x, points[0].y);
+    var lonlat2 = new OpenLayers.LonLat(points[1].x, points[1].y);
+    var point1 = LatLon.fromLonLat(lonlat1);
+    var point2 = LatLon.fromLonLat(lonlat2);
+
+    return Math.sqrt(Math.pow(point1.lon - point2.lon, 2) + 
+                     Math.pow(point1.lat - point2.lat, 2));     
   }
 };
