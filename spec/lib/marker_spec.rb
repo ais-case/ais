@@ -32,12 +32,15 @@ describe Marker do
       marker.position.should eq(vessel.position)
       marker.icon.should eq('v_a.png')
     end
-    it "can create a marker from a Domain::Vessel" do
+    
+    it "can create a marker with a line from a Domain::Vessel" do
       vessel = Domain::Vessel.new(4321, Domain::Vessel::CLASS_A)
+      vessel.heading = 60
+      vessel.speed = 30.0
       marker = Marker.from_vessel(vessel)
       marker.id.should eq(vessel.mmsi)
-      marker.position.should eq(vessel.position)
-      marker.icon.should eq('v_a.png')
+      marker.line.direction.should eq(60)
+      marker.line.length.should eq(0.3)
     end
   end
   
