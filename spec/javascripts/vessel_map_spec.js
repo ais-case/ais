@@ -94,4 +94,16 @@ describe("Map", function() {
 	  map.clickMarker(latlon);
 	  expect(handler).toHaveBeenCalled();
 	});
+	
+	describe("getLineLength", function() {
+    it("returns the line length of a speed line", function() {
+      marker.addLine(45, 0.2);
+      map.addMarker(marker);
+      expect(map.getLineLength(marker.position)).toBeCloseTo(0.2, 2);
+
+      marker.addLine(90, 0.33);
+      map.addMarker(marker);
+      expect(map.getLineLength(marker.position)).toBeCloseTo(0.33, 2);
+    });
+  });
 });

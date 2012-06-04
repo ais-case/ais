@@ -17,6 +17,7 @@ Marker.prototype.addLine = function(direction, length) {
 
 function Map(id, centeredAt, loader) {
   this.markerLayer = new OpenLayers.Layer.Markers('Markers');
+  this.lineLayer = new OpenLayers.Layer.Vector('Lines');
 
   OpenLayers.ImgPath = '/ol/img/';
   this.map = new OpenLayers.Map({
@@ -61,6 +62,8 @@ Map.prototype.zoomToArea = function(latlon1, latlon2) {
 };
 
 Map.prototype.addMarker = function(marker) {
+  
+  // Add OpenLayers marker to marker layer
   var size = new OpenLayers.Size(20, 20);
   var offset = new OpenLayers.Pixel(-(size.w / 2), -(size.h / 2));
   var icon = new OpenLayers.Icon(marker.icon, size, offset);
@@ -71,6 +74,20 @@ Map.prototype.addMarker = function(marker) {
     popup.addToMap(self.map);
   });
   this.markerLayer.addMarker(olMarker);
+  
+  // Add OpenLayers LineString to line layer
+  if (marker.line && marker.line.length > 0.01) { 
+    var pos = marker.position;
+    var length = marker.line.length;
+    var angle = Math.PI * (marker.line.direction / 180.0);
+    var dx = length * Math.sin(angle);
+    var dy = length * Math.cos(angle);
+    var p1 = new OpenLayers.Geometry.Point(pos.lon, pos.lat);
+    var p2 = new OpenLayers.Geometry.Point(pos.lon + dx, pos.lat + dy);
+    var line = new OpenLayers.Geometry.LineString([p1, p2]);
+    var feature = new OpenLayers.Feature.Vector(line);
+    this.lineLayer.addFeatures([feature]);
+  }
 };
 
 Map.prototype.hasMarkerAt = function(latlon, icon) {
@@ -99,5 +116,32 @@ Map.prototype.clickMarker = function(latlon) {
     if (position.equals(latlon)) {
       $(marker.icon.imageDiv).click();
     }
+  }
+};
+
+Map.prototype.getLineLength = function(latlon) {
+  // Find a line feature where one of the two points is the 
+  // given latlon
+  var lineFound = null;
+  for (var i = 0; i < this.lineLayer.features.length; i++) {
+    var line = this.lineLayer.features[i].geometry;
+    var points = line.getVertices(true);
+    for (var j = 0; j < points.length; j++) {
+      if (points[j].x == latlon.lon && points[i].y == latlon.lat) {
+        lineFound = line;
+        break;
+      }
+    }
+  }
+  
+  if (lineFound == null) {
+    return null;
+  } else {
+    var points = line.getVertices(true);
+    if (points.length != 2) {
+      throw "Feature is not a line";
+    }
+    return Math.sqrt(Math.pow(points[0].x - points[1].x, 2) + 
+                     Math.pow(points[0].y - points[1].y, 2));     
   }
 };
