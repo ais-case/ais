@@ -59,7 +59,7 @@ class Marker
   def self.from_vessel(vessel)
     marker = Marker.new(vessel.mmsi, vessel.position, self.icon_from_vessel(vessel))
     if vessel.heading and vessel.speed
-      marker.add_line(vessel.heading, vessel.speed / 100)
+      marker.add_line((vessel.heading + 180) % 360, vessel.speed / 300)
     end
     marker
   end

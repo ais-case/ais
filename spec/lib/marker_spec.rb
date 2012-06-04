@@ -39,8 +39,8 @@ describe Marker do
       vessel.speed = 30.0
       marker = Marker.from_vessel(vessel)
       marker.id.should eq(vessel.mmsi)
-      marker.line.direction.should eq(60)
-      marker.line.length.should eq(0.3)
+      marker.line.direction.should eq(240)
+      marker.line.length.should eq(0.1)
     end
   end
   
