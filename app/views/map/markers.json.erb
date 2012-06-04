@@ -5,9 +5,15 @@
 		{ 
 			"id": <%=raw(ActiveSupport::JSON.encode(marker.id))%>, 
 			"position": <%=raw(ActiveSupport::JSON.encode(marker.position)) %>,
-			"icon": <%=raw(ActiveSupport::JSON.encode(asset_path(marker.icon))) %> }<%=
-		"," unless i == (@markers.size - 1) 
-		%>
+			"icon": <%=raw(ActiveSupport::JSON.encode(asset_path(marker.icon))) %> 
+		  <% if marker.line %>
+		  ,
+		  "line": {
+		    "direction": <%=raw(ActiveSupport::JSON.encode(marker.line.direction)) %>,
+		    "length": <%=raw(ActiveSupport::JSON.encode(marker.line.length)) %>
+		    }
+		  <% end %>	
+		}<%="," unless i == (@markers.size - 1) %>
 	<% end %>
 	]
 }
