@@ -40,7 +40,7 @@ describe Marker do
       marker = Marker.from_vessel(vessel)
       marker.id.should eq(vessel.mmsi)
       marker.line.direction.should eq(240)
-      marker.line.length.should eq(0.1)
+      marker.line.length.should eq(0.05)
     end
   end
   
