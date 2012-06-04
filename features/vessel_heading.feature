@@ -4,7 +4,7 @@ Feature: Vessel Heading
   I want to to see the heading of each vessel marked on the map
 
   Scenario: orientation of vessel icon changes with heading
-    Given vessels:
+    Given vessels with headings:
       | name      | heading |
       | Sea Lion  |   0.0   |
       | Seagull   | 180.0   |

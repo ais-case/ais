@@ -1,4 +1,4 @@
-Given /^vessels:$/ do |table|
+Given /^vessels with headings:$/ do |table|
   @vessels = {}
   delta = 0.01
   table.rows_hash.each do |name,heading|
