@@ -44,6 +44,9 @@ Map.prototype.loadMarkers = function() {
     for (var i = 0; i < markers.length; i++) {
       var latlon = new LatLon(markers[i].position.lat, markers[i].position.lon);
       var marker = new Marker(markers[i].id, latlon, markers[i].icon);
+      if (markers[i].line) {
+        marker.addLine(markers[i].line.direction, markers[i].line.length);
+      }
       self.addMarker(marker);
     }
   }, LatLon.fromLonLat(lonlat1), LatLon.fromLonLat(lonlat2));

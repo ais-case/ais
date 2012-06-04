@@ -32,7 +32,8 @@ describe("Map", function() {
 		    cb({
 		      'markers': [
 		        {'id': 1, 'position': new LatLon(52.1, 3.9), 'icon': '/ol/img/marker.png'}, 
-		        {'id': 2, 'position': new LatLon(52.2, 3.8), 'icon': '/ol/img/marker.png'}
+		        {'id': 2, 'position': new LatLon(52.2, 3.8), 'icon': '/ol/img/marker.png',
+		         'line': {'length': 0.15, 'direction': 45}}
 		        ]
 		    });
 		  },
@@ -73,17 +74,29 @@ describe("Map", function() {
     expect(map.hasMarkerAt(new LatLon(51, 3), 'n')).toBeTruthy();
   });
   
-	it("loads markers", function() {
+  it("loads markers", function() {
     var latlon1 = new LatLon(52, 4);
     var latlon2 = new LatLon(52.1, 4.1);
     map.zoomToArea(latlon1, latlon2);
 
-		spyOn(loader, 'loadMarkers').andCallThrough(); 
-		map.loadMarkers();
-		expect(loader.loadMarkers).toHaveBeenCalled();
-		expect(map.markerLayer.markers.length).toBe(2);
-	});
-	
+    spyOn(loader, 'loadMarkers').andCallThrough();
+    map.loadMarkers();
+    expect(loader.loadMarkers).toHaveBeenCalled();
+    expect(map.markerLayer.markers.length).toBe(2);
+  });
+  
+  it("loads markers with lines", function() {
+    var latlon1 = new LatLon(52, 4);
+    var latlon2 = new LatLon(52.1, 4.1);
+    map.zoomToArea(latlon1, latlon2);
+
+    spyOn(loader, 'loadMarkers').andCallThrough();
+    map.loadMarkers();
+    expect(loader.loadMarkers).toHaveBeenCalled();
+    expect(map.markerLayer.markers.length).toBe(2);
+    expect(map.lineLayer.features.length).toBe(1);
+  });
+  
 	it("can trigger the click event of a marker", function() {
 	  var handler = jasmine.createSpy('handler');
 
