@@ -24,7 +24,8 @@ function Map(id, centeredAt, loader) {
     div: id,
     layers: [
       new OpenLayers.Layer.OSM(),
-      this.markerLayer
+      this.markerLayer,
+      this.lineLayer,
     ],
     theme: 'ol/theme/style.css'
   });
@@ -80,13 +81,15 @@ Map.prototype.addMarker = function(marker) {
   
   // Add OpenLayers LineString to line layer
   if (marker.line && marker.line.length > 0.01) { 
-    var pos = marker.position;
     var length = marker.line.length;
     var angle = Math.PI * (marker.line.direction / 180.0);
     var dx = length * Math.sin(angle);
     var dy = length * Math.cos(angle);
-    var p1 = new OpenLayers.Geometry.Point(pos.lon, pos.lat);
-    var p2 = new OpenLayers.Geometry.Point(pos.lon + dx, pos.lat + dy);
+
+    var lonlat1 = marker.position.getLonLat();
+    var lonlat2 = new LatLon(marker.position.lat + dy, marker.position.lon + dx).getLonLat();
+    var p1 = new OpenLayers.Geometry.Point(lonlat1.lon, lonlat1.lat);
+    var p2 = new OpenLayers.Geometry.Point(lonlat2.lon + dx, lonlat2.lat + dy);
     var line = new OpenLayers.Geometry.LineString([p1, p2]);
     var feature = new OpenLayers.Feature.Vector(line);
     this.lineLayer.addFeatures([feature]);
