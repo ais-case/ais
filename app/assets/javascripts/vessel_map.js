@@ -7,7 +7,13 @@ function Marker(id, position, icon) {
   this.id = id;
   this.position = position;
   this.icon = icon;
+  this.line = null;
 }
+
+Marker.prototype.addLine = function(direction, length) {
+  this.line = {'direction': direction, 'length': length, 
+               'position': this.position};
+};
 
 function Map(id, centeredAt, loader) {
   this.markerLayer = new OpenLayers.Layer.Markers('Markers');

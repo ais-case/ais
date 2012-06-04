@@ -6,6 +6,15 @@ describe("Marker", function() {
 		expect(marker.position).toBe(latlon);
 		expect(marker.icon).toBe('/ol/img/marker.png');
 	});
+	
+	it("can be assigned a line", function() {
+	  var latlon = new LatLon(52, 4);
+	  var marker = new Marker(42, latlon, '/ol/img/marker.png');
+	  marker.addLine(90, 30);
+	  expect(marker.line.direction).toBe(90);
+	  expect(marker.line.length).toBe(30);
+	  expect(marker.line.position).toBe(latlon);
+	})
 });
 
 describe("Map", function() {
