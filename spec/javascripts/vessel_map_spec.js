@@ -114,9 +114,10 @@ describe("Map", function() {
       map.addMarker(marker);
       expect(map.getLineLength(marker.position)).toBeCloseTo(0.2, 2);
 
-      marker.addLine(90, 0.33);
-      map.addMarker(marker);
-      expect(map.getLineLength(marker.position)).toBeCloseTo(0.33, 2);
+      marker2 = new Marker(43, new LatLon(52, 4.1), '/ol/img/marker.png');
+      marker2.addLine(90, 0.33);
+      map.addMarker(marker2);
+      expect(map.getLineLength(marker2.position)).toBeCloseTo(0.33, 2);
     });
   });
 });
