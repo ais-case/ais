@@ -24,8 +24,8 @@ function Map(id, centeredAt, loader) {
     div: id,
     layers: [
       new OpenLayers.Layer.OSM(),
-      this.markerLayer,
       this.lineLayer,
+      this.markerLayer,
     ],
     theme: 'ol/theme/style.css'
   });
