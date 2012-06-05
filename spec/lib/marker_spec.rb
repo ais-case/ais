@@ -42,6 +42,38 @@ describe Marker do
       marker.line.direction.should eq(240)
       marker.line.length.should eq(0.05)
     end
+
+    it "only lines for non-stationary vessels" do
+      vessel = Domain::Vessel.new(4321, Domain::Vessel::CLASS_A)
+      vessel.heading = 60
+      vessel.speed = 0.05
+      marker = Marker.from_vessel(vessel)
+      marker.line.should be_nil      
+    end
+
+    it "line has a minimum length" do
+      vessel = Domain::Vessel.new(4321, Domain::Vessel::CLASS_A)
+      vessel.heading = 60
+      vessel.speed = 10.0
+      marker = Marker.from_vessel(vessel)
+      marker.line.length.should be_within(0.001).of(0.016)
+      
+      vessel.speed = 1.0
+      marker = Marker.from_vessel(vessel)
+      marker.line.length.should be_within(0.001).of(0.016)
+    end
+
+    it "line has a maximum length" do
+      vessel = Domain::Vessel.new(4321, Domain::Vessel::CLASS_A)
+      vessel.heading = 60
+      vessel.speed = 30.0
+      marker = Marker.from_vessel(vessel)
+      marker.line.length.should be_within(0.001).of(0.05)
+      
+      vessel.speed = 50.0
+      marker = Marker.from_vessel(vessel)
+      marker.line.length.should be_within(0.001).of(0.05)
+    end
   end
   
   describe "icon_from_vessel" do
