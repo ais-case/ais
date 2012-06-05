@@ -117,6 +117,8 @@ Map.prototype.hasMarkerAt = function(latlon, icon) {
         return true;
       } else if (endsWith(marker.icon.url, '_' + icon + '.png')) {
         return true;
+      } else if (marker.icon.url.indexOf('_' + icon + '_') !== -1) {
+        return true;
       }
     }
   }

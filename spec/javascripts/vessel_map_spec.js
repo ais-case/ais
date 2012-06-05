@@ -69,9 +69,10 @@ describe("Map", function() {
   it("checks whether a marker with a specific icon type is at a given location", function() {
     map.addMarker(marker);
     expect(map.hasMarkerAt(new LatLon(52, 4), 'n')).toBeFalsy();
-    marker = new Marker(43, new LatLon(51, 3), '/ol/img/marker_n.png');
+    marker = new Marker(43, new LatLon(51, 3), '/ol/img/marker_y_n.png');
     map.addMarker(marker);
     expect(map.hasMarkerAt(new LatLon(51, 3), 'n')).toBeTruthy();
+    expect(map.hasMarkerAt(new LatLon(51, 3), 'y')).toBeTruthy();
   });
   
   it("loads markers", function() {
