@@ -76,5 +76,19 @@ describe MarkerFactory do
       marker = MarkerFactory.from_vessel(vessel_b)
       marker.icon.should eq("v_b_e.png")      
     end
+
+    it "chooses the correct icon based on vessel type" do
+      vessel = Domain::Vessel.new(4321, Domain::Vessel::CLASS_A)
+      marker = MarkerFactory.from_vessel(vessel)
+      
+      colors = {'Passenger' => 'green', 'Fishing' => 'grey', 'Cargo' => 'blue',
+                'Tanker' => 'black', 'Military' => 'white', 'Other' => 'yellow'}
+      
+      colors.each do |type,color|
+        vessel.type = Domain::VesselType.from_str(type)
+        marker = MarkerFactory.from_vessel(vessel)
+        marker.icon.should eq("v_a_#{color}.png")
+      end
+    end
   end
 end

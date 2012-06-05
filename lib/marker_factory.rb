@@ -33,11 +33,20 @@ class MarkerFactory
     direction = directions[heading] if heading      
     cls = (vessel.vessel_class == Domain::Vessel::CLASS_A) ? 'a' : 'b'
     
+    icon = "v_#{cls}"
     if direction
-      "v_#{cls}_#{direction}.png"
-    else
-      "v_#{cls}.png"
+      icon << '_' << direction
     end
+    
+    colors = {'Passenger' => 'green', 'Fishing' => 'grey', 'Cargo' => 'blue',
+              'Tanker' => 'black', 'Military' => 'white', 'Other' => 'yellow'}
+    
+    if vessel.type and colors.has_key?(vessel.type.description)
+      icon << '_' << colors[vessel.type.description]
+    end
+    
+    icon << '.png'
+    
   end
   
   def self.from_vessel(vessel)
@@ -52,8 +61,7 @@ class MarkerFactory
       end
       
       dir = self.round_heading(vessel.heading)
-      
-      marker.add_line((dir + 180) % 360, length)
+      marker.add_line((dir + 180) % 360, length) if dir
     end
     marker
   end
