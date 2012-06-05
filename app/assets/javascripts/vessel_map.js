@@ -31,6 +31,7 @@ function Map(id, centeredAt, loader) {
   this.map.setCenter(centeredAt.getLonLat());
   this.loader = loader;
   this.lines = [];
+  this.icon = {width: 25, height: 25}
 }
 
 Map.prototype.loadMarkers = function() {
@@ -67,8 +68,8 @@ Map.prototype.zoomToArea = function(latlon1, latlon2) {
 Map.prototype.addMarker = function(marker) {
   
   // Add OpenLayers marker to marker layer
-  var size = new OpenLayers.Size(25, 25);
-  var offset = new OpenLayers.Pixel(-(size.w / 2), -(size.h / 2));
+  var size = new OpenLayers.Size(this.icon.width, this.icon.height);
+  var offset = new OpenLayers.Pixel(-(this.icon.width / 2), -(this.icon.height / 2));
   var icon = new OpenLayers.Icon(marker.icon, size, offset);
   var olMarker = new OpenLayers.Marker(marker.position.getLonLat(), icon);
   var self = this;
@@ -78,24 +79,24 @@ Map.prototype.addMarker = function(marker) {
   });
   this.markerLayer.addMarker(olMarker);
   
-  // Add OpenLayers LineString to line layer
   if (marker.line && marker.line.length > 0.01) {
     var icon = $(icon.imageDiv);
     var canvasId = icon.attr('id') + '_canvas';
     icon.append('<canvas id="' + canvasId + '" class="marker_canvas" width="150" height="150"></canvas>');
         
-    
     var length = marker.line.length;
     var angle = Math.PI * (marker.line.direction / 180.0);
+    var sx = (this.icon.width / 2 - 2) * Math.sin(angle);
+    var sy = -(this.icon.height / 2 - 2) * Math.cos(angle); 
     var dx = length * Math.sin(angle);
-    var dy = - length * Math.cos(angle);
+    var dy = -length * Math.cos(angle);
 
     var canvas = document.getElementById(canvasId);
     if (canvas) {
       var ctx = canvas.getContext('2d');
       ctx.beginPath();
-      ctx.moveTo(75, 75);
-      ctx.lineTo(75 + dx, 75 + dy);
+      ctx.moveTo(75 + sx, 75 + sy);
+      ctx.lineTo(75 + sx + dx, 75 + sy + dy);
       ctx.stroke();
     }
     
