@@ -17,14 +17,12 @@ Marker.prototype.addLine = function(direction, length) {
 
 function Map(id, centeredAt, loader) {
   this.markerLayer = new OpenLayers.Layer.Markers('Markers');
-  this.lineLayer = new OpenLayers.Layer.Vector('Lines');
-
+  
   OpenLayers.ImgPath = '/ol/img/';
   this.map = new OpenLayers.Map({
     div: id,
     layers: [
       new OpenLayers.Layer.OSM(),
-      this.lineLayer,
       this.markerLayer,
     ],
     theme: 'ol/theme/style.css'
@@ -69,7 +67,7 @@ Map.prototype.zoomToArea = function(latlon1, latlon2) {
 Map.prototype.addMarker = function(marker) {
   
   // Add OpenLayers marker to marker layer
-  var size = new OpenLayers.Size(20, 20);
+  var size = new OpenLayers.Size(25, 25);
   var offset = new OpenLayers.Pixel(-(size.w / 2), -(size.h / 2));
   var icon = new OpenLayers.Icon(marker.icon, size, offset);
   var olMarker = new OpenLayers.Marker(marker.position.getLonLat(), icon);
@@ -81,20 +79,27 @@ Map.prototype.addMarker = function(marker) {
   this.markerLayer.addMarker(olMarker);
   
   // Add OpenLayers LineString to line layer
-  if (marker.line && marker.line.length > 0.01) { 
+  if (marker.line && marker.line.length > 0.01) {
+    var icon = $(icon.imageDiv);
+    var canvasId = icon.attr('id') + '_canvas';
+    icon.append('<canvas id="' + canvasId + '" class="marker_canvas" width="150" height="150"></canvas>');
+        
+    
     var length = marker.line.length;
     var angle = Math.PI * (marker.line.direction / 180.0);
     var dx = length * Math.sin(angle);
-    var dy = length * Math.cos(angle);
+    var dy = - length * Math.cos(angle);
 
-    var lonlat1 = marker.position.getLonLat();
-    var lonlat2 = new LatLon(marker.position.lat + dy, marker.position.lon + dx).getLonLat();
-    var p1 = new OpenLayers.Geometry.Point(lonlat1.lon, lonlat1.lat);
-    var p2 = new OpenLayers.Geometry.Point(lonlat2.lon + dx, lonlat2.lat + dy);
-    var line = new OpenLayers.Geometry.LineString([p1, p2]);
-    var feature = new OpenLayers.Feature.Vector(line);
-    this.lineLayer.addFeatures([feature]);
-    this.lines.push([p1, p2]);
+    var canvas = document.getElementById(canvasId);
+    if (canvas) {
+      var ctx = canvas.getContext('2d');
+      ctx.beginPath();
+      ctx.moveTo(75, 75);
+      ctx.lineTo(75 + dx, 75 + dy);
+      ctx.stroke();
+    }
+    
+    this.lines.push({latlon: marker.position, dx: dx, dy: dy});      
   }
 };
 
@@ -128,36 +133,12 @@ Map.prototype.clickMarker = function(latlon) {
 };
 
 Map.prototype.getLineLength = function(latlon) {
-  // Find a line feature where one of the two points is the 
-  // given latlon
-  var lineFound = null;
-  
-  foundLine:
   for (var i = 0; i < this.lines.length; i++) {
-    var points = this.lines[i];
-    for (var j = 0; j < points.length; j++) {
-      var lonlat = new OpenLayers.LonLat(points[j].x, points[j].y);
-      var point = LatLon.fromLonLat(lonlat);
-      if (point.lon == latlon.lon && point.lat == latlon.lat) {
-        lineFound = points;
-        break foundLine;
-      }
+    var line = this.lines[i];
+    if (line.latlon == latlon) {
+      return Math.sqrt(Math.pow(line.dx, 2) + 
+                       Math.pow(line.dy, 2));     
     }
-  }
-  
-  if (lineFound == null) {
-    return null;
-  } else {
-    var points = lineFound;
-    if (points.length != 2) {
-      throw "Feature is not a line";
-    }
-    var lonlat1 = new OpenLayers.LonLat(points[0].x, points[0].y);
-    var lonlat2 = new OpenLayers.LonLat(points[1].x, points[1].y);
-    var point1 = LatLon.fromLonLat(lonlat1);
-    var point2 = LatLon.fromLonLat(lonlat2);
-
-    return Math.sqrt(Math.pow(point1.lon - point2.lon, 2) + 
-                     Math.pow(point1.lat - point2.lat, 2));     
-  }
+  }  
+  return null;
 };
