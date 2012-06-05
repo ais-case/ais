@@ -44,11 +44,11 @@ class MarkerFactory
     marker = Marker.new(vessel.mmsi, vessel.position, self.icon_from_vessel(vessel))
     if vessel.heading and vessel.speed and vessel.speed >= 1.0
       if vessel.speed < 10.0
-        length = 10.0 / 600
+        length = 10.0
       elsif vessel.speed > 30.0
-        length = 30.0 / 600
+        length = 30.0
       else
-        length = vessel.speed / 600
+        length = vessel.speed
       end
       
       dir = self.round_heading(vessel.heading)

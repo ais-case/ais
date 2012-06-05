@@ -17,7 +17,7 @@ describe MarkerFactory do
       marker = MarkerFactory.from_vessel(vessel)
       marker.id.should eq(vessel.mmsi)
       marker.line.direction.should eq(225)
-      marker.line.length.should eq(0.05)
+      marker.line.length.should be_within(0.1).of(30.0);
     end
 
     it "only lines for non-stationary vessels" do
@@ -33,11 +33,11 @@ describe MarkerFactory do
       vessel.heading = 60
       vessel.speed = 10.0
       marker = MarkerFactory.from_vessel(vessel)
-      marker.line.length.should be_within(0.001).of(0.016)
+      marker.line.length.should be_within(0.1).of(10.0)
       
       vessel.speed = 1.0
       marker = MarkerFactory.from_vessel(vessel)
-      marker.line.length.should be_within(0.001).of(0.016)
+      marker.line.length.should be_within(0.1).of(10.0)
     end
 
     it "line has a maximum length" do
@@ -45,11 +45,11 @@ describe MarkerFactory do
       vessel.heading = 60
       vessel.speed = 30.0
       marker = MarkerFactory.from_vessel(vessel)
-      marker.line.length.should be_within(0.001).of(0.05)
+      marker.line.length.should be_within(0.1).of(30.0)
       
       vessel.speed = 50.0
       marker = MarkerFactory.from_vessel(vessel)
-      marker.line.length.should be_within(0.001).of(0.05)
+      marker.line.length.should be_within(0.1).of(30.0)
     end
   end
   
