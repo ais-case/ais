@@ -3,8 +3,9 @@ Feature: Vessel Type
   As a coast guard
   I want to see vessels of a specific type marked with a specific color
   
+  @wip
   Scenario: each type of ship has a specific color
-    Given vessels:
+    Given vessels with colors:
       | name        | type      |
       | Sea Lion    | Passenger |
       | Sea Otter   | Fishing   |
