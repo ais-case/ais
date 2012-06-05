@@ -28,7 +28,6 @@ Then /^I should see vessels with the following headings:$/ do |table|
     position = @vessels[name].position
     args = [position.lat, position.lon, dirmap[direction]]
     js = "map.hasMarkerAt(new LatLon(%f,%f), '%s')" % args
-    has_vessel = page.evaluate_script(js)
-    has_vessel.should eq true
+    page.evaluate_script(js).should be_true
   end
 end
