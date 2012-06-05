@@ -45,7 +45,7 @@ describe MapController do
 
     it "returns markers" do
       vessels = [@vessel1, @vessel2]
-      markers = vessels.map { |v| Marker.from_vessel(v) }
+      markers = vessels.map { |v| MarkerFactory.from_vessel(v) }
       @controller.registry = @mock_registry_class.new(vessels)      
       
       get :markers, :format => :json
@@ -58,7 +58,7 @@ describe MapController do
       @controller.registry = @mock_registry_class.new(vessels)
       get :markers, :format => :json
       response.should be_success
-      assigns[:markers].should eq([Marker.from_vessel(@vessel1)])
+      assigns[:markers].should eq([MarkerFactory.from_vessel(@vessel1)])
     end      
 
     it "only returns markers in a specific area when such an area is provided" do
@@ -79,7 +79,7 @@ describe MapController do
       @controller.registry = a_registry
       get :markers, {'area' => '5.5,5_15.0,11.3', :format => :json}
       response.should be_success
-      assigns[:markers].should eq([Marker.from_vessel(@vessel2)])
+      assigns[:markers].should eq([MarkerFactory.from_vessel(@vessel2)])
     end      
   end
 
