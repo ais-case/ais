@@ -10,7 +10,7 @@ module Domain
       (31..32) => "Towing",
       33 => "Dredging or underwater ops",
       34 => "Diving ops",
-      35 => "Military ops",
+      35 => "Military",
       36 => "Saling",
       37 => "Pleasure craft",
       (38..39) => "Reserved",
