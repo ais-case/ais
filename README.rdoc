@@ -25,11 +25,15 @@ and setup for this project:
 
     $ rvm install 1.9.3
 
-4. Create a separated gemset for this project:
+4. Indicate you want to use Ruby 1.9.3:
+
+    $ rvm use 1.9.3
+
+5. Create a separated gemset for this project:
 
     $ rvm gemset create ais
     
-5. Switch to the newly created environment: 
+6. Switch to the newly created environment: 
 
     $ rvm use "1.9.3@ais"
 
