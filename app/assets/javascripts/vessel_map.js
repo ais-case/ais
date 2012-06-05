@@ -129,6 +129,7 @@ Map.prototype.getLineLength = function(latlon) {
   // Find a line feature where one of the two points is the 
   // given latlon
   var lineFound = null;
+  foundLine:
   for (var i = 0; i < this.lineLayer.features.length; i++) {
     var line = this.lineLayer.features[i].geometry;
     var points = line.getVertices(true);
@@ -137,7 +138,7 @@ Map.prototype.getLineLength = function(latlon) {
       var point = LatLon.fromLonLat(lonlat);
       if (point.lon == latlon.lon && point.lat == latlon.lat) {
         lineFound = line;
-        break;
+        break foundLine;
       }
     }
   }
