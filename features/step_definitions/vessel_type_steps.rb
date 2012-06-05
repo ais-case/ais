@@ -12,6 +12,9 @@ Given /^vessels with colors:$/ do |table|
     
     @registry.bind('ais/transmitter') do |service|
       service.send_position_report_for(vessel)
+    end
+
+    @registry.bind('ais/transmitter') do |service|
       service.send_static_report_for(vessel)
     end
     delta += 0.01
@@ -24,6 +27,8 @@ Then /^I should see vessels with the following colors:$/ do |table|
     position = @vessels[name].position
     args = [position.lat, position.lon, color]
     js = "map.hasMarkerAt(new LatLon(%f,%f), '%s')" % args
-    page.evaluate_script(js).should be_true
+    if not page.evaluate_script(js)
+      raise "Vessel #{name} is not #{color}"
+    end
   end
 end
