@@ -9,8 +9,8 @@ LatLon.OSM_PROJ = new OpenLayers.Projection('EPSG:900913');
 LatLon.OUR_PROJ = new OpenLayers.Projection('EPSG:4326');
 
 LatLon.fromLonLat = function(lonlat) {
-  var ol = lonlat.transform(LatLon.OSM_PROJ, LatLon.OUR_PROJ);
-  return new LatLon(lonlat.lat, lonlat.lon);
+  var transformed = lonlat.clone().transform(LatLon.OSM_PROJ, LatLon.OUR_PROJ);
+  return new LatLon(transformed.lat, transformed.lon);
 };
 
 LatLon.prototype.getLonLat = function() {

@@ -13,10 +13,38 @@ describe("LatLon", function() {
   });
   
   it("can be created from OSM spherical mercator coordinates", function() {
-    var lonlat = {lat:52.0, lon:4.0, transform: function() {}}
-    spyOn(lonlat, 'transform');
+    
+    function Mock(lat, lon) {
+      this.lat = lat;
+      this.lon = lon;
+    }
+    
+    Mock.prototype.transformed = 0;
+    
+    Mock.prototype.clone = function() {
+      return new Mock(this.lat, this.lon);
+    }
+    
+    Mock.prototype.transform = function() {
+      Mock.prototype.transformed++;
+      this.lat /= 10;
+      this.lon /= 10;
+      return this;
+    }
+    
+    var lonlat = new Mock(520.0, 40.0);
+    spyOn(lonlat, 'clone').andCallThrough();
     var latlon = LatLon.fromLonLat(lonlat);
-    expect(lonlat.transform).toHaveBeenCalled();
+    expect(lonlat.clone).toHaveBeenCalled();
+    expect(Mock.prototype.transformed).toEqual(1);
+    expect(latlon.lat).toEqual(52.0);
+    expect(latlon.lon).toEqual(4.0);
+    
+    // Regression test, ensure transformation is performed
+    // on a copy of the lonlat object to leave the original
+    // object intact.
+    latlon = LatLon.fromLonLat(lonlat);
+    latlon = LatLon.fromLonLat(lonlat);
     expect(latlon.lat).toEqual(52.0);
     expect(latlon.lon).toEqual(4.0);
   });
