@@ -32,6 +32,7 @@ function Map(id, centeredAt, loader) {
   this.map.zoomTo(11);
   this.map.setCenter(centeredAt.getLonLat());
   this.loader = loader;
+  this.lines = [];
 }
 
 Map.prototype.loadMarkers = function() {
@@ -93,6 +94,7 @@ Map.prototype.addMarker = function(marker) {
     var line = new OpenLayers.Geometry.LineString([p1, p2]);
     var feature = new OpenLayers.Feature.Vector(line);
     this.lineLayer.addFeatures([feature]);
+    this.lines.push([p1, p2]);
   }
 };
 
@@ -129,15 +131,15 @@ Map.prototype.getLineLength = function(latlon) {
   // Find a line feature where one of the two points is the 
   // given latlon
   var lineFound = null;
+  
   foundLine:
-  for (var i = 0; i < this.lineLayer.features.length; i++) {
-    var line = this.lineLayer.features[i].geometry;
-    var points = line.getVertices(true);
+  for (var i = 0; i < this.lines.length; i++) {
+    var points = this.lines[i];
     for (var j = 0; j < points.length; j++) {
       var lonlat = new OpenLayers.LonLat(points[j].x, points[j].y);
       var point = LatLon.fromLonLat(lonlat);
       if (point.lon == latlon.lon && point.lat == latlon.lat) {
-        lineFound = line;
+        lineFound = points;
         break foundLine;
       }
     }
@@ -146,7 +148,7 @@ Map.prototype.getLineLength = function(latlon) {
   if (lineFound == null) {
     return null;
   } else {
-    var points = line.getVertices(true);
+    var points = lineFound;
     if (points.length != 2) {
       throw "Feature is not a line";
     }

@@ -94,7 +94,7 @@ describe("Map", function() {
     map.loadMarkers();
     expect(loader.loadMarkers).toHaveBeenCalled();
     expect(map.markerLayer.markers.length).toBe(2);
-    expect(map.lineLayer.features.length).toBe(1);
+    expect(map.lines.length).toBe(1);
   });
   
 	it("can trigger the click event of a marker", function() {
