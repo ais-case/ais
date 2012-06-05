@@ -23,34 +23,40 @@ class Marker
     @line = MarkerLine.new(direction, length) 
   end  
   
-  def self.icon_from_vessel(vessel)
-    dir = case vessel.heading
+  def self.round_heading(heading)
+    case heading
     when (0..23)
-      'n'
+      0
     when (24..68)
-      'ne'
+      45
     when (67..113)
-      'e'
+      90
     when (114..156)
-      'se'
+      135
     when (157..203)
-      's'
+      180
     when (204..246)
-      'sw'
+      225
     when (247..293)
-      'w'
+      270
     when (294..336)
-      'nw'
+      315
     when (337..360)
-      'n'
+      0
     else 
       nil
-    end
-    
+    end    
+  end
+  
+  def self.icon_from_vessel(vessel)
+    directions = {0 => 'n', 45 => 'ne', 90 => 'e', 135 => 'se', 
+                  180 => 's', 225 => 'sw', 270 => 'w', 315 => 'nw'}
+    heading = round_heading(vessel.heading)
+    direction = directions[heading] if heading      
     cls = (vessel.vessel_class == Domain::Vessel::CLASS_A) ? 'a' : 'b'
     
-    if dir
-      "v_#{cls}_#{dir}.png"
+    if direction
+      "v_#{cls}_#{direction}.png"
     else
       "v_#{cls}.png"
     end
@@ -66,7 +72,10 @@ class Marker
       else
         length = vessel.speed / 600
       end
-      marker.add_line((vessel.heading + 180) % 360, length)
+      
+      dir = self.round_heading(vessel.heading)
+      
+      marker.add_line((dir + 180) % 360, length)
     end
     marker
   end
