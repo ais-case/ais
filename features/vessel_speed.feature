@@ -4,7 +4,7 @@ Feature: Vessel Speed
   I want to see a line behind each marked vessel indicating speed
   
   Scenario: regular movement 
-    Given vessels:
+    Given vessels with speeds:
         | name       | speed |
         | Sea Lion   | 10.0  |
         | Seagull    | 20.0  |
@@ -17,7 +17,7 @@ Feature: Vessel Speed
         | Seal       |  3.0            |
 
   Scenario: slow vessels have a minimum line length
-    Given vessels:
+    Given vessels with speeds:
         | name       | speed |
         | Sea Lion   |  1.0  |
         | Seagull    |  5.0  |
@@ -30,7 +30,7 @@ Feature: Vessel Speed
         | Seal       |  1.0            |
 
   Scenario: fast vessels have a maximum line length
-    Given vessels:
+    Given vessels with speeds:
         | name       | speed |
         | Sea Lion   | 30.0  |
         | Seagull    | 50.0  |
@@ -39,9 +39,9 @@ Feature: Vessel Speed
         | name       | relative length |
         | Sea Lion   |  1.0            |
         | Seagull    |  1.0            |
-          
+
   Scenario: stationary vessels have no lines
-    Given vessels:
+    Given vessels with speeds:
         | name       | speed |
         | Sea Lion   |  0.0  |
         | Seagull    |  0.99 |
