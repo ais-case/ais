@@ -24,6 +24,8 @@ registry = Service::Platform::ServiceRegistryProxy.new registry_endpoint
 begin
   service = klass.new registry
   service.start(endpoint)
+  puts "STARTED"
+  puts "." * 10240
   service.wait
 ensure
   service.stop

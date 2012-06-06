@@ -40,14 +40,17 @@ module Service::Platform
       runner = File.dirname(__FILE__) << '/../run.rb'
       
       get_bindings.each do |binding|
-        @services << Process.spawn(runner, binding[:file], binding[:service], binding[:endpoint], get_registry_endpoint)
-        sleep(1)
+        pipe = IO.popen([runner, binding[:file], binding[:service], binding[:endpoint], get_registry_endpoint])
+        if pipe.readline != "STARTED\n"
+          raise "Couldn't start process for service #{binding[:service]}"
+        end
+        @services << pipe
       end
     end
     
     def stop
-      @services.each do |pid|    
-        Process.kill('TERM', pid)
+      @services.each do |pipe|    
+        Process.kill('TERM', pipe.pid)
       end
       @services.clear
     end
