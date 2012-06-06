@@ -1,13 +1,13 @@
 #!/usr/bin/env ruby
-if ARGV.length != 4
-  raise 'Invalid number of arguments'
-end
 
 require_relative 'platform/service_registry_proxy'
-require_relative ARGV[0]
-service_class = ARGV[1]
-endpoint = ARGV[2]
-registry_endpoint = ARGV[3]
+
+args = Marshal.load(STDIN.readline)
+
+require_relative args[0]
+service_class = args[1]
+endpoint = args[2]
+registry_endpoint = args[3]
 
 klass = Kernel
 service_class.split('::').each do |name|

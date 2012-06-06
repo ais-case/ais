@@ -40,7 +40,9 @@ module Service::Platform
       runner = File.dirname(__FILE__) << '/../run.rb'
       
       get_bindings.each do |binding|
-        pipe = IO.popen([runner, binding[:file], binding[:service], binding[:endpoint], get_registry_endpoint])
+        args = Marshal.dump([binding[:file], binding[:service], binding[:endpoint], get_registry_endpoint])
+        pipe = IO.popen(runner, 'r+')
+        pipe.write(args + "\n")
         if pipe.readline != "STARTED\n"
           raise "Couldn't start process for service #{binding[:service]}"
         end
