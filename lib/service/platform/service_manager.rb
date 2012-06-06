@@ -47,6 +47,7 @@ module Service::Platform
           raise "Couldn't start process for service #{binding[:service]}"
         end
         @services << pipe
+        sleep(1)
       end
     end
     
