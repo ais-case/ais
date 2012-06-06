@@ -25,7 +25,7 @@ begin
   service = klass.new registry
   service.start(endpoint)
   puts "STARTED"
-  STDOUT.close
+  puts "." * 10240
   service.wait
 ensure
   service.stop

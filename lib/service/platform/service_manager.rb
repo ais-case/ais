@@ -41,19 +41,18 @@ module Service::Platform
       
       get_bindings.each do |binding|
         args = Marshal.dump([binding[:file], binding[:service], binding[:endpoint], get_registry_endpoint])
-        stdin, stdout, thread = Open3.popen2(runner)
-        stdin.write(args)
-        stdin.close
-        if stdout.readline != "STARTED\n"
+        pipe = IO.popen(runner, 'r+')
+        pipe.write(args + "\n")
+        if pipe.readline != "STARTED\n"
           raise "Couldn't start process for service #{binding[:service]}"
         end
-        @services << thread.pid
+        @services << pipe
       end
     end
     
     def stop
-      @services.each do |pid|    
-        Process.kill('TERM', pid)
+      @services.each do |pipe|    
+        Process.kill('TERM', pipe.pid)
       end
       @services.clear
     end
