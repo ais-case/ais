@@ -1,12 +1,26 @@
 = Getting started
 
-The main dependencies are Ruby 1.9.x and the bundler gem. Once the bundler gem
+The main dependencies are Ruby 1.9.x, the ZeroMQ library and the bundler gem. Once the bundler gem
 is installed, bundler can be used to install the remaining dependencies using
 the Gemfile in the root directory of the project. You may want to install and
 use a RVM gemset. This keeps to the installed gems separated from other gems
 on your system to prevent any version conflicts.
 
-== Optional: setting up an environment with RVM
+== Quickstart
+
+1. Clone the repository:
+    
+    $ git clone https://github.com/ais-case/ais.git
+
+2. Run the installer:
+
+    $ cd ais && ./installer.sh
+ 
+You can now jump straight to "Running the system" to start the services
+
+== Installation
+
+=== Optional: setting up an environment with RVM
 
 RVM allows you to install and run the project without conflicts with other Ruby-based
 projects you might have installed. Instructions for the installation can be found at 
@@ -41,9 +55,9 @@ Before you work with the project you will always have to switch to this gemset. 
 can be automated by updating <tt>environment_id</tt> in the .rvmrc file of the project with the 
 information about your environment. 
 
-== Installing dependencies
+=== Installing dependencies
 
-The dependencies of the project are documented in the Gemfile. To install all 
+The Ruby dependencies of the project are documented in the Gemfile. To install all 
 dependencies, use the bundler gem:
 
 1. Install bundler:
@@ -53,6 +67,9 @@ dependencies, use the bundler gem:
 2. Then from inside the project directory run bundler to download and install all dependencies:
 
     $ bundle install
+
+In addition to these Ruby Gems you will also need to install the ZeroMQ library available 
+from http://www.zeromq.org.
 
 == Running the system
 
@@ -71,7 +88,7 @@ You should now be able to access the web interface from http://localhost:3000/.
 Note that sources of raw AIS messages are currently hardcoded in 
 <tt>lib/services/transmitter_service.rb</tt>.
 
-== Running tests
+=== Running tests
 
 There are three separate test suites, using a variety of tools. These tools 
 are automatically installed when you run <tt>bundle install</tt>.
@@ -83,6 +100,11 @@ are automatically installed when you run <tt>bundle install</tt>.
   subdirectory. Run the acceptance tests with:
    
     $ rake cucumber
+    
+  One note: acceptance tests have additional requirements, which are not 
+  installed when the installation method described in Quickstart is used. To
+  install the additional dependencies run <tt>bundle install</tt> from the 
+  root of the project.
    
 * Ruby unit tests use the {RSpec}[http://rspec.info/] tool, and can be found
   in the <tt>spec</tt> subdirectory. Run the unit tests with:

@@ -16,4 +16,5 @@
 # Ignore all logfiles and tempfiles.
 /log/*.log
 /tmp
-penv
+/penv
+/vendor/zeromq
