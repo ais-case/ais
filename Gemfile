@@ -5,7 +5,7 @@ gem 'rails', '3.2.3'
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 
-gem 'sqlite3'
+#gem 'sqlite3'
 
 
 # Gems used only for assets and not required
@@ -15,7 +15,7 @@ group :assets do
   # gem 'coffee-rails', '~> 3.2.1'
 
   # See https://github.com/sstephenson/execjs#readme for more supported runtimes
-  # gem 'therubyracer', :platform => :ruby
+  gem 'therubyracer', :platform => :ruby
 
   gem 'uglifier', '>= 1.0.3'
 end
@@ -40,11 +40,14 @@ gem 'jquery-rails'
 # Project specific gems
 gem "ffi-rzmq"
 
-group :development, :test do
+group :test do
   gem 'rspec-rails', '~> 2.0'
-  gem 'cucumber-rails', :require => false
-  gem 'capybara'
   gem 'jasmine'
   # database_cleaner is not required, but highly recommended
   # gem 'database_cleaner'
+end
+
+group :acceptance do
+  gem 'cucumber-rails', :require => false
+  gem 'capybara'
 end
