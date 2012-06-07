@@ -21,7 +21,7 @@ source ~/.rvm/scripts/rvm
 echo "done."
 
 echo -n "Installing openssl, this may take a while... "
-#rvm pkg install openssl 1>>${LOG} 2>&1
+rvm pkg install openssl 1>>${LOG} 2>&1
 echo "done."
 
 echo -n "Installing ruby ${RUBY_VERSION}, this may take a while... "
