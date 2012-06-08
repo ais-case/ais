@@ -1,6 +1,7 @@
 require 'ffi-rzmq'
 require 'timeout'
 require_relative 'base_service'
+require_relative '../payload_decoder_proxy'
 require_relative '../vessel_proxy'
 require_relative '../transmitter_proxy'
 
@@ -10,9 +11,10 @@ module Service
       attr_writer :context
       
       PROXIES = { 
-        'ais/transmitter' => Service::TransmitterProxy,
-        'ais/vessel'      => Service::VesselProxy,
-        'ais/message'     => nil
+        'ais/payload-decoder' => Service::PayloadDecoderProxy,
+        'ais/transmitter'     => Service::TransmitterProxy,
+        'ais/vessel'          => Service::VesselProxy,
+        'ais/message'         => nil
       }
     
       def initialize(endpoint)
