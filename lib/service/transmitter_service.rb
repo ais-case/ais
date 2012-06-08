@@ -1,5 +1,4 @@
 require 'socket'
-require 'thread'
 require_relative '../util'
 require_relative '../domain/vessel'
 require_relative '../domain/vessel_type'

@@ -1,5 +1,4 @@
 require 'ffi-rzmq'
-require 'thread'
 require 'timeout'
 
 module Service
