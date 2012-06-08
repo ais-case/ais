@@ -21,8 +21,8 @@ on your system to prevent any version conflicts.
 
     $ source ~/.rvm/scripts/rvm && cd ais  
 
-  When asked: <tt>Do you wish to trust this .rvmrc file?</tt>,answer with 
-  <tt>yes</tt>, <tt><ENTER></tt> 
+   When asked: <tt>Do you wish to trust this .rvmrc file?</tt>,answer with 
+   <tt>yes</tt>, <tt><ENTER></tt> 
  
 You can now jump straight to "Running the system" to start the services
 
