@@ -45,10 +45,11 @@ module Service
     end
   
     it "publishes processed messages" do
-      # Set up decoder
-      decoder = double('Decoder')
-      decoder.stub(:decode).and_return('1')
-      @registry.stub(:bind).and_yield(decoder)
+      # Set up proxy for decoder and checksum
+      proxy = double('Proxy')
+      proxy.stub(:decode).and_return('1')
+      proxy.stub(:verify).and_return(true)
+      @registry.stub(:bind).and_yield(proxy)
 
       service = MessageService.new(@registry)
       service.should_receive(:publish_message).with(@sample_type, @sample_payload)
@@ -56,6 +57,12 @@ module Service
     end
 
     it "does not publish messages with invalid checksums" do
+      # Set up proxy for decoder and checksum
+      proxy = double('Proxy')
+      proxy.stub(:decode).and_return('101')
+      proxy.stub(:verify).and_return(false)
+      @registry.stub(:bind).and_yield(proxy)
+
       message = @sample_message.dup
       message[20] = 'E'
       service = MessageService.new(@registry)
@@ -67,10 +74,11 @@ module Service
       payload1 = "53aaW@00000000000000000000000000000000160000000000000000"
       payload2 = "00000000000000"
 
-      # Set up decoder
-      decoder = double('Decoder')
-      decoder.stub(:decode).and_return('101')
-      @registry.stub(:bind).and_yield(decoder)
+      # Set up proxy for decoder and checksum
+      proxy = double('Proxy')
+      proxy.stub(:decode).and_return('101')
+      proxy.stub(:verify).and_return(true)
+      @registry.stub(:bind).and_yield(proxy)
 
       service = MessageService.new(@registry)
       service.should_receive(:publish_message).with(5, payload1 + payload2)

@@ -53,7 +53,12 @@ module Service
     end
     
     def process_message(data)
-      return unless Domain::AIS::Checksums::verify(data)
+      valid_message = false
+      @registry.bind('ais/checksum') do |service|
+        valid_message = service.verify(data)
+      end      
+      return unless valid_message
+      
       preamble, fragment_count, fragment_number, id, channel, payload, suffix = data.split(',')
       
       @payload << payload
