@@ -1,5 +1,6 @@
 require_relative 'platform/base_service'
 require_relative 'platform/reply_service'
+require_relative '../util'
 require_relative '../domain/ais/six_bit_encoding'
 
 module Service
