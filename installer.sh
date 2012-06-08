@@ -47,7 +47,7 @@ echo "done."
 
 # Create compile environent for zmq and switch to it
 mkdir -p ${BASEPATH}/vendor/zeromq
-cd ${BASEPATH}vendor/zeromq
+cd ${BASEPATH}/vendor/zeromq
 BUILDPATH=`pwd`
 
 echo -n "Downloading zeromq into ${BUILDPATH}... "
