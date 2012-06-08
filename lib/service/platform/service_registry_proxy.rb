@@ -15,8 +15,10 @@ module Service
         'ais/payload-decoder' => Service::PayloadDecoderProxy,
         'ais/checksum'        => Service::ChecksumProxy,
         'ais/transmitter'     => Service::TransmitterProxy,
+        'ais/receiver'        => nil,
+        'ais/combiner'        => nil,
+        'ais/message'         => nil,
         'ais/vessel'          => Service::VesselProxy,
-        'ais/message'         => nil
       }
     
       def initialize(endpoint)

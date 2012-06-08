@@ -7,6 +7,8 @@ module Service::Platform
                 {:endpoint => 'tcp://*:0', :service => 'Service::PayloadDecoderService', :file => 'payload_decoder_service'},
                 {:endpoint => 'tcp://*:0', :service => 'Service::ChecksumService', :file => 'checksum_service'},
                 {:endpoint => 'tcp://*:0', :service => 'Service::TransmitterService', :file => 'transmitter_service'},
+                {:endpoint => 'tcp://*:0', :service => 'Service::ReceiverService', :file => 'receiver_service'},
+                {:endpoint => 'tcp://*:0', :service => 'Service::CombinerService', :file => 'combiner_service'},
                 {:endpoint => 'tcp://*:0', :service => 'Service::MessageService', :file => 'message_service'},
                 {:endpoint => 'tcp://*:0', :service => 'Service::VesselService', :file => 'vessel_service'}]
     
