@@ -5,7 +5,6 @@ module Service::Platform
     
     BINDINGS = [{:endpoint => 'tcp://*:0', :service => 'Service::Platform::ServiceRegistry', :file => 'platform/service_registry'},
                 {:endpoint => 'tcp://*:0', :service => 'Service::PayloadDecoderService', :file => 'payload_decoder_service'},
-                {:endpoint => 'tcp://*:0', :service => 'Service::ChecksumService', :file => 'checksum_service'},
                 {:endpoint => 'tcp://*:0', :service => 'Service::TransmitterService', :file => 'transmitter_service'},
                 {:endpoint => 'tcp://*:0', :service => 'Service::ReceiverService', :file => 'receiver_service'},
                 {:endpoint => 'tcp://*:0', :service => 'Service::CombinerService', :file => 'combiner_service'},
