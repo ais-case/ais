@@ -18,7 +18,7 @@ on your system to prevent any version conflicts.
 
 3. Go into project directory (e.g. <tt>cd ais</tt>) and when asked:
    <tt>Do you wish to trust this .rvmrc file?</tt>,
-   answer with <tt>yes</tt><tt><ENTER></tt> 
+   answer with <tt>yes</tt>, <tt><ENTER></tt> 
  
 You can now jump straight to "Running the system" to start the services
 
