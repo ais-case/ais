@@ -2,6 +2,7 @@ require 'ffi-rzmq'
 require 'timeout'
 require_relative 'base_service'
 require_relative '../payload_decoder_proxy'
+require_relative '../payload_encoder_proxy'
 require_relative '../vessel_proxy'
 require_relative '../transmitter_proxy'
 
@@ -12,6 +13,7 @@ module Service
       
       PROXIES = { 
         'ais/payload-decoder' => Service::PayloadDecoderProxy,
+        'ais/payload-encoder' => Service::PayloadEncoderProxy,
         'ais/transmitter'     => Service::TransmitterProxy,
         'ais/receiver'        => nil,
         'ais/combiner'        => nil,
