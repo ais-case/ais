@@ -6,7 +6,7 @@ module Service
       @sample_message = "!AIVDM,1,1,,A,10004lP0?w0BCp01eo@00?v00000,0*24\n"
     end
     
-    before(:each) do
+    before(:each) do            
       @registry = MockRegistry.new
 
       @vessel = Domain::Vessel.new(1234, Domain::Vessel::CLASS_A)
@@ -37,35 +37,57 @@ module Service
     end
     
     describe "process_request" do
-      it "accepts position report requests" do  
-        service = TransmitterService.new(@registry)
-        service.process_request('POSITION ' << Marshal.dump(@vessel))
-      end
+      describe "position reports" do
+        before(:each) do
+          service = double('Service')
+          service.stub(:encode).and_return('10004lP0?w0BCp01eo@00?v00000')
+          @registry.stub(:bind).and_yield(service)
+        end
 
-      it "accepts static info report requests" do  
-        service = TransmitterService.new(@registry)
-        service.process_request('STATIC ' << Marshal.dump(@vessel))
-      end
+        it "accepts position report requests" do  
+          service = TransmitterService.new(@registry)
+          service.process_request('POSITION ' << Marshal.dump(@vessel))
+        end
 
-      it "returns an empy response" do  
-        service = TransmitterService.new(@registry)
-        service.process_request('POSITION ' << Marshal.dump(@vessel)).should eq('')
+        it "returns an empy response" do  
+          service = TransmitterService.new(@registry)
+          service.process_request('POSITION ' << Marshal.dump(@vessel)).should eq('')
+        end
+
+        it "broadcasts the encoded position report" do
+          raw = 'POSITION ' << Marshal.dump(@vessel)
+    
+          service = TransmitterService.new(@registry)
+          service.should_receive(:broadcast_message).with(@sample_message)
+          service.process_request(raw)
+        end
       end
       
-      it "broadcasts the encoded position report" do
-        raw = 'POSITION ' << Marshal.dump(@vessel)
-  
-        service = TransmitterService.new(@registry)
-        service.should_receive(:broadcast_message).with(@sample_message)
-        service.process_request(raw)
-      end
+      describe "static reports" do
+        before(:each) do
+          encoded = "50004lP0?w0BCp01eo@00?v000000000000000160000000000000000"
+          encoded << "00000000000000"
+          service = double('Service')
+          service.stub(:encode).and_return(encoded)
+          @registry.stub(:bind).and_yield(service)
+        end
 
-      it "broadcasts the encoded static info report" do
-        raw = 'STATIC ' << Marshal.dump(@vessel)
+        it "accepts static info report requests" do  
+          service = TransmitterService.new(@registry)
+          service.process_request('STATIC ' << Marshal.dump(@vessel))
+        end
   
-        service = TransmitterService.new(@registry)
-        service.should_receive(:broadcast_message).twice
-        service.process_request(raw)
+        it "broadcasts the encoded static info report" do
+          raw = 'STATIC ' << Marshal.dump(@vessel)
+    
+          expected = []
+          expected << "!AIVDM,2,1,,A,50004lP0?w0BCp01eo@00?v000000000000000160000000000000000,0*24\n"
+          expected << "!AIVDM,2,2,,A,00000000000000,0*26\n"
+          service = TransmitterService.new(@registry)
+          service.should_receive(:broadcast_message).with(expected[0])
+          service.should_receive(:broadcast_message).with(expected[1])
+          service.process_request(raw)
+        end
       end
     end
     

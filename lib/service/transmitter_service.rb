@@ -147,8 +147,11 @@ module Service
       end
       
       # Create the fragments
-      encoded = Domain::AIS::SixBitEncoding.encode(message.payload)
-
+      encoded = nil
+      @registry.bind('ais/payload-encoder') do |encoder|
+        encoded = encoder.encode(message.payload)  
+      end
+      
       chunk_no = 1
       chunks = encoded.scan(/.{1,56}/)
       chunks.each do |chunk|
