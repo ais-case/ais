@@ -27,6 +27,8 @@ begin
   puts "STARTED"
   puts "." * 10240
   service.wait
+rescue
+  $stderr.puts $!
 ensure
   service.stop
 end
