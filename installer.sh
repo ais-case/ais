@@ -42,8 +42,8 @@ echo "done."
 # ZeroMQ library compilation
 
 # Create compile environent for zmq and switch to it
-mkdir -p vendor/zeromq
-cd vendor/zeromq
+mkdir -p ${BASEPATH}/vendor/zeromq
+cd ${BASEPATH}vendor/zeromq
 BUILDPATH=`pwd`
 
 echo -n "Downloading zeromq into ${BUILDPATH}... "
@@ -71,6 +71,10 @@ do
     ln -s ${LIBFILE} ${DEST} 1>>${LOG} 2>&1
 done;
 echo "done."
+
+# Now install rvmrc
+cd ${BASEPATH} && cd ..
+cp ${BASEPATH}/.rvmrc.distrib ${BASEPATH}/.rvmrc
 
 echo
 echo "Done with installation"

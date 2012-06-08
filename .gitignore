@@ -18,3 +18,4 @@
 /tmp
 /penv
 /vendor/zeromq
+/.rvmrc

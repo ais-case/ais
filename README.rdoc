@@ -14,7 +14,11 @@ on your system to prevent any version conflicts.
 
 2. Run the installer:
 
-    $ cd ais && ./installer.sh
+    $ ais/installer.sh
+
+3. Go into project directory (e.g. <tt>cd ais</tt>) and when asked:
+   <tt>Do you wish to trust this .rvmrc file?</tt>,
+   answer with <tt>yes</tt><tt><ENTER></tt> 
  
 You can now jump straight to "Running the system" to start the services
 
@@ -52,8 +56,8 @@ and setup for this project:
     $ rvm use "1.9.3@ais"
 
 Before you work with the project you will always have to switch to this gemset. This
-can be automated by updating <tt>environment_id</tt> in the .rvmrc file of the project with the 
-information about your environment. 
+can be automated by updating <tt>environment_id</tt> in a <tt>.rvmrc</tt> file of the project with the 
+information about your environment. An example file is included as <tt>.rvmrc.distrib</tt>
 
 === Installing dependencies
 
@@ -73,17 +77,17 @@ from http://www.zeromq.org.
 
 == Running the system
 
-From the main project folder, start the service platform:
+From the main project folder you can start the service platform:
 
     $ rake services:start
 
-The process will keep running, keeping the service processes alive in the
+The process will run indefinitely, keeping the service processes alive in the
 background until you kill the rake task with <tt>CTRL-C</tt>.
 To launch the web interface run the Rails webserver:
 
     $ rails s
 	
-You should now be able to access the web interface from http://localhost:3000/.
+You should now be able to access the web interface from http://localhost:3000.
 
 Note that sources of raw AIS messages are currently hardcoded in 
 <tt>lib/services/transmitter_service.rb</tt>.
