@@ -53,6 +53,10 @@ module Service::Platform
       end       
     end
     
+    def wait
+      @thread.join
+    end
+    
     def stop
       @thread.kill if @thread
       @thread = nil

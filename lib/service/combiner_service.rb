@@ -39,7 +39,11 @@ module Service
     end
     
     def process_message(data)
-      preamble, fragment_count, fragment_number, id, channel, payload, suffix = data.split(',')
+      # Remove message header
+      sentence = data.split(' ')[1]
+      
+      # Concatenate payloads until last fragment is received
+      preamble, fragment_count, fragment_number, id, channel, payload, suffix = sentence.split(',')
       @payload << payload
       if fragment_count == fragment_number
         publish_message(@payload.dup)

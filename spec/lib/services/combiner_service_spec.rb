@@ -3,8 +3,7 @@ require 'spec_helper'
 module Service
   describe CombinerService do
     before(:all) do
-      @sample_message = "!AIVDM,1,1,,B,13OF<80vh2wgiJJNes7EMGrD0<0e,0*00"
-      @sample_payload =               "13OF<80vh2wgiJJNes7EMGrD0<0e"
+      @sample_payload = "13OF<80vh2wgiJJNes7EMGrD0<0e"
     end
     
     before(:each) do
@@ -14,9 +13,10 @@ module Service
     it_behaves_like "a service"
   
     it "publishes processed messages" do
+      message = "SENTENCE !AIVDM,1,1,,B,13OF<80vh2wgiJJNes7EMGrD0<0e,0*00"
       service = CombinerService.new(@registry)
       service.should_receive(:publish_message).with(@sample_payload)
-      service.process_message(@sample_message)
+      service.process_message(message)
     end
 
     it "aggregates multi-fragment messages before publishing" do
@@ -25,8 +25,8 @@ module Service
 
       service = CombinerService.new(@registry)
       service.should_receive(:publish_message).with(payload1 + payload2)
-      service.process_message("!AIVDM,2,1,,A,#{payload1},0*33")
-      service.process_message("!AIVDM,2,2,,A,#{payload2},0*26")
+      service.process_message("SENTENCE !AIVDM,2,1,,A,#{payload1},0*33")
+      service.process_message("SENTENCE !AIVDM,2,2,,A,#{payload2},0*26")
     end
     
     it "listens for AIS sentences" do
