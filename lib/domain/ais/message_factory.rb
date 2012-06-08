@@ -11,14 +11,12 @@ require_relative '../vessel_type'
 module Domain
   module AIS
     class MessageFactory
-      def self.fromPayload(payload)
+      def self.fromPayload(decoded)
         
         # Note that checks for length use >, because the messages might be 
         # longer due to padding of the payload. This padding won't influence
         # values, since only the least significant bits at the end of the 
-        # message are padded.
-        
-        decoded = SixBitEncoding.decode(payload)
+        # message are padded.        
         msg_type = decoded[0..5].to_i(2)
         message = nil
         mmsi = Datatypes::UInt.from_bit_string(decoded[8..37])

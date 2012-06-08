@@ -43,7 +43,13 @@ module Service
     def process_message(data)
       @log.debug("Message incoming: #{data}")
       payload = data.split(' ')[1]
-      message = Domain::AIS::MessageFactory.fromPayload(payload)
+      
+      decoded = nil
+      @registry.bind('ais/payload-decoder') do |decoder|
+        decoded = decoder.decode(payload)
+      end
+      
+      message = Domain::AIS::MessageFactory.fromPayload(decoded)
       if message.nil?
         @log.debug("Message rejected: #{data}")
       else  

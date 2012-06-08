@@ -2,11 +2,15 @@ require 'spec_helper'
 
 module Domain::AIS
   describe MessageFactory do
+    before(:all) do
+      @encoding = Domain::AIS::SixBitEncoding
+    end
+    
     describe "fromPayload" do
       it "can create a class A position report message from a payload" do
         payload = "13`wgT0P5fPGmDfN>o?TN2NN2<05"
         mf = MessageFactory.new
-        msg = MessageFactory.fromPayload(payload)
+        msg = MessageFactory.fromPayload(@encoding.decode(payload))
         msg.mmsi.should eq(244314000)
         msg.vessel_class.should eq(Domain::Vessel::CLASS_A)
         msg.lat.should be_within(1.0/1_000_000).of(52.834663)
@@ -18,7 +22,7 @@ module Domain::AIS
       it "can create a class B position report message from a payload" do
         payload = "B6:fOUh0=R1oRQSC=jo9D7b61P06"
         mf = MessageFactory.new
-        msg = MessageFactory.fromPayload(payload)
+        msg = MessageFactory.fromPayload(@encoding.decode(payload))
         msg.mmsi.should eq(413900695)
         msg.vessel_class.should eq(Domain::Vessel::CLASS_B)
         msg.lat.should be_within(1.0/1_000_000).of(23.070368)
@@ -28,7 +32,7 @@ module Domain::AIS
 
         payload = "C6:fOUh0=R1oRQSC=jo9D7b61P06000000000000000000000000"
         mf = MessageFactory.new
-        msg = MessageFactory.fromPayload(payload)
+        msg = MessageFactory.fromPayload(@encoding.decode(payload))
         msg.mmsi.should eq(413900695)
         msg.vessel_class.should eq(Domain::Vessel::CLASS_B)
         msg.lat.should be_within(1.0/1_000_000).of(23.070368)
@@ -40,7 +44,7 @@ module Domain::AIS
       it "can create a class A static info message from a payload" do
         payload = "53u=:PP00001<H?G7OI0ThuB37G61<F22222220j1042240Ht2P00000000000000000008"
         mf = MessageFactory.new
-        msg = MessageFactory.fromPayload(payload)
+        msg = MessageFactory.fromPayload(@encoding.decode(payload))
         msg.mmsi.should eq(265505410)
         msg.vessel_class.should eq(Domain::Vessel::CLASS_A)
         msg.vessel_type.should eq(Domain::VesselType.new(50))
@@ -49,7 +53,7 @@ module Domain::AIS
       it "can create a class B static info message from a payload" do
         payload = "H44?BB4lDB1>C1CEC130001@F270"
         mf = MessageFactory.new
-        msg = MessageFactory.fromPayload(payload)
+        msg = MessageFactory.fromPayload(@encoding.decode(payload))
         msg.mmsi.should eq(272880200)
         msg.vessel_class.should eq(Domain::Vessel::CLASS_B)
         msg.vessel_type.should eq(Domain::VesselType.new(52))
@@ -58,7 +62,7 @@ module Domain::AIS
       it "returns null for messages of incorrect length" do
         payload = "13`wgT0P5"
         mf = MessageFactory.new
-        msg = MessageFactory.fromPayload(payload)
+        msg = MessageFactory.fromPayload(@encoding.decode(payload))
         msg.should eq(nil)
       end
     end

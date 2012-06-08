@@ -9,6 +9,11 @@ module Service
     before(:each) do
       @registry = MockRegistry.new
       @registry.register('ais/message', 'tcp://localhost:21002')
+      decoder = double('Service')
+      decoder.stub(:decode) do |payload|
+        Domain::AIS::SixBitEncoding.decode(payload)
+      end
+      @registry.stub(:bind).and_yield(decoder)
       
       @vessel1 = Domain::Vessel.new(1234, Domain::Vessel::CLASS_A)
       @vessel1.position = Domain::LatLon.new(3.0, 5.0) 
