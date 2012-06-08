@@ -16,9 +16,13 @@ on your system to prevent any version conflicts.
 
     $ ais/installer.sh
 
-3. Go into project directory (e.g. <tt>cd ais</tt>) and when asked:
-   <tt>Do you wish to trust this .rvmrc file?</tt>,
-   answer with <tt>yes</tt>, <tt><ENTER></tt> 
+3. Now activate the project <tt>.rvmrc</tt> to ensure the correct
+   RVM environment is selected when you work on the project:
+
+    $ source ~/.rvm/scripts/rvm && cd ais  
+
+  When asked: <tt>Do you wish to trust this .rvmrc file?</tt>,answer with 
+  <tt>yes</tt>, <tt><ENTER></tt> 
  
 You can now jump straight to "Running the system" to start the services
 

@@ -24,6 +24,10 @@ echo -n "Installing openssl, this may take a while... "
 rvm pkg install openssl 1>>${LOG} 2>&1
 echo "done."
 
+echo -n "Installing zlib, this may take a while... "
+rvm pkg install zlib 1>>${LOG} 2>&1
+echo "done."
+
 echo -n "Installing ruby ${RUBY_VERSION}, this may take a while... "
 rvm install ${RUBY_VERSION} 1>>${LOG} 2>&1
 rvm use ${RUBY_VERSION} 1>>${LOG} 2>&1
@@ -79,3 +83,5 @@ cp ${BASEPATH}/.rvmrc.distrib ${BASEPATH}/.rvmrc
 echo
 echo "Done with installation"
 echo
+echo "Now run:"
+echo "source ~/.rvm/scripts/rvm && cd ais"
