@@ -45,6 +45,11 @@ module Service
     end
   
     it "publishes processed messages" do
+      # Set up decoder
+      decoder = double('Decoder')
+      decoder.stub(:decode).and_return('1')
+      @registry.stub(:bind).and_yield(decoder)
+
       service = MessageService.new(@registry)
       service.should_receive(:publish_message).with(@sample_type, @sample_payload)
       service.process_message(@sample_message)
@@ -61,6 +66,12 @@ module Service
     it "aggregates multi-fragment messages before publishing" do
       payload1 = "53aaW@00000000000000000000000000000000160000000000000000"
       payload2 = "00000000000000"
+
+      # Set up decoder
+      decoder = double('Decoder')
+      decoder.stub(:decode).and_return('101')
+      @registry.stub(:bind).and_yield(decoder)
+
       service = MessageService.new(@registry)
       service.should_receive(:publish_message).with(5, payload1 + payload2)
       service.process_message("!AIVDM,2,1,,A,#{payload1},0*33")

@@ -10,6 +10,7 @@ module Service
     
     def initialize(registry)
       super(registry)
+      @registry = registry
       @log = Util::get_log('message')
       @payload = ''
     end
@@ -58,7 +59,10 @@ module Service
       @payload << payload
       
       if fragment_count == fragment_number
-        type = Domain::AIS::SixBitEncoding.decode(@payload[0]).to_i(2)
+        type = nil
+        @registry.bind('ais/payload-decoder') do |service|
+          type = service.decode(@payload[0]).to_i(2)
+        end
         publish_message(type, @payload.dup)
         @payload = ''
       end
