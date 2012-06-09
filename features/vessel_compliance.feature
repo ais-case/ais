@@ -78,14 +78,17 @@ Feature: Vessel Compliance
         | Sea Otter  | yes       |
         | Seahawk    | no        |
     
-  Scenario: static information, compliant vessel
-    Given vessel "Seal" of class "A"
-     When "Seal" sends a voyage report
-      And sends another voyage report after "6.0" minutes
-     Then the vessel "Seal" should not be marked as non-compliant
-
-  Scenario: static information, non-compliant vessel
-    Given vessel "Sea Lion" of class "A"
-     When "Sea Lion" sends a voyage report
-      And sends another position report after "6.1" minutes
-     Then the vessel "Sea Lion" should be marked as non-compliant
+  Scenario: static information
+    Given class "A" vessels:
+        | name       |
+        | Sea Lion   |
+        | Seal       |
+     When these vessels send a static report
+      And send another static report after:
+        | name       | interval |
+        | Sea Lion   | 3600.0   |
+        | Seal       | 3600.1   |
+     Then the compliance of the vessels should be marked as:
+        | name       | compliant |
+        | Sea Lion   | yes       |
+        | Seal       | no        |
