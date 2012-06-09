@@ -1,0 +1,91 @@
+Feature: Vessel Compliance
+  In order to see how reliable vessel information is 
+  As a coast guard
+  I want to see which class A vessels do not comply with the AIS protocol
+
+  Scenario: dynamic information of anchored vessels
+    Given anchored class "A" vessels with dynamic information:
+        | name       | speed | anchored |
+        | Sea Lion   |  3.0  | yes      |
+        | Seal       |  3.0  | yes      |
+        | Seagull    |  3.1  | yes      |
+        | Seahorse   |  3.1  | yes      |
+     When these vessels send a position report
+      And send another position report after:
+        | name       | interval |
+        | Sea Lion   | 180.0    |
+        | Seal       | 180.1    |
+        | Seagull    |  10.0    |
+        | Seahorse   |  10.1    |
+     Then the compliance of the vessels should be marked as:
+        | name       | compliant |
+        | Sea Lion   | yes       |
+        | Seal       | no        |
+        | Seagull    | yes       |
+        | Seahorse   | no        |
+      
+  Scenario: dynamic information of moving, non-anchored vessels not changing course
+    Given non-anchored class "A" vessels with dynamic information:
+        | name       | speed |
+        | Sea Lion   |  1.0  |
+        | Seal       |  1.0  |
+        | Seagull    | 14.1  |
+        | Seahorse   | 14.1  |
+        | Sea Otter  | 23.1  |
+        | Seahawk    | 23.1  |
+     When these vessels send a position report
+      And send another position report after:
+        | name       | interval |
+        | Sea Lion   | 10.0     |
+        | Seal       | 10.1     |
+        | Seagull    |  6.0     |
+        | Seahorse   |  6.1     |
+        | Sea Otter  |  2.0     |
+        | Seahawk    |  2.1     |
+     Then the compliance of the vessels should be marked as:
+        | name       | compliant |
+        | Sea Lion   | yes       |
+        | Seal       | no        |
+        | Seagull    | yes       |
+        | Seahorse   | no        |
+        | Sea Otter  | yes       |
+        | Seahawk    | no        |
+      
+  Scenario: dynamic information of moving, non-anchored vessels with a changing course
+    Given class "A" vessels with a changing course and dynamic information:
+        | name       | speed |
+        | Sea Lion   |  1.0  |
+        | Seal       |  1.0  |
+        | Seagull    | 14.1  |
+        | Seahorse   | 14.1  |
+        | Sea Otter  | 23.1  |
+        | Seahawk    | 23.1  |
+     When these vessels send a position report
+      And send another position report after:
+        | name       | interval |
+        | Sea Lion   | 3.5      |
+        | Seal       | 3.6      |
+        | Seagull    | 2.0      |
+        | Seahorse   | 2.1      |
+        | Sea Otter  | 2.0      |
+        | Seahawk    | 2.1      |
+     Then the compliance of the vessels should be marked as:
+        | name       | compliant |
+        | Sea Lion   | yes       |
+        | Seal       | no        |
+        | Seagull    | yes       |
+        | Seahorse   | no        |
+        | Sea Otter  | yes       |
+        | Seahawk    | no        |
+    
+  Scenario: static information, compliant vessel
+    Given vessel "Seal" of class "A"
+     When "Seal" sends a voyage report
+      And sends another voyage report after "6.0" minutes
+     Then the vessel "Seal" should not be marked as non-compliant
+
+  Scenario: static information, non-compliant vessel
+    Given vessel "Sea Lion" of class "A"
+     When "Sea Lion" sends a voyage report
+      And sends another position report after "6.1" minutes
+     Then the vessel "Sea Lion" should be marked as non-compliant
