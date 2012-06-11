@@ -11,16 +11,19 @@ end
 After do |scenario|
   @manager.stop
   
-  if scenario.failed?
-    @failed_scenarios += 1
-    #name = scenario.to_sexp[3]
-    name = @failed_scenarios.to_s
-    logbase = Rails.root.join('log', name.gsub(' ', '_'))
-    FileUtils.makedirs(logbase) 
-    Dir.glob(Rails.root.join('log', 'log-*.log')).each do |log|
-      FileUtils.copy(log, File.join(logbase, File.basename(log)))
+  if ENV.has_key?('CUCUMBER_CI')
+    if scenario.failed?
+      @failed_scenarios += 1
+      
+      #name = scenario.to_sexp[3]
+      name = @failed_scenarios.to_s
+      logbase = Rails.root.join('log', name.gsub(' ', '_'))
+      FileUtils.makedirs(logbase) 
+      Dir.glob(Rails.root.join('log', 'log-*.log')).each do |log|
+        FileUtils.copy(log, File.join(logbase, File.basename(log)))
+      end
     end
-  end
   
-  FileUtils.rm(Dir.glob(Rails.root.join('log', 'log-*.log')))
+    FileUtils.rm(Dir.glob(Rails.root.join('log', 'log-*.log')))
+  end
 end
