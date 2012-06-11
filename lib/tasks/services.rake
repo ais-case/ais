@@ -13,6 +13,22 @@ namespace :services do
       puts "Stopped"
     end
   end
+
+  task :listener, [:port] => :environment do |t,args|
+    begin
+      ctx = ZMQ::Context.new
+      socket = ctx.socket(ZMQ::SUB)
+      socket.setsockopt(ZMQ::SUBSCRIBE, '')
+      rc = socket.connect("tcp://localhost:#{args.port}")
+      raise "Couldn't listen to socket" unless ZMQ::Util.resultcode_ok?(rc)
+      loop do
+        socket.recv_string(data = '')
+        puts data
+      end
+    ensure
+      socket.close
+    end
+  end
   
   task :starttest => :environment do
     sm = Service::Platform::ServiceManager.new
