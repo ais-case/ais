@@ -1,2 +1,4 @@
 #!/bin/bash
 ps x | grep ruby | grep -v grep | cut -d ' ' -f1 | xargs kill
+sleep 2
+ps x | grep ruby | grep -v grep | cut -d ' ' -f1 | xargs kill -9
