@@ -14,13 +14,33 @@ module Service
       @payload = ''
       filter = ['SENTENCE ']
       @receiver = Platform::SubscriberService.new(method(:process_message), filter, @log)
+      @publish_queue = Queue.new
+      @publish_thread = nil
     end
     
     def start(endpoint)
-      context = ZMQ::Context.new
-      @pub_socket = context.socket(ZMQ::PUB)
-      rc = @pub_socket.bind(endpoint)
-      raise "Couldn't bind to socket" unless ZMQ::Util.resultcode_ok?(rc)
+      
+      @publish_thread = Thread.new(@log) do |log|
+        context = ZMQ::Context.new
+        socket = context.socket(ZMQ::PUB)
+        begin
+          log.debug("Running publish thread")
+          rc = socket.bind(endpoint)
+          raise "Couldn't bind to socket" unless ZMQ::Util.resultcode_ok?(rc)
+          loop do
+            socket.send_string(@publish_queue.pop)
+            log.debug("Message published")
+          end
+        rescue => e
+          @log.fatal("Subscriber service thread exception: #{e.message}")
+          e.backtrace.each { |line| @log.fatal(line) }
+          puts e.message
+          queue.push(false)
+          raise
+        ensure
+          socket.close
+        end
+      end
       
       receiver_endpoint = @registry.lookup('ais/receiver')
       @receiver.start(receiver_endpoint) if receiver_endpoint
@@ -35,7 +55,7 @@ module Service
     
     def stop
       @receiver.stop
-      @pub_socket.close
+      @publish_thread.kill if @publish_thread
     end
     
     def process_message(data)
@@ -53,7 +73,7 @@ module Service
     
     def publish_message(payload)
       @log.debug("Publishing PAYLOAD #{payload}")
-      rc = @pub_socket.send_string("PAYLOAD #{payload}")
+      @publish_queue.push("PAYLOAD #{payload}")
     end
   end
 end

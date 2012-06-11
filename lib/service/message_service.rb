@@ -17,13 +17,34 @@ module Service
       
       filter = ['PAYLOAD ']
       @combiner = Platform::SubscriberService.new(method(:process_message), filter, @log)
+      
+      @publish_queue = Queue.new
+      @publish_thread = nil
     end
     
     def start(endpoint)
-      context = ZMQ::Context.new
-      @pub_socket = context.socket(ZMQ::PUB)
-      rc = @pub_socket.bind(endpoint)
-      raise "Couldn't bind to socket" unless ZMQ::Util.resultcode_ok?(rc)
+      
+      @publish_thread = Thread.new(@log) do |log|
+        context = ZMQ::Context.new
+        socket = context.socket(ZMQ::PUB)
+        begin
+          log.debug("Running publish thread")
+          rc = socket.bind(endpoint)
+          raise "Couldn't bind to socket" unless ZMQ::Util.resultcode_ok?(rc)
+          loop do
+            socket.send_string(@publish_queue.pop)
+            log.debug("Message published")
+          end
+        rescue => e
+          @log.fatal("Subscriber service thread exception: #{e.message}")
+          e.backtrace.each { |line| @log.fatal(line) }
+          puts e.message
+          queue.push(false)
+          raise
+        ensure
+          socket.close
+        end
+      end
       
       combiner_endpoint = @registry.lookup('ais/combiner')
       @combiner.start(combiner_endpoint) if combiner_endpoint
@@ -38,7 +59,7 @@ module Service
     
     def stop
       @combiner.stop
-      @pub_socket.close      
+      @publish_thread.kill if @publish_thread     
     end
     
     def process_message(data)
@@ -55,7 +76,7 @@ module Service
     
     def publish_message(type, payload)
       @log.debug("Publishing #{payload} under type #{type}")
-      rc = @pub_socket.send_string("#{type.to_s} #{payload}")
+      @publish_queue.push("#{type.to_s} #{payload}")
     end
   end
 end
