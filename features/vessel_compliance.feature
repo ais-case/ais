@@ -3,13 +3,14 @@ Feature: Vessel Compliance
   As a coast guard
   I want to see which class A vessels do not comply with the AIS protocol
 
+  @wip
   Scenario: dynamic information of anchored vessels
     Given anchored class "A" vessels with dynamic information:
-        | name       | speed | anchored |
-        | Sea Lion   |  3.0  | yes      |
-        | Seal       |  3.0  | yes      |
-        | Seagull    |  3.1  | yes      |
-        | Seahorse   |  3.1  | yes      |
+        | name       | speed |
+        | Sea Lion   |  3.0  |
+        | Seal       |  3.0  |
+        | Seagull    |  3.1  |
+        | Seahorse   |  3.1  |
      When these vessels send a position report
       And send another position report after:
         | name       | interval |
@@ -24,6 +25,7 @@ Feature: Vessel Compliance
         | Seagull    | yes       |
         | Seahorse   | no        |
       
+  @wip
   Scenario: dynamic information of moving, non-anchored vessels not changing course
     Given non-anchored class "A" vessels with dynamic information:
         | name       | speed |
@@ -51,6 +53,7 @@ Feature: Vessel Compliance
         | Sea Otter  | yes       |
         | Seahawk    | no        |
       
+  @wip
   Scenario: dynamic information of moving, non-anchored vessels with a changing course
     Given class "A" vessels with a changing course and dynamic information:
         | name       | speed |
@@ -77,7 +80,8 @@ Feature: Vessel Compliance
         | Seahorse   | no        |
         | Sea Otter  | yes       |
         | Seahawk    | no        |
-    
+
+  @wip
   Scenario: static information
     Given class "A" vessels:
         | name       |
