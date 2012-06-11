@@ -3,6 +3,7 @@ require 'socket'
 require_relative '../util'
 require_relative 'platform/base_service'
 require_relative 'platform/subscriber_service'
+require_relative 'platform/publisher_service'
 
 module Service
   class CombinerService < Platform::BaseService
@@ -12,35 +13,12 @@ module Service
       @registry = registry
       @log = Util::get_log('combiner')
       @payload = ''
-      filter = ['SENTENCE ']
-      @receiver = Platform::SubscriberService.new(method(:process_message), filter, @log)
-      @publish_queue = Queue.new
-      @publish_thread = nil
+      @receiver = Platform::SubscriberService.new(method(:process_message), [''], @log)
+      @publisher = Platform::PublisherService.new(@log)
     end
     
     def start(endpoint)
-      
-      @publish_thread = Thread.new(@log) do |log|
-        context = ZMQ::Context.new
-        socket = context.socket(ZMQ::PUB)
-        begin
-          log.debug("Running publish thread")
-          rc = socket.bind(endpoint)
-          raise "Couldn't bind to socket" unless ZMQ::Util.resultcode_ok?(rc)
-          loop do
-            socket.send_string(@publish_queue.pop)
-            log.debug("Message published")
-          end
-        rescue => e
-          @log.fatal("Subscriber service thread exception: #{e.message}")
-          e.backtrace.each { |line| @log.fatal(line) }
-          puts e.message
-          queue.push(false)
-          raise
-        ensure
-          socket.close
-        end
-      end
+      @publisher.start(endpoint)      
       
       receiver_endpoint = @registry.lookup('ais/receiver')
       @receiver.start(receiver_endpoint) if receiver_endpoint
@@ -50,12 +28,12 @@ module Service
     end
     
     def wait
-      @receiver.wait
+      @receiver.wait and @publisher.wait
     end
     
     def stop
       @receiver.stop
-      @publish_thread.kill if @publish_thread
+      @publisher.stop
     end
     
     def process_message(data)
@@ -73,7 +51,7 @@ module Service
     
     def publish_message(payload)
       @log.debug("Publishing PAYLOAD #{payload}")
-      @publish_queue.push("PAYLOAD #{payload}")
+      @publisher.publish("PAYLOAD #{payload}")
     end
   end
 end

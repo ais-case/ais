@@ -5,6 +5,7 @@ require_relative '../domain/ais/checksums'
 require_relative '../domain/ais/six_bit_encoding'
 require_relative 'platform/base_service'
 require_relative 'platform/subscriber_service'
+require_relative 'platform/publisher_service'
 
 module Service
   class MessageService < Platform::BaseService
@@ -15,36 +16,12 @@ module Service
       @log = Util::get_log('message')
       @payload = ''
       
-      filter = ['PAYLOAD ']
-      @combiner = Platform::SubscriberService.new(method(:process_message), filter, @log)
-      
-      @publish_queue = Queue.new
-      @publish_thread = nil
+      @combiner = Platform::SubscriberService.new(method(:process_message), [''], @log)
+      @publisher = Platform::PublisherService.new(@log)
     end
     
     def start(endpoint)
-      
-      @publish_thread = Thread.new(@log) do |log|
-        context = ZMQ::Context.new
-        socket = context.socket(ZMQ::PUB)
-        begin
-          log.debug("Running publish thread")
-          rc = socket.bind(endpoint)
-          raise "Couldn't bind to socket" unless ZMQ::Util.resultcode_ok?(rc)
-          loop do
-            socket.send_string(@publish_queue.pop)
-            log.debug("Message published")
-          end
-        rescue => e
-          @log.fatal("Subscriber service thread exception: #{e.message}")
-          e.backtrace.each { |line| @log.fatal(line) }
-          puts e.message
-          queue.push(false)
-          raise
-        ensure
-          socket.close
-        end
-      end
+      @publisher.start(endpoint)
       
       combiner_endpoint = @registry.lookup('ais/combiner')
       @combiner.start(combiner_endpoint) if combiner_endpoint
@@ -54,12 +31,12 @@ module Service
     end
     
     def wait
-      @combiner.wait
+      @combiner.wait and @publisher.wait
     end
     
     def stop
       @combiner.stop
-      @publish_thread.kill if @publish_thread     
+      @publisher.stop
     end
     
     def process_message(data)
@@ -76,7 +53,7 @@ module Service
     
     def publish_message(type, payload)
       @log.debug("Publishing #{payload} under type #{type}")
-      @publish_queue.push("#{type.to_s} #{payload}")
+      @publisher.publish("#{type.to_s} #{payload}")
     end
   end
 end
