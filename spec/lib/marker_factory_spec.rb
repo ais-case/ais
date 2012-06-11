@@ -90,5 +90,12 @@ describe MarkerFactory do
         marker.icon.should eq("v_a_#{color}.png")
       end
     end
+    
+    it "chooses the correct icon for non-compliant vessels" do
+      vessel = Domain::Vessel.new(4321, Domain::Vessel::CLASS_A)
+      vessel.compliant = false
+      marker = MarkerFactory.from_vessel(vessel)
+      marker.icon.should eq("v_a_non-compliant.png")
+    end
   end
 end
