@@ -3,7 +3,7 @@ require 'spec_helper'
 module Service
   describe TransmitterService do
     before(:all) do
-      @sample_message = "!AIVDM,1,1,,A,10004lP0?w0BCp01eo@00?v00000,0*24\n"
+      @sample_message = "!AIVDM,1,1,,A,10004lP0?w0BCp01eo@00?v00000,0*24"
     end
     
     before(:each) do            
@@ -83,8 +83,8 @@ module Service
           raw = 'STATIC ' << Marshal.dump([@vessel, timestamp])
     
           expected = []
-          expected << "!AIVDM,2,1,,A,50004lP0?w0BCp01eo@00?v000000000000000160000000000000000,0*24\n"
-          expected << "!AIVDM,2,2,,A,00000000000000,0*26\n"
+          expected << "!AIVDM,2,1,,A,50004lP0?w0BCp01eo@00?v000000000000000160000000000000000,0*24"
+          expected << "!AIVDM,2,2,,A,00000000000000,0*26"
                     
           service = TransmitterService.new(@registry)
           service.should_receive(:broadcast_message).with(expected[0])
@@ -105,7 +105,7 @@ module Service
           service.broadcast_message(@sample_message)
    
           timeout(1) do
-            socket.gets.should eq(@sample_message)
+            socket.gets.should eq(@sample_message + "\n")
           end
         ensure
           service.stop

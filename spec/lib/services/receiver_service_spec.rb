@@ -31,7 +31,7 @@ module Service
     
     it "listens for raw AIS data from a local TCP server on port 20000" do
       service = ReceiverService.new(@registry)
-      service.should_receive(:process_message).with(@valid_message << "\n")
+      service.should_receive(:process_message).with(@valid_message)
       service.start('tcp://*:28000')
       
       # Wait for mock TCP server to finish request
