@@ -25,6 +25,7 @@ module Service
           loop do
             data = socket.gets
             break if data == nil
+            data.strip!
             @log.debug("Received raw message: #{data}")
             process_message(data)
           end

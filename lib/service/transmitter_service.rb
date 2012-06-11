@@ -119,7 +119,7 @@ module Service
       return if data[0] == '#'
       i = data.index('!')
       return unless i
-      broadcast_message(data[i..-1])
+      broadcast_message(data[i..-1].strip)
     end
     
     def broadcast_message(message)
