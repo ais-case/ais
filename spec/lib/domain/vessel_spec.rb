@@ -11,6 +11,10 @@ module Domain
       @vessel.vessel_class.should eq Vessel::CLASS_A
     end
     
+    it "is compliant by default" do
+      @vessel.compliant.should be_true
+    end
+    
     it "has name and position attributes" do
       @vessel.name = "Seal"
       @vessel.position = LatLon.new(50.0, 4.0)

@@ -10,6 +10,7 @@ module Domain
     def initialize(mmsi, vessel_class)
       @mmsi = mmsi
       @vessel_class = vessel_class
+      @compliant = true
     end
     
     def update_from(other)
