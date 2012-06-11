@@ -20,14 +20,18 @@ module Domain
       @vessel.position.lon.should eq 4.0
     end
 
-    it "has heading, speed and type attributes" do
+    it "has heading, course, speed, anchored and type attributes" do
       type = VesselType.from_str("Passenger")
       @vessel.heading = 193
+      @vessel.course = 190
       @vessel.speed = 46.3
+      @vessel.anchored = true
       @vessel.type = type
   
       @vessel.heading.should eq(193)
+      @vessel.course.should eq(190)
       @vessel.speed.should be_within(0.1).of(46.3)
+      @vessel.anchored.should be_true
       @vessel.type.should eq(type)
     end
     
