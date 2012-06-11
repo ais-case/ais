@@ -17,10 +17,10 @@ After do |scenario|
     name = @failed_scenarios.to_s
     logbase = Rails.root.join('log', name.gsub(' ', '_'))
     FileUtils.makedirs(logbase) 
-    Dir.glob(Rails.root.join('log', '*.log')).each do |log|
+    Dir.glob(Rails.root.join('log', 'log-*.log')).each do |log|
       FileUtils.copy(log, File.join(logbase, File.basename(log)))
     end
   end
   
-  FileUtils.rm(Dir.glob(Rails.root.join('log', '*.log')))
+  FileUtils.rm(Dir.glob(Rails.root.join('log', 'log-*.log')))
 end
