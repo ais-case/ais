@@ -46,19 +46,21 @@ module Service
 
         it "accepts position report requests" do  
           service = TransmitterService.new(@registry)
-          service.process_request('POSITION ' << Marshal.dump(@vessel))
+          service.process_request('POSITION ' << Marshal.dump([@vessel, Time.now]))
         end
 
         it "returns an empy response" do  
           service = TransmitterService.new(@registry)
-          service.process_request('POSITION ' << Marshal.dump(@vessel)).should eq('')
+          service.process_request('POSITION ' << Marshal.dump([@vessel, Time.now])).should eq('')
         end
 
         it "broadcasts the encoded position report" do
-          raw = 'POSITION ' << Marshal.dump(@vessel)
+          timestamp = Time.now
+          expected_message = "%0.9f%s" % [timestamp, @sample_message]
+          raw = 'POSITION ' << Marshal.dump([@vessel, timestamp])
     
           service = TransmitterService.new(@registry)
-          service.should_receive(:broadcast_message).with(@sample_message)
+          service.should_receive(:broadcast_message).with(expected_message)
           service.process_request(raw)
         end
       end
@@ -74,15 +76,16 @@ module Service
 
         it "accepts static info report requests" do  
           service = TransmitterService.new(@registry)
-          service.process_request('STATIC ' << Marshal.dump(@vessel))
+          service.process_request('STATIC ' << Marshal.dump([@vessel, Time.now]))
         end
   
         it "broadcasts the encoded static info report" do
-          raw = 'STATIC ' << Marshal.dump(@vessel)
+          timestamp = Time.now
+          raw = 'STATIC ' << Marshal.dump([@vessel, timestamp])
     
           expected = []
-          expected << "!AIVDM,2,1,,A,50004lP0?w0BCp01eo@00?v000000000000000160000000000000000,0*24\n"
-          expected << "!AIVDM,2,2,,A,00000000000000,0*26\n"
+          expected << "%0.9f!AIVDM,2,1,,A,50004lP0?w0BCp01eo@00?v000000000000000160000000000000000,0*24\n" % timestamp
+          expected << "%0.9f!AIVDM,2,2,,A,00000000000000,0*26\n" % timestamp
           service = TransmitterService.new(@registry)
           service.should_receive(:broadcast_message).with(expected[0])
           service.should_receive(:broadcast_message).with(expected[1])

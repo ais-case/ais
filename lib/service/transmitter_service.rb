@@ -133,7 +133,9 @@ module Service
       
       type_end = data.index(' ')
       type = data[0..(type_end - 1)]
-      vessel = Marshal.load(data[(type_end + 1)..-1])
+      args = Marshal.load(data[(type_end + 1)..-1])
+      vessel = args[0]
+      timestamp = args[1]
       
       fragments = []
       message_factory = Domain::AIS::MessageFactory.new
@@ -157,7 +159,8 @@ module Service
       chunks.each do |chunk|
         fragment = "!AIVDM,#{chunks.length},#{chunk_no},,A,#{chunk},0"
         packet = Domain::AIS::Checksums::add(fragment) << "\n"
-        broadcast_message(packet)
+        prefix = "%0.9f" % timestamp
+        process_raw_message(prefix + packet)
         chunk_no += 1  
       end 
       
