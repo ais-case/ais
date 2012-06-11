@@ -1,8 +1,6 @@
 require 'ffi-rzmq'
 require 'socket'
 require_relative '../util'
-require_relative '../domain/ais/checksums'
-require_relative '../domain/ais/six_bit_encoding'
 require_relative 'platform/base_service'
 require_relative 'platform/subscriber_service'
 require_relative 'platform/publisher_service'
