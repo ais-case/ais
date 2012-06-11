@@ -1,12 +1,12 @@
 
 module VesselComplianceSteps
   def self.create_vessel(i, speed, anchored)
-    vessel = Domain::Vessel.new(1_000 + (100 * i).to_i, Domain::Vessel::CLASS_A)
+    vessel = Domain::Vessel.new(1_000 + i, Domain::Vessel::CLASS_A)
     vessel.name =  name
     vessel.speed = speed.to_f 
     vessel.anchored = true
-    vessel.course = 19.9 * delta
-    vessel.position = Domain::LatLon.new(51.81 + i, 4.0 + 10 * i)
+    vessel.course = 19.9 * i.to_f
+    vessel.position = Domain::LatLon.new(51.81 + (i.to_f / 100.0), 4.0 + (i.to_f / 10.0))
     vessel    
   end
 end
