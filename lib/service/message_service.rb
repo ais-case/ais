@@ -38,20 +38,19 @@ module Service
     end
     
     def process_message(data)
-      # Remove header
-      payload = data.split(' ')[1] 
+      timestamp, payload = data.split(' ')
       
       # Determine message type by examining first byte of payload
       type = nil
       @registry.bind('ais/payload-decoder') do |service|
         type = service.decode(payload[0]).to_i(2)
       end
-      publish_message(type, payload)
+      publish_message(type, timestamp, payload)
     end
     
-    def publish_message(type, payload)
-      @log.debug("Publishing #{payload} under type #{type}")
-      @publisher.publish("#{type.to_s} #{payload}")
+    def publish_message(type, timestamp, payload)
+      @log.debug("Publishing #{payload} with timestamp #{timestamp} under type #{type}")
+      @publisher.publish("%d %s %s" % [type, timestamp, payload])
     end
   end
 end

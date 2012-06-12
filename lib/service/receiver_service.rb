@@ -53,12 +53,13 @@ module Service
     end
     
     def process_message(data)
-      publish_message(data) if Domain::AIS::Checksums::verify(data)      
+      timestamp, fragment = data.split(' ')
+      publish_message(timestamp, fragment) if Domain::AIS::Checksums::verify(fragment)      
     end
     
-    def publish_message(sentence)
-      @log.debug("Publishing SENTENCE #{sentence}")
-      rc = @pub_socket.send_string("SENTENCE #{sentence}")
+    def publish_message(timestamp, sentence)
+      @log.debug("Publishing #{sentence} with timestamp #{timestamp}")
+      @pub_socket.send_string("%s %s" % [timestamp, sentence])
     end
   end
 end

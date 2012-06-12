@@ -21,6 +21,8 @@ module Service
       @vessel2.position = Domain::LatLon.new(3.0, 4.0)
       @vessel3 = Domain::Vessel.new(9012, Domain::Vessel::CLASS_B)
       @vessel3.position = Domain::LatLon.new(2.0, 4.0) 
+      
+      @timestamp = "%0.9f" % Time.new.to_f
     end
     
     it "returns a list of vessels" do
@@ -76,11 +78,11 @@ module Service
 
         service.start('tcp://localhost:23000')
         raw.each do |type,data|
-          sock.send_string("#{type} " << data)
+          sock.send_string("%d %s %s" % [type, @timestamp, data])
 
           # Give service time to receive and process message
           sleep(0.1)
-          service.received_data.should eq("#{type} " << data)  
+          service.received_data.should eq("%d %s %s" % [type, @timestamp, data])  
         end
         service.stop
       ensure
@@ -121,7 +123,7 @@ module Service
     
     it "processes incoming AIS messages into vessel information" do
       # Send position report
-      message = "1 13`wgT0P5fPGmDfN>o?TN2NN2<05"
+      message = "1 #{@timestamp} 13`wgT0P5fPGmDfN>o?TN2NN2<05"
       vessel = Domain::Vessel.new(244314000, Domain::Vessel::CLASS_A)
       vessel.speed = 36.6
       vessel.heading = 79
@@ -138,7 +140,7 @@ module Service
       
       vessel = Domain::Vessel.new(265505410, Domain::Vessel::CLASS_A)
       vessel.type = Domain::VesselType.new(50)
-      message = "5 53u=:PP00001<H?G7OI0ThuB37G61<F22222220j1042240Ht2P00000000000000000008"
+      message = "5 #{@timestamp} 53u=:PP00001<H?G7OI0ThuB37G61<F22222220j1042240Ht2P00000000000000000008"
 
       service = VesselService.new(@registry)
       service.stub(:receiveVessel) do |v|
@@ -152,7 +154,7 @@ module Service
     end
 
     it "don't processes invalid AIS messages" do
-      message = "1 13`wgT0P5fPGmDfN>"
+      message = "1 #{@timestamp} 13`wgT0P5fPGmDfN>"
 
       # Send position report
       service = VesselService.new(@registry)

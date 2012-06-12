@@ -37,21 +37,20 @@ module Service
     end
     
     def process_message(data)
-      # Remove message header
-      sentence = data.split(' ')[1]
+      timestamp, sentence = data.split(' ')
       
       # Concatenate payloads until last fragment is received
       preamble, fragment_count, fragment_number, id, channel, payload, suffix = sentence.split(',')
       @payload << payload
       if fragment_count == fragment_number
-        publish_message(@payload.dup)
+        publish_message(timestamp, @payload.dup)
         @payload = ''
       end
     end
     
-    def publish_message(payload)
-      @log.debug("Publishing PAYLOAD #{payload}")
-      @publisher.publish("PAYLOAD #{payload}")
+    def publish_message(timestamp, payload)
+      @log.debug("Publishing #{payload} with timestamp #{timestamp}")
+      @publisher.publish("%s %s" % [timestamp, payload])
     end
   end
 end

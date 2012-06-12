@@ -60,7 +60,7 @@ module Service
 
     def process_message(data)
       @log.debug("Message incoming: #{data}")
-      payload = data.split(' ')[1]
+      type, timestamp, payload = data.split(' ')
       
       decoded = nil
       @registry.bind('ais/payload-decoder') do |decoder|

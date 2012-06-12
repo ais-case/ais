@@ -5,6 +5,7 @@ module Service
     it_behaves_like "a service"
 
     before(:all) do
+      @timestamp = "%0.9f" % Time.new.to_f
       @valid_message = "!AIVDM,1,1,,B,13OF<80vh2wgiJJNes7EMGrD0<0e,0*00"
       @invalid_message = "!AIVDM,1,1,,B,13OF<80vh2wgiJJNes7EMGrD0<0e,0*11"
     end
@@ -20,7 +21,7 @@ module Service
         ensure 
           socket.close
         end
-      end
+      end      
     end
       
     after(:each) do
@@ -45,28 +46,28 @@ module Service
   
     it "publishes messages with valid checksums" do
       service = ReceiverService.new(@registry)
-      service.should_receive(:publish_message).with(@valid_message)
-      service.process_message(@valid_message)
+      service.should_receive(:publish_message).with(@timestamp, @valid_message)
+      service.process_message("%s %s" % [@timestamp, @valid_message])
     end
 
     it "does not publish messages with invalid checksums" do
       service = ReceiverService.new(@registry)
       service.should_not_receive(:publish_message)
-      service.process_message(@invalid_message)
+      service.process_message("%s %s" % [@timestamp, @invalid_message])
     end
     
     it "broadcasts published messages to subscribers" do
       handler = double('Subscriber')
-      handler.should_receive(:handle_request).with("SENTENCE #{@valid_message}")
+      handler.should_receive(:handle_request).with("%s %s" % [@timestamp, @valid_message])
 
-      subscr = Platform::SubscriberService.new(handler.method(:handle_request), ['SENTENCE '], MockLogger.new)
+      subscr = Platform::SubscriberService.new(handler.method(:handle_request), [''], MockLogger.new)
       
       service = ReceiverService.new(@registry)
       begin
         service.start('tcp://*:29000')
 
         subscr.start('tcp://localhost:29000')    
-        service.publish_message(@valid_message)
+        service.publish_message(@timestamp, @valid_message)
         
         # Wait a very short time to allow for message delivery 
         sleep(0.1)

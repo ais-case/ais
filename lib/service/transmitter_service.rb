@@ -119,11 +119,13 @@ module Service
       return if data[0] == '#'
       i = data.index('!')
       return unless i
-      broadcast_message(data[i..-1].strip)
+      timestamp = data[0..i-1].strip
+      fragment = data[i..-1].strip
+      broadcast_message(timestamp, fragment)
     end
     
-    def broadcast_message(message)
-      @messages.push(message)      
+    def broadcast_message(timestamp, message)
+      @messages.push("%s %s" % [timestamp, message])
     end
     
     def process_request(data)

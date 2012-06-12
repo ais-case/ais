@@ -20,9 +20,10 @@ module Service
       proxy.stub(:decode).and_return('1')
       @registry.stub(:bind).and_yield(proxy)
 
+      timestamp = "%0.9f" % Time.new.to_f
       service = MessageService.new(@registry)
-      service.should_receive(:publish_message).with(@sample_type, @sample_payload)
-      service.process_message('PAYLOAD ' << @sample_payload)
+      service.should_receive(:publish_message).with(@sample_type, timestamp, @sample_payload)
+      service.process_message("%s %s" % [timestamp, @sample_payload])
     end
 
     it "listens for AIS payloads" do
@@ -44,11 +45,12 @@ module Service
 
         service.start('tcp://*:23001')
         payloads.each do |payload|
-          sock.send_string('PAYLOAD ' << payload)
+          message = "%0.9f %s" % [Time.new.to_f, payload]
+          sock.send_string(message)
 
           # Give service time to receive and process message
-          sleep(0.1)
-          service.received_data.should eq('PAYLOAD ' << payload)  
+          sleep(0.01)
+          service.received_data.should eq(message)  
         end
         service.stop
       ensure
@@ -57,8 +59,10 @@ module Service
     end
 
     it "broadcasts published messages to subscribers" do
+      timestamp = "%0.9f%" % Time.new.to_f
+      expected = "%s %s %s" % [@sample_type, timestamp, @sample_payload]
       handler = double('Subscriber')
-      handler.should_receive(:handle_request).with("#{@sample_type} #{@sample_payload}")
+      handler.should_receive(:handle_request).with(expected)
 
       subscr = Platform::SubscriberService.new(handler.method(:handle_request), ['1 '], MockLogger.new)
       
@@ -67,7 +71,7 @@ module Service
         service.start('tcp://*:29000')
 
         subscr.start('tcp://localhost:29000')    
-        service.publish_message(@sample_type, @sample_payload)
+        service.publish_message(@sample_type, timestamp, @sample_payload)
         
         # Wait a very short time to allow for message delivery 
         sleep(0.1)
