@@ -1,6 +1,7 @@
 require 'ffi-rzmq'
 require 'socket'
 require_relative '../util'
+require_relative '../domain/ais/message_factory'
 require_relative 'platform/base_service'
 require_relative 'platform/subscriber_service'
 require_relative 'platform/publisher_service'
