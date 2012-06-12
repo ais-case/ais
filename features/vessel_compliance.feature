@@ -90,8 +90,8 @@ Feature: Vessel Compliance
      When these vessels send a static report
       And send another static report after:
         | name       | interval |
-        | Sea Lion   | 3600.0   |
-        | Seal       | 3600.1   |
+        | Sea Lion   | 360.0   |
+        | Seal       | 360.1   |
      Then the compliance of the vessels should be marked as:
         | name       | compliant |
         | Sea Lion   | yes       |
