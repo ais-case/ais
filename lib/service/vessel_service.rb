@@ -16,6 +16,7 @@ module Service
       @reply_service = Platform::ReplyService.new(method(:process_request), @log)
       filter = ['1 ', '2 ', '3 ', '5 ', '18 ', '19 ', '24 ']
       @message_service = Platform::SubscriberService.new(method(:process_message), filter, @log)
+      @compliance_service = Platform::SubscriberService.new(method(:process_compliance_report), [''], @log)
     end
     
     def start(endpoint)
@@ -24,6 +25,8 @@ module Service
       
       message_endpoint = @registry.lookup('ais/message')
       @message_service.start(message_endpoint) if message_endpoint
+      compliance_endpoint = @registry.lookup('ais/compliance')
+      @compliance_service.start(compliance_endpoint) if compliance_endpoint
       @reply_service.start(endpoint)
       
       register_self('ais/vessel', endpoint)
@@ -37,7 +40,22 @@ module Service
     def stop
       @reply_service.stop
       @message_service.stop
+      @compliance_service.stop
       super
+    end
+
+    def process_compliance_report(data)
+      request = data.split(' ')
+      if request.length != 2 or request[0] != 'NON-COMPLIANT'
+        return
+      end
+      mmsi = request[1].to_i
+      
+      @vessels_mutex.synchronize do
+        if @vessels.has_key?(mmsi)
+          @vessels[mmsi].compliant = false
+        end
+      end
     end
 
     def process_message(data)

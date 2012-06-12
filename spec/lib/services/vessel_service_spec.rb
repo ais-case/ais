@@ -87,6 +87,37 @@ module Service
         sock.close
       end
     end
+
+    it "listens for compliance reports" do
+      raw = ["NON-COMPLIANT 12345", "NON-COMPLIANT 67890"]
+
+      ctx = ZMQ::Context.new
+      sock = ctx.socket(ZMQ::PUB)
+      begin
+        rc = sock.bind('tcp://*:21015')
+        ZMQ::Util.resultcode_ok?(rc).should be_true
+        @registry.register('ais/compliance', 'tcp://localhost:21015')
+        
+        service = (Class.new(VesselService) do
+          attr_reader :received_data
+          def process_compliance_report(data)
+            @received_data = data
+          end
+        end).new(@registry)
+
+        service.start('tcp://localhost:23001')
+        raw.each do |data|
+          sock.send_string(data)
+
+          # Give service time to receive and process message
+          sleep(0.1)
+          service.received_data.should eq(data)  
+        end
+        service.stop
+      ensure
+        sock.close
+      end
+    end
     
     it "processes incoming AIS messages into vessel information" do
       # Send position report
@@ -159,6 +190,33 @@ module Service
       service.receiveVessel(vessel2)
       vessels = service.process_request('LIST')
       vessels.should eq(Marshal.dump([vessel1, vessel2]))
-    end    
+    end
+    
+    describe "process_compliance_report" do
+      it "marks reported vessels as non-compliant" do
+        vessel = Domain::Vessel.new(1234, Domain::Vessel::CLASS_A)
+        vessel.position = Domain::LatLon.new(3.0, 4.0) 
+      
+        service = VesselService.new(@registry)
+        service.receiveVessel(vessel)
+        service.process_compliance_report("NON-COMPLIANT 1234")
+        returned_vessel = Marshal.load(service.process_request('INFO 1234'))
+        returned_vessel.compliant.should be_false
+      end
+
+      it "ignores reports for unknown vessels" do
+        # First send report
+        service = VesselService.new(@registry)
+        service.process_compliance_report("NON-COMPLIANT 1234")
+
+        # Only then add the vessel
+        vessel = Domain::Vessel.new(1234, Domain::Vessel::CLASS_A)
+        vessel.position = Domain::LatLon.new(3.0, 4.0) 
+        service.receiveVessel(vessel)
+        
+        returned_vessel = Marshal.load(service.process_request('INFO 1234'))
+        returned_vessel.compliant.should be_true
+      end
+    end
   end
 end
