@@ -9,10 +9,10 @@ module Service
     it_behaves_like "a service"
     
     it "listens for AIS messages reports" do
-      raw = {1 => "13`wgT0P5fPGmDfN>o?TN?vN2<05",
-             2 => "23`wgT0P5fPGmDfN>o?TN?vN2<05",
-             3 => "33`wgT0P5fPGmDfN>o?TN?vN2<05",
-             5 => "53u=:PP00001<H?G7OI0ThuB37G61<F22222220j1042240Ht2P00000000000000000008"}
+      raw = {1 => "#{Time.new.to_f} 13`wgT0P5fPGmDfN>o?TN?vN2<05",
+             2 => "#{Time.new.to_f} 23`wgT0P5fPGmDfN>o?TN?vN2<05",
+             3 => "#{Time.new.to_f} 33`wgT0P5fPGmDfN>o?TN?vN2<05",
+             5 => "#{Time.new.to_f} 53u=:PP00001<H?G7OI0ThuB37G61<F22222220j1042240Ht2P00000000000000000008"}
 
       ctx = ZMQ::Context.new
       sock = ctx.socket(ZMQ::PUB)
@@ -62,5 +62,70 @@ module Service
         subscr.stop
       end
     end
+
+    describe "process_message" do
+      it "adds expectations to the queue" do
+        payload1 = "50004lP00000000000000000000000000000000t0000000000000000000000000000000"
+        payload2 = "50005lP00000000000000000000000000000000t0000000000000000000000000000000"
+      
+        proxy = double('Proxy')
+        proxy.stub(:decode).with(payload1).and_return(Domain::AIS::SixBitEncoding.decode(payload1))
+        proxy.stub(:decode).with(payload2).and_return(Domain::AIS::SixBitEncoding.decode(payload2))
+        @registry.stub(:bind).and_yield(proxy)
+        
+        queue = double('Queue')
+
+        service = ComplianceService.new(@registry)
+        service.expected = queue
+
+        last = Time.new.to_f
+
+        messages = [
+          {:ts => last - 400, :mmsi => 1490, :payload => payload2},
+          {:ts => last - 360 - 1, :mmsi => 1234, :payload => payload1},
+          {:ts => last - 90, :mmsi => 1490, :payload => payload2},
+          {:ts => last, :mmsi => 1234, :payload => payload1}
+          ]
+          
+        messages.each do |msg|
+          queue.should_receive(:push).with([msg[:ts], msg[:ts] + 360, msg[:mmsi]])
+          service.process_message("5 #{msg[:ts]} #{msg[:payload]}")
+        end        
+      end
+    end
+    
+    describe "check_compliance" do
+      it "broadcasts when the interval between static reports is longer than 6 minutes" do
+        queue = Queue.new
+        recv_mutex = Mutex.new
+        recv = {}
+        publisher = double('Publisher')
+        publisher.should_receive(:publish).with("NON-COMPLIANT 1234")
+        
+        expect_at = Time.new.to_f
+        last = expect_at - 361.0
+        recv[1234] = last
+        queue.push([last, expect_at, 1234])
+        
+        service = ComplianceService.new(@registry)
+        service.check_compliance(publisher.method(:publish), queue, recv, recv_mutex)
+      end
+
+      it "does not broadcast when the interval between static reports is 6 minutes or shorter" do
+        queue = Queue.new
+        recv_mutex = Mutex.new
+        recv = {}
+        publisher = double('Publisher')
+        publisher.should_not_receive(:publish)
+        
+        expect_at = Time.new.to_f
+        last = expect_at - 360.0
+        recv[1234] = expect_at - 0.01
+        queue.push([last, expect_at, 1234])
+        
+        service = ComplianceService.new(@registry)
+        service.check_compliance(publisher.method(:publish), queue, recv, recv_mutex)
+      end
+    end  
   end
 end
