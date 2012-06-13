@@ -9,6 +9,22 @@ module VesselComplianceSteps
     vessel.position = Domain::LatLon.new(51.81 + (i.to_f / 100.0), 4.0 + (i.to_f / 10.0))
     vessel    
   end
+  
+  def self.send_first_report(info, report_type, registry)
+    timestamps = {}
+    info.each do |vessel,interval|
+      timestamp = Time.new.to_f - interval + 1
+      registry.bind('ais/transmitter') do |service|
+        if report_type == 'static'
+          service.send_static_report_for(vessel, timestamp)
+        else
+          service.send_position_report_for(vessel, timestamp)
+        end
+      end
+      timestamps[vessel.mmsi] = timestamp
+    end  
+    timestamps
+  end
 end
 
 Given /^anchored class "(.*?)" vessels with dynamic information:$/ do |class_str, table|
@@ -58,27 +74,36 @@ Given /^class "(.*?)" vessels:$/ do |class_str, table|
 end
 
 When /^these vessels send a position report$/ do
-  @times = {}
-  @vessels.each do |name, vessel|
-    @times[name] = Time.now 
-    @registry.bind('ais/transmitter') do |service|
-      service.send_position_report_for(vessel, @times[name])
-    end
-  end
+  @last_report = 'dynamic'
 end
 
 When /^send another position report after:$/ do |table|
-  table.rows_hash.each do |name,interval|
+  # Gather info
+  info = []
+  table.rows_hash.each do |name,interval_str|
     next if name == 'name'
     raise "Vessel '#{name}' not known" unless @vessels.has_key?(name)
-    if @changing_course and @changing_course.has_key?(name)
-      @vessels[name].course += 19.9
+    
+    vessel = @vessels[name]
+    interval = interval_str.to_f
+    info << [vessel, interval]
+  end
+   
+  
+  # First message
+  timestamps = VesselComplianceSteps::send_first_report(info, @last_report, @registry)
+
+  # Second message
+  info.each do |vessel,interval|
+    if @changing_course and @changing_course.has_key?(vessel.name)
+      vessel.course += 19.9
     end
 
     @registry.bind('ais/transmitter') do |service|
-      service.send_position_report_for(@vessels[name], @times[name] + interval.to_f)
+      service.send_position_report_for(vessel, timestamps[vessel.mmsi] + interval)
     end
   end  
+  sleep(1)    
 end
 
 When /^these vessels send a static report$/ do
@@ -100,18 +125,7 @@ When /^send another static report after:$/ do |table|
    
   
   # First message
-  timestamps = {}
-  info.each do |vessel,interval|
-    timestamp = Time.new.to_f - interval + 1
-    @registry.bind('ais/transmitter') do |service|
-      if @last_report == 'static'
-        service.send_static_report_for(vessel, timestamp)
-      else
-        service.send_position_report_for(vessel, timestamp)
-      end
-    end
-    timestamps[vessel.mmsi] = timestamp
-  end  
+  timestamps = VesselComplianceSteps::send_first_report(info, @last_report, @registry)
 
   # Second message
   info.each do |vessel,interval|
