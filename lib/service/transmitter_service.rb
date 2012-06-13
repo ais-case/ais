@@ -119,7 +119,11 @@ module Service
       return if data[0] == '#'
       i = data.index('!')
       return unless i
-      timestamp = data[0..i-1].strip
+      if i > 0
+        timestamp = data[0..i-1].strip
+      else 
+        timestamp = "%0.9f" % Time.new.to_f
+      end
       fragment = data[i..-1].strip
       broadcast_message(timestamp, fragment)
     end

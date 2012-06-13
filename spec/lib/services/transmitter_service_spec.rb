@@ -20,7 +20,10 @@ module Service
     describe "process_raw_message" do
       it "broadcasts processed messages" do
         service = TransmitterService.new(@registry)
-        service.should_receive(:broadcast_message).once
+        service.should_receive(:broadcast_message).once do |timestamp,message|
+          timestamp.should match(/^\d+\.\d+$/)
+          message.should eq(@sample_message)
+        end
         service.process_raw_message(@sample_message)
       end
         
