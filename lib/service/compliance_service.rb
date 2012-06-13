@@ -85,13 +85,15 @@ module Service
         mmsi = message.mmsi
       end
       
-      @log.debug("Message with timestamp #{timestamp} and mmsi #{mmsi}")
+      @log.debug("Message #{payload} with timestamp #{timestamp} and mmsi #{mmsi}")
 
       if not @last_recv.has_key?(mmsi)
+        @log.debug("New vessel with mmsi #{mmsi}")
         @last_recv[mmsi] = Queue.new
       end
 
       if type == 5
+        @log.debug("Registered reception of message type 5 from #{mmsi}")
         @last_recv[mmsi].push(timestamp)
       end
       
