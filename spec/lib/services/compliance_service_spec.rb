@@ -119,6 +119,38 @@ module Service
           service.process_message("1 #{msg[:ts]} #{msg[:payload]}")
         end        
       end
+
+      it "adds received dynamic messages to the queue of the vessels" do
+        payload1 = "10004lP08M0BCp01eo@007r00000"
+        payload2 = "10005lP08M0BCp01eo@007r00000"
+      
+        proxy = double('Proxy')
+        proxy.stub(:decode).with(payload1).and_return(Domain::AIS::SixBitEncoding.decode(payload1))
+        proxy.stub(:decode).with(payload2).and_return(Domain::AIS::SixBitEncoding.decode(payload2))
+        @registry.stub(:bind).and_yield(proxy)
+        
+        dynamic_received = double('Queue')
+
+        service = ComplianceService.new(@registry)
+        service.dynamic_received = dynamic_received
+
+        messages = [
+          {:ts => Time.new.to_f, :payload => payload2},
+          {:ts => Time.new.to_f, :payload => payload1},
+          ]
+          
+        messages.each do |msg|
+          decoded = Domain::AIS::SixBitEncoding.decode(msg[:payload])
+          message = Domain::AIS::MessageFactory.fromPayload(decoded)
+          dynamic_received.should_receive(:push).with(message.mmsi)
+          service.process_message("1 #{msg[:ts]} #{msg[:payload]}")
+          Timeout::timeout(1) do 
+            ts, ret_message = service.dynamic_messages[message.mmsi].pop
+            ts.should eq(msg[:ts])
+            ret_message.should be_kind_of(Domain::AIS::Message1)
+          end
+        end        
+      end
     end
     
     describe "check_compliance" do
@@ -158,6 +190,60 @@ module Service
         service = ComplianceService.new(@registry)
         4.times do
           service.check_compliance(publisher.method(:publish), queue, recv)
+        end
+      end
+    end
+    
+    describe "check_dynamic_compliance" do
+      describe "for non-anchored, non-route changing vessels" do
+        it "broadcasts when the interval between dynamic reports is too long" do
+          received = Queue.new
+          messages = {}
+          publisher = double('Publisher')
+          
+          {1.0 => 10, 14.1 => 6, 23.1 => 2}.each do |speed,interval|
+            mmsi = 1000 + interval
+            vessel = Domain::Vessel.new(mmsi, Domain::Vessel::CLASS_A)
+            vessel.position = Domain::LatLon.new(52, 4)
+            vessel.speed = speed
+            message = Domain::AIS::MessageFactory.new.create_position_report(vessel)
+            timestamp = Time.new.to_f
+            messages[mmsi] = Queue.new
+            messages[mmsi].push([timestamp - interval - 1, message])
+            messages[mmsi].push([timestamp, message.clone])
+            publisher.should_receive(:publish).with(mmsi)
+            received.push(mmsi) 
+          end
+          
+          service = ComplianceService.new(@registry)
+          3.times do
+            service.check_dynamic_compliance(publisher.method(:publish), received, messages)
+          end
+        end
+
+        it "doesn't broadcast when the interval between dynamic reports is correct" do
+          received = Queue.new
+          messages = {}
+          publisher = double('Publisher')
+          publisher.should_not_receive(:publish)
+          
+          {1.0 => 10, 14.1 => 6, 23.1 => 2}.each do |speed,interval|
+            mmsi = 1000 + interval
+            vessel = Domain::Vessel.new(mmsi, Domain::Vessel::CLASS_A)
+            vessel.position = Domain::LatLon.new(52, 4)
+            vessel.speed = speed
+            message = Domain::AIS::MessageFactory.new.create_position_report(vessel)
+            timestamp = Time.new.to_f
+            messages[mmsi] = Queue.new
+            messages[mmsi].push([timestamp - interval, message])
+            messages[mmsi].push([timestamp, message.clone])
+            received.push(mmsi) 
+          end
+          
+          service = ComplianceService.new(@registry)
+          3.times do
+            service.check_dynamic_compliance(publisher.method(:publish), received, messages)
+          end
         end
       end
     end  

@@ -8,7 +8,8 @@ require_relative 'platform/publisher_service'
 
 module Service
   class ComplianceService < Platform::BaseService
-    attr_writer :expected
+    attr_reader :dynamic_messages
+    attr_writer :expected, :dynamic_received
     
     def initialize(registry)
       super(registry)
@@ -18,7 +19,11 @@ module Service
       @message_service = Platform::SubscriberService.new(method(:process_message), filter, @log)
       @publisher = Platform::PublisherService.new(@log)
       @checker_thread = nil
+      @dynchecker_thread = nil
       @expected = Queue.new
+      @dynamic_received = Queue.new
+      @dynamic_messages = {}
+      @dynamic_buffered = {}
       @last_recv = {}
       @next_ts = {}
     end
@@ -42,6 +47,19 @@ module Service
         end
       end
 
+      @dynchecker_thread = Thread.new do
+        begin
+          loop do
+            check_dynamic_compliance(method(:publish_message), @dynamic_received, @dynamic_messages)
+          end
+        rescue => e
+          @log.fatal("Checker thread exception: #{e.message}")
+          e.backtrace.each { |line| @log.fatal(line) }
+          puts e.message
+          raise
+        end
+      end
+
       register_self('ais/compliance', endpoint)
       @log.info("Service started")
     end
@@ -52,6 +70,7 @@ module Service
     
     def stop
       @checker_thread.kill if @checker_thread
+      @dynchecker_thread.kill if @dynchecker_thread
       @message_service.stop
       @publisher.stop
     end
@@ -86,6 +105,14 @@ module Service
       end
       
       @log.debug("Message #{payload} with timestamp #{timestamp} and mmsi #{mmsi}")
+
+      if type == 1 or type == 2 or type == 3
+        if not @dynamic_messages.has_key?(mmsi)
+          @dynamic_messages[mmsi] = Queue.new
+        end
+        @dynamic_messages[mmsi].push([timestamp, message])
+        @dynamic_received.push(mmsi)
+      end
 
       if not @last_recv.has_key?(mmsi)
         @log.debug("New vessel with mmsi #{mmsi}")
@@ -130,6 +157,51 @@ module Service
             
       @log.debug("Vessel #{mmsi} compliant: #{compliant}")
       
+      if not compliant
+        publish_method.call(mmsi)
+      end
+    end
+
+    def check_dynamic_compliance(publish_method, received, receptions)
+      mmsi = received.pop
+      @log.debug("Processing messages for vessel #{mmsi}")
+      
+      if @dynamic_buffered.has_key?(mmsi)
+        prev_reception = @dynamic_buffered[mmsi]
+      else
+        # Should never throw an exception, if received could be popped 
+        # there should always be a message in the queue. Using non-blocking
+        # pop anyway to fail early if this is not the case.
+        prev_reception = receptions[mmsi].pop(true)
+      end
+      
+      compliant = true
+      begin
+        loop do
+          reception = receptions[mmsi].pop(true)
+          timestamp, message = reception
+          prev_timestamp, prev_message = prev_reception
+         
+          min_speed = [message.speed, prev_message.speed].min
+          if min_speed > 23.0
+            interval = 2.0
+          elsif min_speed > 14.0 
+            interval = 6.0
+          else 
+            interval = 10.0
+          end
+          
+          if timestamp - prev_timestamp > interval
+            compliant = false
+          end
+          prev_reception = reception
+        end
+      rescue ThreadError
+        @dynamic_buffered[mmsi] = prev_reception
+      end
+
+      @log.debug("Vessel #{mmsi} compliant: #{compliant}")
+
       if not compliant
         publish_method.call(mmsi)
       end

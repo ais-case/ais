@@ -24,8 +24,7 @@ Feature: Vessel Compliance
         | Seal       | no        |
         | Seagull    | yes       |
         | Seahorse   | no        |
-      
-  @wip
+   
   Scenario: dynamic information of moving, non-anchored vessels not changing course
     Given non-anchored class "A" vessels with dynamic information:
         | name       | speed |
