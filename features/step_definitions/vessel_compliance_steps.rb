@@ -6,7 +6,7 @@ module VesselComplianceSteps
     vessel.speed = speed.to_f 
     vessel.anchored = true
     vessel.heading = 19.9 * i.to_f
-    vessel.position = Domain::LatLon.new(51.81 + (i.to_f / 100.0), 4.0 + (i.to_f / 10.0))
+    vessel.position = Domain::LatLon.new(51.81 + (i.to_f / 50.0), 4.1 + (i.to_f / 20.0))
     vessel    
   end
   
@@ -139,9 +139,18 @@ Then /^the compliance of the vessels should be marked as:$/ do |table|
     next if name == 'name'
     raise "Vessel '#{name}' not known" unless @vessels.has_key?(name)
     position = @vessels[name].position
+    
+    args = [position.lat, position.lon]
+    js = "map.hasMarkerAt(new LatLon(%f,%f))" % args
+    marked = page.evaluate_script(js)
+    if not marked
+      raise "No marker for vessel #{name} found at position #{position}"
+    end
+    
     args = [position.lat, position.lon, 'red']
     js = "map.hasMarkerAt(new LatLon(%f,%f), '%s')" % args
     marked_as_compliant = (not page.evaluate_script(js))
+    
     if compliant == 'yes' and not marked_as_compliant
       raise "Vessel #{name} is compliant, yet is shown as non-compliant"
     elsif compliant == 'no' and marked_as_compliant
