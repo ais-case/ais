@@ -183,12 +183,31 @@ module Service
           prev_timestamp, prev_message = prev_reception
          
           min_speed = [message.speed, prev_message.speed].min
-          if min_speed > 23.0
-            interval = 2.0
-          elsif min_speed > 14.0 
-            interval = 6.0
-          else 
-            interval = 10.0
+          course_changed = false
+          if message.heading and prev_message.heading
+            heading_change = (message.heading - prev_message.heading).abs
+            course_changed = (heading_change > 5)
+          end
+          
+          @log.debug("Headings: #{message.heading} and #{prev_message.heading}")
+          @log.debug("Course changed: #{course_changed}")
+          
+          if course_changed
+            if min_speed > 23.0
+              interval = 2.0
+            elsif min_speed > 14.0
+              interval = 2.0
+            else 
+              interval = 3.5
+            end
+          else
+            if min_speed > 23.0
+              interval = 2.0
+            elsif min_speed > 14.0
+              interval = 6.0
+            else 
+              interval = 10.0
+            end            
           end
           
           if timestamp - prev_timestamp > interval

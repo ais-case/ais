@@ -5,7 +5,7 @@ module VesselComplianceSteps
     vessel.name = name
     vessel.speed = speed.to_f 
     vessel.anchored = true
-    vessel.course = 19.9 * i.to_f
+    vessel.heading = 19.9 * i.to_f
     vessel.position = Domain::LatLon.new(51.81 + (i.to_f / 100.0), 4.0 + (i.to_f / 10.0))
     vessel    
   end
@@ -93,7 +93,7 @@ When /^send another position report after:$/ do |table|
   # Second message
   info.each do |vessel,interval|
     if @changing_course and @changing_course.has_key?(vessel.name)
-      vessel.course += 19.9
+      vessel.heading += 19.9
     end
 
     @registry.bind('ais/transmitter') do |service|

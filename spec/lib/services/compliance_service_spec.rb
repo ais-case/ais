@@ -202,7 +202,7 @@ module Service
           publisher = double('Publisher')
           
           {1.0 => 10, 14.1 => 6, 23.1 => 2}.each do |speed,interval|
-            mmsi = 1000 + interval
+            mmsi = 1000 + speed.to_i
             vessel = Domain::Vessel.new(mmsi, Domain::Vessel::CLASS_A)
             vessel.position = Domain::LatLon.new(52, 4)
             vessel.speed = speed
@@ -228,7 +228,7 @@ module Service
           publisher.should_not_receive(:publish)
           
           {1.0 => 10, 14.1 => 6, 23.1 => 2}.each do |speed,interval|
-            mmsi = 1000 + interval
+            mmsi = 1000 + speed.to_i
             vessel = Domain::Vessel.new(mmsi, Domain::Vessel::CLASS_A)
             vessel.position = Domain::LatLon.new(52, 4)
             vessel.speed = speed
@@ -236,6 +236,72 @@ module Service
             timestamp = Time.new.to_f
             messages[mmsi] = Queue.new
             messages[mmsi].push([timestamp - interval, message])
+            messages[mmsi].push([timestamp, message.clone])
+            received.push(mmsi) 
+          end
+          
+          service = ComplianceService.new(@registry)
+          3.times do
+            service.check_dynamic_compliance(publisher.method(:publish), received, messages)
+          end
+        end
+      end
+
+      describe "for non-anchored, route changing vessels" do
+        it "broadcasts when the interval between dynamic reports is too long" do
+          received = Queue.new
+          messages = {}
+          publisher = double('Publisher')
+          
+          {1.0 => 3.5, 14.1 => 2, 23.1 => 2}.each do |speed,interval|
+            mmsi = 1000 + speed.to_i
+            vessel = Domain::Vessel.new(mmsi, Domain::Vessel::CLASS_A)
+            vessel.position = Domain::LatLon.new(52, 4)
+            vessel.speed = speed
+            
+            vessel.heading = 80
+            message = Domain::AIS::MessageFactory.new.create_position_report(vessel)
+            
+            timestamp = Time.new.to_f
+            messages[mmsi] = Queue.new
+            messages[mmsi].push([timestamp - interval - 1, message.clone])
+
+            vessel.heading = 10
+            message = Domain::AIS::MessageFactory.new.create_position_report(vessel)
+            
+            messages[mmsi].push([timestamp, message.clone])
+            publisher.should_receive(:publish).with(mmsi)
+            received.push(mmsi) 
+          end
+          
+          service = ComplianceService.new(@registry)
+          3.times do
+            service.check_dynamic_compliance(publisher.method(:publish), received, messages)
+          end
+        end
+
+        it "doesn't broadcast when the interval between dynamic reports is correct" do
+          received = Queue.new
+          messages = {}
+          publisher = double('Publisher')
+          publisher.should_not_receive(:publish)
+          
+          {1.0 => 3.5, 14.1 => 2, 23.1 => 2}.each do |speed,interval|
+            mmsi = 1000 + speed.to_i
+            vessel = Domain::Vessel.new(mmsi, Domain::Vessel::CLASS_A)
+            vessel.position = Domain::LatLon.new(52, 4)
+            vessel.speed = speed
+            
+            vessel.heading = 80
+            message = Domain::AIS::MessageFactory.new.create_position_report(vessel)
+            
+            timestamp = Time.new.to_f
+            messages[mmsi] = Queue.new
+            messages[mmsi].push([timestamp - interval, message.clone])
+
+            vessel.heading = 10
+            message = Domain::AIS::MessageFactory.new.create_position_report(vessel)
+            
             messages[mmsi].push([timestamp, message.clone])
             received.push(mmsi) 
           end
