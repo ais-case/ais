@@ -17,6 +17,7 @@ module Domain::AIS
         msg.lon.should be_within(1.0/1_000_000).of(5.206438)
         msg.speed.should be_within(0.1).of(36.6)
         msg.heading.should be(79)
+        msg.navigation_status.should eq(Domain::NavigationStatus.new(0))
       end
 
       it "can create a class B position report message from a payload" do

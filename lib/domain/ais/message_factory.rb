@@ -5,6 +5,7 @@ require_relative 'message5'
 require_relative 'message18'
 require_relative 'message19'
 require_relative 'message24'
+require_relative '../navigation_status'
 require_relative '../vessel'
 require_relative '../vessel_type'
 
@@ -25,7 +26,8 @@ module Domain
             message = Message1.new(mmsi)
             message.lat, message.lon = decode_latlon(decoded[89..115], decoded[61..88])
             message.speed = decode_speed(decoded[50..59])
-            message.heading = decode_heading(decoded[128..136])            
+            message.heading = decode_heading(decoded[128..136])
+            message.navigation_status = decode_navigation_status(decoded[38..41])
           end
         elsif msg_type == 5
           if decoded.length >= 424
@@ -75,11 +77,18 @@ module Domain
         (heading == 511) ? nil : heading
       end
       
+      def self.decode_navigation_status(bits)
+        Domain::NavigationStatus.new(Datatypes::UInt.from_bit_string(bits))
+      end
+      
       def create_position_report(vessel)
         if vessel.vessel_class == Domain::Vessel::CLASS_B
           message = Message18.new(vessel.mmsi)
         else
           message = Message1.new(vessel.mmsi)
+          if vessel.navigation_status 
+            message.navigation_status = vessel.navigation_status
+          end
         end
         message.lon = vessel.position.lon
         message.lat = vessel.position.lat
