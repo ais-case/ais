@@ -1,8 +1,8 @@
 
 module VesselComplianceSteps
-  def self.create_vessel(i, speed, anchored)
+  def self.create_vessel(i, name, speed, anchored)
     vessel = Domain::Vessel.new(1_000 + i, Domain::Vessel::CLASS_A)
-    vessel.name =  name
+    vessel.name = name
     vessel.speed = speed.to_f 
     vessel.anchored = true
     vessel.course = 19.9 * i.to_f
@@ -34,7 +34,7 @@ Given /^anchored class "(.*?)" vessels with dynamic information:$/ do |class_str
   @vessels = {}
   table.rows_hash.each do |name,speed|
     next if name == 'name'
-    @vessels[name] = VesselComplianceSteps::create_vessel(@vessels.length, speed, true)
+    @vessels[name] = VesselComplianceSteps::create_vessel(@vessels.length, name, speed, true)
   end
 end
 
@@ -44,7 +44,7 @@ Given /^non\-anchored class "(.*?)" vessels with dynamic information:$/ do |clas
   @vessels = {}
   table.rows_hash.each do |name,speed|
     next if name == 'name'
-    @vessels[name] = VesselComplianceSteps::create_vessel(@vessels.length, speed, false)
+    @vessels[name] = VesselComplianceSteps::create_vessel(@vessels.length, name, speed, false)
   end
 end
 
@@ -56,7 +56,7 @@ Given /^class "(.*?)" vessels with a changing course and dynamic information:$/ 
   table.rows_hash.each do |name,speed|
     next if name == 'name'
     @changing_course[name] = true
-    @vessels[name] = VesselComplianceSteps::create_vessel(@vessels.length, speed, false)
+    @vessels[name] = VesselComplianceSteps::create_vessel(@vessels.length, name, speed, false)
   end
 end
 
@@ -66,7 +66,7 @@ Given /^class "(.*?)" vessels:$/ do |class_str, table|
   @vessels = {}
   table.raw.flatten.each do |name|
     next if name == 'name'
-    @vessels[name] = VesselComplianceSteps::create_vessel(@vessels.length, 10.0, false)
+    @vessels[name] = VesselComplianceSteps::create_vessel(@vessels.length, name, 10.0, false)
   end
 end
 
