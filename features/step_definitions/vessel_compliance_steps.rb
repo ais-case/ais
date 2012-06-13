@@ -15,10 +15,11 @@ module VesselComplianceSteps
     info.each do |vessel,interval|
       timestamp = Time.new.to_f - interval + 1
       registry.bind('ais/transmitter') do |service|
-        if report_type == 'static'
+        service.send_position_report_for(vessel, timestamp)
+      end
+      if report_type == 'static'
+        registry.bind('ais/transmitter') do |service|
           service.send_static_report_for(vessel, timestamp)
-        else
-          service.send_position_report_for(vessel, timestamp)
         end
       end
       timestamps[vessel.mmsi] = timestamp
@@ -66,10 +67,6 @@ Given /^class "(.*?)" vessels:$/ do |class_str, table|
   table.raw.flatten.each do |name|
     next if name == 'name'
     @vessels[name] = VesselComplianceSteps::create_vessel(@vessels.length, 10.0, false)
-
-    @registry.bind('ais/transmitter') do |service|
-      service.send_position_report_for(@vessels[name])
-    end
   end
 end
 

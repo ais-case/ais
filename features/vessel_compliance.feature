@@ -81,12 +81,27 @@ Feature: Vessel Compliance
         | Sea Otter  | yes       |
         | Seahawk    | no        |
 
-  Scenario: static information
+  Scenario: static reports should be received within 6 minutes of each other
     Given class "A" vessels:
         | name       |
         | Sea Lion   |
         | Seal       |
      When these vessels send a static report
+      And send another static report after:
+        | name       | interval |
+        | Sea Lion   | 360.0   |
+        | Seal       | 360.1   |
+     Then the compliance of the vessels should be marked as:
+        | name       | compliant |
+        | Sea Lion   | yes       |
+        | Seal       | no        |
+        
+  Scenario: static reports should be received within 6 minutes of a position report
+    Given class "A" vessels:
+        | name       |
+        | Sea Lion   |
+        | Seal       |
+     When these vessels send a position report
       And send another static report after:
         | name       | interval |
         | Sea Lion   | 360.0   |

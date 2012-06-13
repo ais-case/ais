@@ -64,7 +64,7 @@ module Service
     end
 
     describe "process_message" do
-      it "adds expectations to the queue" do
+      it "adds expectations for the next static message when a static message is received" do        
         payload1 = "50004lP00000000000000000000000000000000t0000000000000000000000000000000"
         payload2 = "50005lP00000000000000000000000000000000t0000000000000000000000000000000"
       
@@ -90,6 +90,33 @@ module Service
         messages.each do |msg|
           queue.should_receive(:push).with([msg[:ts], msg[:ts] + 360, msg[:mmsi]])
           service.process_message("5 #{msg[:ts]} #{msg[:payload]}")
+        end        
+      end
+      
+      it "adds expectations for the next static message when a dynamic message is received" do
+        payload1 = "10004lP08M0BCp01eo@007r00000"
+        payload2 = "10005lP08M0BCp01eo@007r00000"
+      
+        proxy = double('Proxy')
+        proxy.stub(:decode).with(payload1).and_return(Domain::AIS::SixBitEncoding.decode(payload1))
+        proxy.stub(:decode).with(payload2).and_return(Domain::AIS::SixBitEncoding.decode(payload2))
+        @registry.stub(:bind).and_yield(proxy)
+        
+        queue = double('Queue')
+
+        service = ComplianceService.new(@registry)
+        service.expected = queue
+
+        last = Time.new.to_f
+
+        messages = [
+          {:ts => last - 400, :mmsi => 1490, :payload => payload2},
+          {:ts => last - 360 - 1, :mmsi => 1234, :payload => payload1},
+          ]
+          
+        messages.each do |msg|
+          queue.should_receive(:push).with([msg[:ts], msg[:ts] + 360, msg[:mmsi]])
+          service.process_message("1 #{msg[:ts]} #{msg[:payload]}")
         end        
       end
     end

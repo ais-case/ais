@@ -85,15 +85,16 @@ module Service
       end
       
       @log.debug("Message with timestamp #{timestamp} and mmsi #{mmsi}")
-      
-      if type == 5
-        if not @last_recv.has_key?(mmsi) 
-          @last_recv[mmsi] = Queue.new  
-        end
-        @last_recv[mmsi].push(timestamp)
-        
-        @expected.push([timestamp, timestamp + 360, mmsi])
+
+      if not @last_recv.has_key?(mmsi)
+        @last_recv[mmsi] = Queue.new
       end
+
+      if type == 5
+        @last_recv[mmsi].push(timestamp)
+      end
+      
+      @expected.push([timestamp, timestamp + 360, mmsi])
     end
     
     def check_compliance(publish_method, expected, last_recv)
