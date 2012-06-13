@@ -24,14 +24,18 @@ module Domain
       @vessel.position.lon.should eq 4.0
     end
 
-    it "has heading, speed, anchored, type and compliant attributes" do
+    it "has navigation_status, heading, speed, anchored, type and compliant attributes" do
+      nav_status = Domain::NavigationStatus::from_str('Moored')
       type = VesselType.from_str("Passenger")
+      
+      @vessel.navigation_status = nav_status
       @vessel.heading = 193
       @vessel.speed = 46.3
       @vessel.anchored = true
       @vessel.type = type
       @vessel.compliant = false
   
+      @vessel.navigation_status.should eq(nav_status)
       @vessel.heading.should eq(193)
       @vessel.speed.should be_within(0.1).of(46.3)
       @vessel.anchored.should be_true
