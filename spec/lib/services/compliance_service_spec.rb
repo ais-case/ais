@@ -105,7 +105,7 @@ module Service
         last = expect_at - 361.0
         recv[1234] = Queue.new
         recv[1234].push(last)
-        recv[1234].push(last + 361.0)
+        recv[1234].push(expect_at + 0.1)
         queue.push([last, expect_at, 1234])
        
         service = ComplianceService.new(@registry)
