@@ -99,7 +99,7 @@ module Service
         queue = Queue.new
         recv = {}
         publisher = double('Publisher')
-        publisher.should_receive(:publish).with("NON-COMPLIANT 1234")
+        publisher.should_receive(:publish).with(1234)
         
         expect_at = Time.new.to_f
         last = expect_at - 361.0

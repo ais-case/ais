@@ -122,7 +122,7 @@ module Service
       @log.debug("Vessel #{mmsi} compliant: #{compliant}")
       
       if not compliant
-        publish_method.call("NON-COMPLIANT #{mmsi}")
+        publish_method.call(mmsi)
       end
     end
     
