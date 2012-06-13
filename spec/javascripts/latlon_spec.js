@@ -54,10 +54,12 @@ describe("LatLon", function() {
     var latlon2 = new LatLon(10,20);
     var latlon3 = new LatLon(10,30);
     var latlon4 = new LatLon(20,20);
+    var latlon5 = new LatLon(10.00005,20.00005);
     
     expect(latlon1.equals(latlon2)).toBeTruthy();
     expect(latlon2.equals(latlon1)).toBeTruthy();
     expect(latlon1.equals(latlon3)).toBeFalsy();
     expect(latlon1.equals(latlon4)).toBeFalsy();
+    expect(latlon1.equals(latlon5)).toBeTruthy();
   });
 });

@@ -20,5 +20,7 @@ LatLon.prototype.getLonLat = function() {
 };
 
 LatLon.prototype.equals = function(that) {
-  return ((this.lat == that.lat) && (this.lon == that.lon));
+  var ret = (Math.abs(this.lat - that.lat) < 0.0001);
+  ret = ret && (Math.abs(this.lon - that.lon) < 0.0001) 
+  return  ret;
 };
