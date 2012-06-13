@@ -11,6 +11,12 @@
 		<th>Position:</th>
 		<td><% if @vessel.position %><%=@vessel.position%><% else %>Unknown<% end %></td>
 	</tr>
+	<% if @vessel.navigation_status %>
+  <tr>
+    <th>Navigation status:</th>
+    <td><%=@vessel.navigation_status.description%></td>
+  </tr>
+  <% end %>
 	<tr>
 		<th>Heading:</th>
 		<td><% if @vessel.heading %><%=@vessel.heading%><% else %>Unknown<% end %></td>

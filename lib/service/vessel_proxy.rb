@@ -1,5 +1,6 @@
 require_relative 'platform/service_proxy'
 require_relative '../domain/lat_lon'
+require_relative '../domain/navigation_status'
 require_relative '../domain/vessel'
 require_relative '../domain/vessel_type'
 
@@ -15,6 +16,7 @@ module Service
       @socket.recv_string(message = "")
       
       Domain::LatLon
+      Domain::NavigationStatus
       Domain::Vessel
       Domain::VesselType
       
@@ -26,6 +28,7 @@ module Service
       @socket.recv_string(message = "")
       
       Domain::LatLon
+      Domain::NavigationStatus
       Domain::Vessel
       Domain::VesselType
 

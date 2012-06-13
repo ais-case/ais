@@ -7,11 +7,14 @@ describe "map/info.html.erb" do
     vessel.heading = 180
     vessel.speed = 30.56
     vessel.type = Domain::VesselType.from_str("Passenger")
+    vessel.navigation_status = Domain::NavigationStatus::from_str("Anchored")
     
     assign(:vessel, vessel)
     render
 
-    details = [vessel.mmsi, vessel.position, vessel.heading, vessel.speed, vessel.type.description]
+    details = [vessel.mmsi, vessel.position, vessel.heading, vessel.speed]
+    details << vessel.type.description
+    details << vessel.navigation_status.description
     texts = details.map { |o| o.to_s }
     texts.each do |text|
       if not rendered.include?(text)

@@ -84,6 +84,9 @@ module Service
         if message.respond_to?(:vessel_type)
           vessel.type = message.vessel_type
         end
+        if message.respond_to?(:navigation_status)
+          vessel.navigation_status = message.navigation_status
+        end
           
         receiveVessel(vessel)
       end

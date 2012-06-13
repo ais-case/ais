@@ -13,6 +13,9 @@ Given /^vessel "(.*?)" with details:$/ do |name, table|
   @vessel.heading = @fields['Heading'].to_f
   @vessel.speed = @fields['Speed'].to_f
   @vessel.position = Domain::LatLon.from_str(@fields['Position'])
+  if @fields.has_key?('Status')
+    @vessel.navigation_status = Domain::NavigationStatus.from_str(@fields['Status'])
+  end
 end
 
 

@@ -127,11 +127,13 @@ module Service
       vessel = Domain::Vessel.new(244314000, Domain::Vessel::CLASS_A)
       vessel.speed = 36.6
       vessel.heading = 79
+      vessel.navigation_status = Domain::NavigationStatus.from_str("Underway using engine")
 
       service = VesselService.new(@registry)
       service.stub(:receiveVessel) do |v|
         if v.mmsi != vessel.mmsi or v.speed != vessel.speed or
-           v.heading != vessel.heading
+           v.heading != vessel.heading or 
+           v.navigation_status != vessel.navigation_status
           raise "Properties of vessel not as expected"
         end 
       end
