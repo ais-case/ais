@@ -81,7 +81,6 @@ Feature: Vessel Compliance
         | Sea Otter  | yes       |
         | Seahawk    | no        |
 
-  @wip
   Scenario: static information
     Given class "A" vessels:
         | name       |
