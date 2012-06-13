@@ -9,7 +9,7 @@ module Domain::AIS
       m.vessel_class.should eq(Domain::Vessel::CLASS_A)
     end
     
-    it "has lat, lon, speed and heading properties" do  
+    it "has lat, lon, speed, heading and anchored properties" do  
       m = Message1.new(244314000)
       m.lat = 1.0
       m.lat.should eq(1.0)
@@ -19,6 +19,8 @@ module Domain::AIS
       m.speed.should be_within(0.01).of(53.6)
       m.heading = 35
       m.heading.should eq(35)
+      m.anchored = false
+      m.anchored.should be_false
     end
     
     describe "payload" do

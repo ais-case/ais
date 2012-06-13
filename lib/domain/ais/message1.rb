@@ -4,7 +4,7 @@ module Domain
   module AIS
     class Message1
       attr_reader :mmsi, :vessel_class, :type
-      attr_accessor :lat, :lon, :speed, :heading
+      attr_accessor :lat, :lon, :speed, :heading, :anchored
       
       def initialize(mmsi)
         @mmsi = mmsi
