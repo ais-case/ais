@@ -84,7 +84,7 @@ end
 When /^these vessels send a static report$/ do
   @times = {}
   @vessels.each do |name, vessel|
-    @times[name] = Time.now 
+    @times[name] = Time.new - 357.0
     @registry.bind('ais/transmitter') do |service|
       service.send_static_report_for(vessel, @times[name])
     end
@@ -96,9 +96,10 @@ When /^send another static report after:$/ do |table|
     next if name == 'name'
     raise "Vessel '#{name}' not known" unless @vessels.has_key?(name)
     @registry.bind('ais/transmitter') do |service|
-      service.send_static_report_for(@vessels[name], @times[name] + interval.to_i)
+      service.send_static_report_for(@vessels[name], @times[name] + interval.to_f)
     end
   end  
+  sleep(3)
 end
 
 Then /^the compliance of the vessels should be marked as:$/ do |table|
