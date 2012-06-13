@@ -58,6 +58,8 @@ module Service
     
     def process_message(data)
       
+      @log.debug("Received #{data}")
+      
       # Parse fields
       fields = data.split(' ')
       if fields.length != 3
@@ -65,7 +67,7 @@ module Service
         return
       end
       
-      type, timestamp, payload = fields[0], fields[1].to_f, fields[2]
+      type, timestamp, payload = fields[0].to_i, fields[1].to_f, fields[2]
       
       # Decode payload
       decoded = nil
@@ -83,25 +85,42 @@ module Service
         mmsi = message.mmsi
       end
       
-      @last_recv_mutex.synchronize do
-        @last_recv[mmsi] = timestamp
-      end
+      @log.debug("Message with timestamp #{timestamp} and mmsi #{mmsi}")
       
-      @expected.push([timestamp, timestamp + 360, mmsi])
+      if type == 5
+        @last_recv_mutex.synchronize do
+          if not @last_recv.has_key?(mmsi) 
+            @last_recv[mmsi] = Queue.new  
+          end
+          @last_recv[mmsi].push(timestamp)
+        end
+        
+        @expected.push([timestamp, timestamp + 360, mmsi])
+      end
     end
     
     def check_compliance(publish_method, expected, last_recv, last_recv_mutex)
       timestamp, exp_timestamp, mmsi = expected.pop
       
+      @log.debug("Expected: #{mmsi} on #{exp_timestamp}, timestamp #{timestamp}, it's now #{Time.new.to_f}")
       diff = exp_timestamp - Time.new.to_f
       if diff > 0
         sleep(diff)
       end
-
-      compliant = true
-      last_recv_mutex.synchronize do
-        compliant = last_recv[mmsi] > timestamp
+      
+      compliant = nil
+      begin
+        while compliant.nil?
+          next_ts = last_recv[mmsi].pop(true)
+          @log.debug("Next message in queue has ts #{next_ts}")
+          if next_ts > timestamp
+            compliant = next_ts < exp_timestamp 
+          end  
+        end
+      rescue ThreadError
+        compliant = false
       end
+              
       if not compliant
         publish_method.call("NON-COMPLIANT #{mmsi}")
       end

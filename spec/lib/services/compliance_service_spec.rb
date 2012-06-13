@@ -104,9 +104,11 @@ module Service
         
         expect_at = Time.new.to_f
         last = expect_at - 361.0
-        recv[1234] = last
+        recv[1234] = Queue.new
+        recv[1234].push(last)
+        recv[1234].push(last + 361.0)
         queue.push([last, expect_at, 1234])
-        
+       
         service = ComplianceService.new(@registry)
         service.check_compliance(publisher.method(:publish), queue, recv, recv_mutex)
       end
@@ -120,7 +122,9 @@ module Service
         
         expect_at = Time.new.to_f
         last = expect_at - 360.0
-        recv[1234] = expect_at - 0.01
+        recv[1234] = Queue.new
+        recv[1234].push(last)
+        recv[1234].push(last + 359.0)
         queue.push([last, expect_at, 1234])
         
         service = ComplianceService.new(@registry)
