@@ -82,24 +82,44 @@ When /^send another position report after:$/ do |table|
 end
 
 When /^these vessels send a static report$/ do
-  @times = {}
-  @vessels.each do |name, vessel|
-    @times[name] = Time.new - 357.0
-    @registry.bind('ais/transmitter') do |service|
-      service.send_static_report_for(vessel, @times[name])
-    end
-  end
+  @last_report = 'static'
 end
 
 When /^send another static report after:$/ do |table|
-  table.rows_hash.each do |name,interval|
+  
+  # Gather info
+  info = []
+  table.rows_hash.each do |name,interval_str|
     next if name == 'name'
     raise "Vessel '#{name}' not known" unless @vessels.has_key?(name)
+    
+    vessel = @vessels[name]
+    interval = interval_str.to_f
+    info << [vessel, interval]
+  end
+   
+  
+  # First message
+  timestamps = {}
+  info.each do |vessel,interval|
+    timestamp = Time.new.to_f - interval + 1
     @registry.bind('ais/transmitter') do |service|
-      service.send_static_report_for(@vessels[name], @times[name] + interval.to_f)
+      if @last_report == 'static'
+        service.send_static_report_for(vessel, timestamp)
+      else
+        service.send_position_report_for(vessel, timestamp)
+      end
+    end
+    timestamps[vessel.mmsi] = timestamp
+  end  
+
+  # Second message
+  info.each do |vessel,interval|
+    @registry.bind('ais/transmitter') do |service|
+      service.send_static_report_for(vessel, timestamps[vessel.mmsi] + interval)
     end
   end  
-  sleep(3)
+  sleep(1)
 end
 
 Then /^the compliance of the vessels should be marked as:$/ do |table|
