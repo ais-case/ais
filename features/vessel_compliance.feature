@@ -3,7 +3,6 @@ Feature: Vessel Compliance
   As a coast guard
   I want to see which class A vessels do not comply with the AIS protocol
 
-  @wip
   Scenario: dynamic information of anchored vessels
     Given anchored class "A" vessels with dynamic information:
         | name       | speed |

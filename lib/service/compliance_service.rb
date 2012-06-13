@@ -2,6 +2,7 @@ require 'ffi-rzmq'
 require 'socket'
 require_relative '../util'
 require_relative '../domain/ais/message_factory'
+require_relative '../domain/navigation_status'
 require_relative 'platform/base_service'
 require_relative 'platform/subscriber_service'
 require_relative 'platform/publisher_service'
@@ -191,8 +192,19 @@ module Service
           
           @log.debug("Headings: #{message.heading} and #{prev_message.heading}")
           @log.debug("Course changed: #{course_changed}")
-          
-          if course_changed
+
+          anchored = message.navigation_status == Domain::NavigationStatus::from_str('Anchored')
+          moored = message.navigation_status == Domain::NavigationStatus::from_str('Moored') 
+
+          @log.debug("Navigation status, moored: #{moored}, anchored #{anchored}")
+
+          if anchored or moored
+            if min_speed > 3.0
+              interval = 10.0
+            else 
+              interval = 180.0
+            end            
+          elsif course_changed
             if min_speed > 23.0
               interval = 2.0
             elsif min_speed > 14.0
@@ -209,6 +221,8 @@ module Service
               interval = 10.0
             end            
           end
+
+          @log.debug("Expected interval #{interval}")
           
           if timestamp - prev_timestamp > interval
             compliant = false

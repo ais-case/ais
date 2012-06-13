@@ -35,6 +35,7 @@ Given /^anchored class "(.*?)" vessels with dynamic information:$/ do |class_str
   table.rows_hash.each do |name,speed|
     next if name == 'name'
     @vessels[name] = VesselComplianceSteps::create_vessel(@vessels.length, name, speed, true)
+    @vessels[name].navigation_status = Domain::NavigationStatus.from_str('Anchored')
   end
 end
 
