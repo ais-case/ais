@@ -182,8 +182,13 @@ module Service
           reception = receptions[mmsi].pop(true)
           timestamp, message = reception
           prev_timestamp, prev_message = prev_reception
-         
-          min_speed = [message.speed, prev_message.speed].min
+          
+          if message.speed and prev_message.speed
+            min_speed = [message.speed, prev_message.speed].min
+          else
+            min_speed = 0.0  
+          end
+          
           course_changed = false
           if message.heading and prev_message.heading
             heading_change = (message.heading - prev_message.heading).abs
