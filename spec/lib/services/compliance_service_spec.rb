@@ -97,7 +97,6 @@ module Service
     describe "check_compliance" do
       it "broadcasts when the interval between static reports is longer than 6 minutes" do
         queue = Queue.new
-        recv_mutex = Mutex.new
         recv = {}
         publisher = double('Publisher')
         publisher.should_receive(:publish).with("NON-COMPLIANT 1234")
@@ -110,12 +109,11 @@ module Service
         queue.push([last, expect_at, 1234])
        
         service = ComplianceService.new(@registry)
-        service.check_compliance(publisher.method(:publish), queue, recv, recv_mutex)
+        service.check_compliance(publisher.method(:publish), queue, recv)
       end
 
       it "does not broadcast when the interval between static reports is 6 minutes or shorter" do
         queue = Queue.new
-        recv_mutex = Mutex.new
         recv = {}
         publisher = double('Publisher')
         publisher.should_not_receive(:publish)
@@ -128,7 +126,7 @@ module Service
         queue.push([last, expect_at, 1234])
         
         service = ComplianceService.new(@registry)
-        service.check_compliance(publisher.method(:publish), queue, recv, recv_mutex)
+        service.check_compliance(publisher.method(:publish), queue, recv)
       end
     end  
   end

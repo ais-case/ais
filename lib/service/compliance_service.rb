@@ -20,7 +20,6 @@ module Service
       @checker_thread = nil
       @expected = Queue.new
       @last_recv = {}
-      @last_recv_mutex = Mutex.new
     end
     
     def start(endpoint)
@@ -32,7 +31,7 @@ module Service
       @checker_thread = Thread.new do
         begin
           loop do
-            check_compliance(method(:publish_message), @expected, @last_recv, @last_recv_mutex)
+            check_compliance(method(:publish_message), @expected, @last_recv)
           end
         rescue => e
           @log.fatal("Checker thread exception: #{e.message}")
@@ -88,18 +87,16 @@ module Service
       @log.debug("Message with timestamp #{timestamp} and mmsi #{mmsi}")
       
       if type == 5
-        @last_recv_mutex.synchronize do
-          if not @last_recv.has_key?(mmsi) 
-            @last_recv[mmsi] = Queue.new  
-          end
-          @last_recv[mmsi].push(timestamp)
+        if not @last_recv.has_key?(mmsi) 
+          @last_recv[mmsi] = Queue.new  
         end
+        @last_recv[mmsi].push(timestamp)
         
         @expected.push([timestamp, timestamp + 360, mmsi])
       end
     end
     
-    def check_compliance(publish_method, expected, last_recv, last_recv_mutex)
+    def check_compliance(publish_method, expected, last_recv)
       timestamp, exp_timestamp, mmsi = expected.pop
       
       @log.debug("Expected: #{mmsi} on #{exp_timestamp}, timestamp #{timestamp}, it's now #{Time.new.to_f}")
