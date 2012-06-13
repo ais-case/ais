@@ -150,10 +150,15 @@ module Service
         recv[1234] = Queue.new
         recv[1234].push(last)
         recv[1234].push(last + 359.0)
+        queue.push([last, expect_at - 0.3, 1234])
+        queue.push([last, expect_at - 0.2, 1234])
+        queue.push([last, expect_at - 0.1, 1234])
         queue.push([last, expect_at, 1234])
         
         service = ComplianceService.new(@registry)
-        service.check_compliance(publisher.method(:publish), queue, recv)
+        4.times do
+          service.check_compliance(publisher.method(:publish), queue, recv)
+        end
       end
     end  
   end

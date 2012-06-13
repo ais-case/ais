@@ -20,6 +20,7 @@ module Service
       @checker_thread = nil
       @expected = Queue.new
       @last_recv = {}
+      @next_ts = {}
     end
     
     def start(endpoint)
@@ -99,7 +100,7 @@ module Service
     
     def check_compliance(publish_method, expected, last_recv)
       timestamp, exp_timestamp, mmsi = expected.pop
-      
+
       @log.debug("Expected: #{mmsi} on #{exp_timestamp}, timestamp #{timestamp}, it's now #{Time.new.to_f}")
       diff = exp_timestamp - Time.new.to_f
       if diff > 0
@@ -107,19 +108,24 @@ module Service
       end
       
       compliant = nil
-      begin
-        while compliant.nil?
-          next_ts = last_recv[mmsi].pop(true)
-          if next_ts > timestamp
-            # Check if message is within expected window, with
-            # grace period of 0.001s
-            compliant = (next_ts - 0.001) < exp_timestamp 
-          end  
+      if @next_ts.has_key?(mmsi) and (@next_ts[mmsi] - 0.001) < exp_timestamp
+        compliant = true
+      else
+        begin
+          while compliant.nil?
+            next_ts = last_recv[mmsi].pop(true)
+            if next_ts > timestamp
+              # Check if message is within expected window, with
+              # grace period of 0.001s
+              compliant = (next_ts - 0.001) < exp_timestamp 
+            end
+            @next_ts[mmsi] = next_ts
+          end
+        rescue ThreadError
+          compliant = false
         end
-      rescue ThreadError
-        compliant = false
       end
-      
+            
       @log.debug("Vessel #{mmsi} compliant: #{compliant}")
       
       if not compliant
