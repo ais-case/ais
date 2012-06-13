@@ -10,7 +10,7 @@ module Domain
       def initialize(mmsi)
         @mmsi = mmsi
         @vessel_class = Domain::Vessel::CLASS_A
-        @navigation_status = Domain::NavigationStatus::UNKNOWN
+        @navigation_status = Domain::NavigationStatus::from_str('Undefined')
         @type = 1
       end
       
@@ -28,8 +28,11 @@ module Domain
         # mmsi
         payload << uint.bit_string(@mmsi, 30)
         
-        # nav status, rot
-        payload << '0' * 12
+        # nav status
+        payload << uint.bit_string(@navigation_status.code, 4)
+        
+        # rot
+        payload << '0' * 8
         
         # speed
         if not @speed
