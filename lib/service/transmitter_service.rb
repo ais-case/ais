@@ -76,6 +76,7 @@ module Service
         ais_sources = [] 
       else
         ais_sources = [['82.210.120.176', 20000]] 
+        #ais_sources = [['hd-sf.com', 9009]] 
       end
       
       ais_sources.each do |ais_source|
