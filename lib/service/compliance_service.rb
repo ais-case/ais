@@ -109,15 +109,18 @@ module Service
       begin
         while compliant.nil?
           next_ts = last_recv[mmsi].pop(true)
-          @log.debug("Next message in queue has ts #{next_ts}")
           if next_ts > timestamp
-            compliant = next_ts < exp_timestamp 
+            # Check if message is within expected window, with
+            # grace period of 0.001s
+            compliant = (next_ts - 0.001) < exp_timestamp 
           end  
         end
       rescue ThreadError
         compliant = false
       end
-              
+      
+      @log.debug("Vessel #{mmsi} compliant: #{compliant}")
+      
       if not compliant
         publish_method.call("NON-COMPLIANT #{mmsi}")
       end
