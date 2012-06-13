@@ -186,6 +186,7 @@ module Service
           if message.speed and prev_message.speed
             min_speed = [message.speed, prev_message.speed].min
           else
+            @log.error("Message without speed: #{message.speed}, #{prev_message.speed}")
             min_speed = 0.0  
           end
           
