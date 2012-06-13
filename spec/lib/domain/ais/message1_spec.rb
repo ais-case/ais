@@ -7,9 +7,10 @@ module Domain::AIS
       m.mmsi.should eq(244314000)
       m.type.should eq(1)
       m.vessel_class.should eq(Domain::Vessel::CLASS_A)
+      m.navigation_status.should eq(Domain::NavigationStatus::UNKNOWN)
     end
     
-    it "has lat, lon, speed, heading and anchored properties" do  
+    it "has lat, lon, speed, heading, navigation_status properties" do  
       m = Message1.new(244314000)
       m.lat = 1.0
       m.lat.should eq(1.0)
@@ -19,8 +20,8 @@ module Domain::AIS
       m.speed.should be_within(0.01).of(53.6)
       m.heading = 35
       m.heading.should eq(35)
-      m.anchored = false
-      m.anchored.should be_false
+      m.navigation_status = Domain::NavigationStatus::ANCHORED
+      m.navigation_status.should eq(Domain::NavigationStatus::ANCHORED) 
     end
     
     describe "payload" do

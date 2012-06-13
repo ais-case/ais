@@ -1,14 +1,16 @@
 require_relative '../vessel'
+require_relative '../navigation_status'
 
 module Domain
   module AIS
     class Message1
       attr_reader :mmsi, :vessel_class, :type
-      attr_accessor :lat, :lon, :speed, :heading, :anchored
+      attr_accessor :lat, :lon, :speed, :heading, :navigation_status
       
       def initialize(mmsi)
         @mmsi = mmsi
         @vessel_class = Domain::Vessel::CLASS_A
+        @navigation_status = Domain::NavigationStatus::UNKNOWN
         @type = 1
       end
       
