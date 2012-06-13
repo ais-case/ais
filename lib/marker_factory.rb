@@ -27,31 +27,27 @@ class MarkerFactory
   end
   
   def self.icon_from_vessel(vessel)
-    cls = (vessel.vessel_class == Domain::Vessel::CLASS_A) ? 'a' : 'b'
-    icon = "v_#{cls}"
-    
-    if not vessel.compliant
-      return icon << "_non-compliant.png"
-    end 
-      
     directions = {0 => 'n', 45 => 'ne', 90 => 'e', 135 => 'se', 
                   180 => 's', 225 => 'sw', 270 => 'w', 315 => 'nw'}
+    colors = {'Passenger' => 'green', 'Fishing' => 'grey', 'Cargo' => 'blue',
+              'Tanker' => 'black', 'Military' => 'white', 'Other' => 'yellow'}
+
+    cls = (vessel.vessel_class == Domain::Vessel::CLASS_A) ? 'a' : 'b'
+    icon = "v_#{cls}"
+        
     heading = round_heading(vessel.heading)
     direction = directions[heading] if heading      
     
     if direction
       icon << '_' << direction
     end
-    
-    colors = {'Passenger' => 'green', 'Fishing' => 'grey', 'Cargo' => 'blue',
-              'Tanker' => 'black', 'Military' => 'white', 'Other' => 'yellow'}
-    
-    if vessel.type and colors.has_key?(vessel.type.description)
+
+    if not vessel.compliant
+      icon << '_red'      
+    elsif vessel.type and colors.has_key?(vessel.type.description)
       icon << '_' << colors[vessel.type.description]
-    end
-    
-    icon << '.png'
-    
+    end 
+    icon << '.png'    
   end
   
   def self.from_vessel(vessel)

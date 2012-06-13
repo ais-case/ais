@@ -95,7 +95,7 @@ describe MarkerFactory do
       vessel = Domain::Vessel.new(4321, Domain::Vessel::CLASS_A)
       vessel.compliant = false
       marker = MarkerFactory.from_vessel(vessel)
-      marker.icon.should eq("v_a_non-compliant.png")
+      marker.icon.should eq("v_a_red.png")
     end
   end
 end

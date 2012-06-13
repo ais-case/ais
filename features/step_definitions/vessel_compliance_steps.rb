@@ -139,7 +139,7 @@ Then /^the compliance of the vessels should be marked as:$/ do |table|
     next if name == 'name'
     raise "Vessel '#{name}' not known" unless @vessels.has_key?(name)
     position = @vessels[name].position
-    args = [position.lat, position.lon, 'non-compliant']
+    args = [position.lat, position.lon, 'red']
     js = "map.hasMarkerAt(new LatLon(%f,%f), '%s')" % args
     marked_as_compliant = (not page.evaluate_script(js))
     if compliant == 'yes' and not marked_as_compliant
