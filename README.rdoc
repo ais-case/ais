@@ -10,7 +10,7 @@ on your system to prevent any version conflicts.
 
 1. Clone the repository:
     
-    $ git clone https://github.com/ais-case/ais.git
+    $ git clone git://github.com/ais-case/ais.git
 
 2. Run the installer:
 
