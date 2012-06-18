@@ -20,7 +20,7 @@ module Service::Platform
             socket.setsockopt(ZMQ::SUBSCRIBE, filter)
           end
           rc = socket.connect(endpoint)
-          raise "Couldn't listen to socket" unless ZMQ::Util.resultcode_ok?(rc)
+          raise "Couldn't listen to socket #{endpoint}" unless ZMQ::Util.resultcode_ok?(rc)
           
           # For some reason the socket needs some time before it's functional
           sleep(0.1)
