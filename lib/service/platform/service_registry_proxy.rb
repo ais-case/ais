@@ -15,9 +15,6 @@ module Service
         'ais/payload-decoder' => Service::PayloadDecoderProxy,
         'ais/payload-encoder' => Service::PayloadEncoderProxy,
         'ais/transmitter'     => Service::TransmitterProxy,
-        'ais/receiver'        => nil,
-        'ais/combiner'        => nil,
-        'ais/message'         => nil,
         'ais/vessel'          => Service::VesselProxy,
       }
     
@@ -48,12 +45,16 @@ module Service
       end
       
       def lookup(name, seconds = 5)
+        begin
           timeout(seconds) do
-          loop do
-            endpoint = request("LOOKUP #{name}")
-            return endpoint unless endpoint == nil
-            sleep(0.1)
+            loop do
+              endpoint = request("LOOKUP #{name}")
+              return endpoint unless endpoint == nil
+              sleep(0.1)
+            end
           end
+        rescue Timeout::Error => e
+          nil
         end
       end
     
