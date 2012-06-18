@@ -109,7 +109,7 @@ module Service
         begin
           service.start('tcp://*:29000')
   
-          subscr.start('tcp://localhost:22000')
+          subscr.start('tcp://localhost:20000')
           service.broadcast_message(@timestamp, @sample_message)
           
           # Wait a very short time to allow for message delivery 
