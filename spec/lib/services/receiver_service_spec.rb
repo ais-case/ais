@@ -12,36 +12,33 @@ module Service
     
     before(:each) do
       @registry = MockRegistry.new
-      sleep(0.1)
-      @server_queue = Queue.new
-      @server = Thread.new(TCPServer.new(20000)) do |socket|
-        begin
-          client = socket.accept
-          client.puts(@server_queue.pop)
-        ensure 
-          socket.close
-        end
-      end      
     end
-      
-    after(:each) do
-      @server.kill
-      @server = nil
-      @server_queue = nil
-    end
-    
-    it "listens for raw AIS data from a local TCP server on port 20000" do
-      service = ReceiverService.new(@registry)
-      service.should_receive(:process_message).with(@valid_message)
-      service.start('tcp://*:28000')
-      
-      # Wait for mock TCP server to finish request
-      timeout(1) do
-        @server_queue.push(@valid_message)
-        @server.join
-      end
+          
+    it "listens for raw AIS data published by a remote host" do
+      ctx = ZMQ::Context.new
+      sock = ctx.socket(ZMQ::PUB)
+      begin
+        rc = sock.bind('tcp://*:21011')
+        ZMQ::Util.resultcode_ok?(rc).should be_true
+        @registry.register('ais/transmitter-pub', 'tcp://localhost:21011')
+        
+        service = (Class.new(ReceiverService) do
+          attr_reader :received_data
+          def process_message(data)
+            @received_data = data
+          end
+        end).new(@registry)
 
-      service.stop
+        service.start('tcp://*:23003')
+        sock.send_string(@valid_message)
+
+        # Give service time to receive and process message
+        sleep(0.01)
+        service.received_data.should eq(@valid_message)  
+        service.stop
+      ensure
+        sock.close
+      end    
     end
   
     it "publishes messages with valid checksums" do

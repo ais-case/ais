@@ -99,21 +99,24 @@ module Service
     end
     
     describe "broadcast_message" do
-      it "sends out a message to clients" do
-        service = TransmitterService.new(@registry)
-        service.start('tcp://*:27000')
-        socket = TCPSocket.new('localhost', 20000)
-        sleep(0.1)
+      it "sends out a message to clients" do        
+        handler = double('Subscriber')
+        handler.should_receive(:handle_request).with("%s %s" % [@timestamp, @sample_message])
   
+        subscr = Platform::SubscriberService.new(handler.method(:handle_request), [''], MockLogger.new)
+        
+        service = TransmitterService.new(@registry)
         begin
+          service.start('tcp://*:29000')
+  
+          subscr.start('tcp://localhost:22000')
           service.broadcast_message(@timestamp, @sample_message)
-   
-          timeout(1) do
-            socket.gets.should eq("%s %s\n" % [@timestamp, @sample_message])
-          end
+          
+          # Wait a very short time to allow for message delivery 
+          sleep(0.01)
         ensure
           service.stop
-          socket.close
+          subscr.stop
         end
       end
     end
