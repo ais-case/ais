@@ -3,7 +3,6 @@ Feature: Vessel Movement
   As a coast guard
   I want the vessel location to be automatically updated on the map
   
-  @wip
   Scenario: move within map view
     Given class "A" vessel "Sea Lion" at position "51.99N, 4.03E"
      When I see the map area between "52.10N, 3.90E" and "51.90N, 4.10E"
@@ -13,10 +12,9 @@ Feature: Vessel Movement
   Scenario: move out of map view
     Given class "A" vessel "Sea Lion" at position "51.99N, 4.03E"
      When I see the map area between "52.10N, 3.90E" and "51.90N, 4.10E"
-      And vessel "Sea Lion" moves to position "52.04N, 3.85E"
+      And vessel "Sea Lion" moves to position "51.80N, 4.02E"
      Then I should not see vessel "Sea Lion"
 
-  @wip
   Scenario: move in to map view
     Given class "A" vessel "Sea Lion" at position "52.04N, 3.85E"
      When I see the map area between "52.10N, 3.90E" and "51.90N, 4.10E"

@@ -86,6 +86,22 @@ describe("Map", function() {
     expect(map.markerLayer.markers.length).toBe(2);
   });
   
+  it("reloads markers after 1 second", function() {
+    var latlon1 = new LatLon(52, 4);
+    var latlon2 = new LatLon(52.1, 4.1);
+    map.zoomToArea(latlon1, latlon2);
+
+    spyOn(loader, 'loadMarkers').andCallThrough();
+    runs(function() {
+      map.loadMarkers();    
+    });
+    waits(1000);
+    runs(function() {
+      expect(loader.loadMarkers.callCount).toBe(2);
+      expect(map.markerLayer.markers.length).toBe(2);  
+    });
+  });
+  
   it("loads markers with lines", function() {
     var latlon1 = new LatLon(52, 4);
     var latlon2 = new LatLon(52.1, 4.1);

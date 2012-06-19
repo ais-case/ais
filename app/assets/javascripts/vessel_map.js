@@ -41,6 +41,12 @@ Map.prototype.loadMarkers = function() {
   var lonlat2 = new OpenLayers.LonLat(extent[2], extent[3]);
 
   this.loader.loadMarkers(function(data) {
+    var prevMarkerLayer = self.markerLayer; 
+  
+    self.markerLayer = new OpenLayers.Layer.Markers('Markers');
+    self.map.addLayer(self.markerLayer);
+    $(self.markerLayer.div).hide();
+    
     var markers = data.markers;
     for (var i = 0; i < markers.length; i++) {
       var latlon = new LatLon(markers[i].position.lat, markers[i].position.lon);
@@ -49,7 +55,13 @@ Map.prototype.loadMarkers = function() {
         marker.addLine(markers[i].line.direction, markers[i].line.length);
       }
       self.addMarker(marker);
-    }
+    }  
+
+    $(self.markerLayer.div).show();
+    $(prevMarkerLayer.div).hide();
+    if (prevMarkerLayer != null) prevMarkerLayer.destroy();
+          
+    setTimeout(function() {self.loadMarkers();}, 1000);
   }, LatLon.fromLonLat(lonlat1), LatLon.fromLonLat(lonlat2));
 };
 

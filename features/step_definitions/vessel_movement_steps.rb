@@ -5,4 +5,5 @@ When /^vessel "(.*?)" moves to position "(.*?)"$/ do |name, coords_str|
   @registry.bind('ais/transmitter') do |service|
     service.send_position_report_for @vessels[name]
   end
+  sleep(1.0)
 end
