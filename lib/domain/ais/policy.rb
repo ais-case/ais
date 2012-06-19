@@ -4,6 +4,10 @@ module Domain
   module AIS
     module Policy      
       def position_reports_compliant?(prev_timestamp, prev_message, timestamp, message)
+        if prev_message.speed.nil? or message.speed.nil?
+          return false
+        end
+        
         min_speed = [message.speed, prev_message.speed].min
         
         course_changed = false

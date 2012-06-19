@@ -99,6 +99,35 @@ module Domain::AIS
           end
         end
       end
+      
+      describe "for vessels with unknown speed" do
+        it "returns false when vessel has reported unknown speed once" do
+          interval = 1
+          m1 = @msg.clone
+          m1.speed = nil
+          t1 = Time.new.to_f - interval - 1
+          
+          m2 = m1.clone
+          m2.speed = nil
+          t2 = t1 + interval
+
+          Policy::position_reports_compliant?(t1, m1, t2, m2).should be_false
+          Policy::position_reports_compliant?(t1, m2, t2, m1).should be_false
+        end
+
+        it "returns false when vessel always reports unknown speed" do
+          interval = 1
+          m1 = @msg.clone
+          m1.speed = nil
+          t1 = Time.new.to_f - interval - 1
+          
+          m2 = m1.clone
+          m2.speed = nil
+          t2 = t1 + interval
+
+          Policy::position_reports_compliant?(t1, m1, t2, m2).should be_false
+        end
+      end
     end
   end
 end
