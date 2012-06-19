@@ -25,6 +25,7 @@ module Service
     
       def request(req)
         socket = @context.socket(ZMQ::REQ)
+        socket.setsockopt(ZMQ::LINGER, 1000)
         rc = socket.connect(@endpoint)
         if ZMQ::Util.resultcode_ok?(rc)
           begin
@@ -65,6 +66,7 @@ module Service
         end
         
         socket = @context.socket(ZMQ::REQ)
+        socket.setsockopt(ZMQ::LINGER, 1000)
         rc = socket.connect(endpoint)
         if ZMQ::Util.resultcode_ok?(rc)
           proxy = PROXIES[name].new(socket) 

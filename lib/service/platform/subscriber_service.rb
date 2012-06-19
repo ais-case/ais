@@ -16,6 +16,7 @@ module Service::Platform
         begin
           ctx = ZMQ::Context.new
           socket = ctx.socket(ZMQ::SUB)
+          socket.setsockopt(ZMQ::LINGER, 1000)
           @filters.each do |filter|
             socket.setsockopt(ZMQ::SUBSCRIBE, filter)
           end

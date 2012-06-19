@@ -14,6 +14,7 @@ module Service::Platform
         begin
           ctx = ZMQ::Context.new
           socket = ctx.socket(ZMQ::PUB)
+          socket.setsockopt(ZMQ::LINGER, 1000)
           rc = socket.bind(endpoint)
           raise "Couldn't listen to socket" unless ZMQ::Util.resultcode_ok?(rc)
           

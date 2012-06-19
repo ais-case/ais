@@ -17,6 +17,7 @@ module Service
         @thread = Thread.new(@done_queue) do |queue|
           context = ZMQ::Context.new
           socket = context.socket(ZMQ::REP)
+          socket.setsockopt(ZMQ::LINGER, 1000)
           begin
             socket.bind(endpoint)
             queue.push(true)
