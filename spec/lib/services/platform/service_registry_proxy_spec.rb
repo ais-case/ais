@@ -12,6 +12,7 @@ module Service::Platform
         endpoint = 'tcp://localhost:21002'
 
         socket = double("Socket")
+        socket.should_receive(:setsockopt)
         socket.should_receive(:connect) { 0 }
         socket.should_receive(:send_string).with('LOOKUP ' << name)
         socket.should_receive(:recv_string) { |s| s.replace(endpoint) }
@@ -31,6 +32,7 @@ module Service::Platform
         endpoint = 'tcp://localhost:22000'
         
         socket = double("Socket")
+        socket.should_receive(:setsockopt)
         socket.should_receive(:connect) { 0 }
         socket.should_receive(:send_string).with("REGISTER #{name} #{endpoint}") { 0 }
         socket.should_receive(:recv_string) { '' }
@@ -51,6 +53,7 @@ module Service::Platform
         
         socket = double("Socket")
         socket.should_receive(:connect).with(endpoint) { 0 }
+        socket.should_receive(:setsockopt)
         socket.should_receive(:close) { 0 }
   
         context = double("Context")
@@ -72,19 +75,6 @@ module Service::Platform
         
         @registry.context = context  
         expect { @registry.bind('ais/transmitter') }.to raise_error
-      end
-  
-      it "closes sockets of proxies when stopped" do
-        socket = double("Socket")
-        socket.should_receive(:connect) { 0 }
-        socket.should_receive(:close)
-  
-        context = double("Context")
-        context.stub(:socket) { socket }
-  
-        @registry.context = context
-        @registry.stub(:lookup) { nil }
-        @registry.bind('ais/transmitter') {|service| nil }
       end
     end    
   end
