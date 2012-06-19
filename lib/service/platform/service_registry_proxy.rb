@@ -60,6 +60,10 @@ module Service
     
       def bind(name)
         endpoint = lookup(name)
+        if endpoint.nil?
+          raise RuntimeError, "Lookup failed for #{name}"  
+        end
+        
         socket = @context.socket(ZMQ::REQ)
         rc = socket.connect(endpoint)
         if ZMQ::Util.resultcode_ok?(rc)
