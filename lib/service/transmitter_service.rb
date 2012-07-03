@@ -20,6 +20,7 @@ module Service
       @reply_service = Platform::ReplyService.new(method(:process_request), @log)
       @source = Platform::SubscriberService.new(method(:process_raw_message), [''], @log)
       @publisher = Platform::PublisherService.new(@log)
+      @encoder = nil
     end
     
     def start(endpoint)
@@ -53,6 +54,7 @@ module Service
       @reply_service.stop
       @publisher.stop
       @source.stop
+      @encoder.release if @encoder
       @log.info("Service stopped")
     end
         
@@ -96,10 +98,8 @@ module Service
       end
       
       # Create the fragments
-      encoded = nil
-      @registry.bind('ais/payload-encoder') do |encoder|
-        encoded = encoder.encode(message.payload)  
-      end
+      @encoder = @registry.bind('ais/payload-encoder') unless @encoder 
+      encoded = @encoder.encode(message.payload)
       
       chunk_no = 1
       chunks = encoded.scan(/.{1,56}/)

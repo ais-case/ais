@@ -45,7 +45,7 @@ module Service
         before(:each) do
           service = double('Service')
           service.stub(:encode).and_return('10004lP0?w0BCp01eo@00?v00000')
-          @registry.stub(:bind).and_yield(service)
+          @registry.stub(:bind).and_return(service)
         end
 
         it "accepts position report requests" do  
@@ -74,7 +74,7 @@ module Service
           encoded << "00000000000000"
           service = double('Service')
           service.stub(:encode).and_return(encoded)
-          @registry.stub(:bind).and_yield(service)
+          @registry.stub(:bind).and_return(service)
         end
 
         it "accepts static info report requests" do  
