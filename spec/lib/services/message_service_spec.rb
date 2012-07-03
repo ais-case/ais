@@ -10,16 +10,17 @@ module Service
     before(:each) do
       @registry = MockRegistry.new
       Thread.new do end
+        
+      # Set up proxy for decoder and checksum
+      proxy = double('Proxy')
+      proxy.stub(:decode).and_return('1')
+      proxy.stub(:release)
+      @registry.stub(:bind).and_return(proxy)
     end
       
     it_behaves_like "a service"
     
     it "publishes processed messages" do
-      # Set up proxy for decoder and checksum
-      proxy = double('Proxy')
-      proxy.stub(:decode).and_return('1')
-      @registry.stub(:bind).and_yield(proxy)
-
       timestamp = "%0.9f" % Time.new.to_f
       service = MessageService.new(@registry)
       service.should_receive(:publish_message).with(@sample_type, timestamp, @sample_payload)

@@ -16,6 +16,7 @@ module Service
       
       @combiner = Platform::SubscriberService.new(method(:process_message), [''], @log)
       @publisher = Platform::PublisherService.new(@log)
+      @decoder = nil
     end
     
     def start(endpoint)
@@ -26,6 +27,7 @@ module Service
 
       register_self('ais/message', endpoint)
       @log.info("Service started")
+
     end
     
     def wait
@@ -35,16 +37,16 @@ module Service
     def stop
       @combiner.stop
       @publisher.stop
+      @decoder.release if @decoder
     end
     
     def process_message(data)
       timestamp, payload = data.split(' ')
       
       # Determine message type by examining first byte of payload
-      type = nil
-      @registry.bind('ais/payload-decoder') do |service|
-        type = service.decode(payload[0]).to_i(2)
-      end
+      @decoder = @registry.bind('ais/payload-decoder') unless @decoder
+      type = @decoder.decode(payload[0]).to_i(2)
+      
       publish_message(type, timestamp, payload)
     end
     
