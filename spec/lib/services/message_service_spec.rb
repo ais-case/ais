@@ -9,7 +9,6 @@ module Service
     
     before(:each) do
       @registry = MockRegistry.new
-      Thread.new do end
         
       # Set up proxy for decoder and checksum
       proxy = double('Proxy')
