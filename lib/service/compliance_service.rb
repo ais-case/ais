@@ -20,6 +20,7 @@ module Service
       filter = ['1 ', '2 ', '3 ', '5 ']
       @message_service = Platform::SubscriberService.new(method(:process_message), filter, @log)
       @publisher = Platform::PublisherService.new(@log)
+      @decoder = nil
       @checker_thread = nil
       @dynchecker_thread = nil
       @expected = Queue.new
@@ -75,6 +76,7 @@ module Service
       @dynchecker_thread.kill if @dynchecker_thread
       @message_service.stop
       @publisher.stop
+      @decoder.release if @decoder
     end
     
     def process_message(data)
@@ -91,10 +93,8 @@ module Service
       type, timestamp, payload = fields[0].to_i, fields[1].to_f, fields[2]
       
       # Decode payload
-      decoded = nil
-      @registry.bind('ais/payload-decoder') do |decoder|
-        decoded = decoder.decode(payload)
-      end
+      @decoder = @registry.bind('ais/payload-decoder') unless @decoder      
+      decoded = @decoder.decode(payload)
       
       # Parse message from payload
       message = Domain::AIS::MessageFactory.fromPayload(decoded)

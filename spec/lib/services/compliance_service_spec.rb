@@ -71,7 +71,7 @@ module Service
         proxy = double('Proxy')
         proxy.stub(:decode).with(payload1).and_return(Domain::AIS::SixBitEncoding.decode(payload1))
         proxy.stub(:decode).with(payload2).and_return(Domain::AIS::SixBitEncoding.decode(payload2))
-        @registry.stub(:bind).and_yield(proxy)
+        @registry.stub(:bind).and_return(proxy)
         
         queue = double('Queue')
 
@@ -100,7 +100,7 @@ module Service
         proxy = double('Proxy')
         proxy.stub(:decode).with(payload1).and_return(Domain::AIS::SixBitEncoding.decode(payload1))
         proxy.stub(:decode).with(payload2).and_return(Domain::AIS::SixBitEncoding.decode(payload2))
-        @registry.stub(:bind).and_yield(proxy)
+        @registry.stub(:bind).and_return(proxy)
         
         queue = double('Queue')
 
@@ -127,7 +127,7 @@ module Service
         proxy = double('Proxy')
         proxy.stub(:decode).with(payload1).and_return(Domain::AIS::SixBitEncoding.decode(payload1))
         proxy.stub(:decode).with(payload2).and_return(Domain::AIS::SixBitEncoding.decode(payload2))
-        @registry.stub(:bind).and_yield(proxy)
+        @registry.stub(:bind).and_return(proxy)
         
         dynamic_received = double('Queue')
 
