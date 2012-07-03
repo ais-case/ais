@@ -17,6 +17,7 @@ module Service
       filter = ['1 ', '2 ', '3 ', '5 ', '18 ', '19 ', '24 ']
       @message_service = Platform::SubscriberService.new(method(:process_message), filter, @log)
       @compliance_service = Platform::SubscriberService.new(method(:process_compliance_report), [''], @log)
+      @decoder = nil
     end
     
     def start(endpoint)
@@ -41,6 +42,7 @@ module Service
       @reply_service.stop
       @message_service.stop
       @compliance_service.stop
+      @decoder.release if @decoder
       super
     end
 
@@ -62,10 +64,8 @@ module Service
       @log.debug("Message incoming: #{data}")
       type, timestamp, payload = data.split(' ')
       
-      decoded = nil
-      @registry.bind('ais/payload-decoder') do |decoder|
-        decoded = decoder.decode(payload)
-      end
+      @decoder = @registry.bind('ais/payload-decoder') unless @decoder
+      decoded = @decoder.decode(payload)
       
       message = Domain::AIS::MessageFactory.fromPayload(decoded)
       if message.nil?

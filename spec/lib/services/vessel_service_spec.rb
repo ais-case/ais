@@ -13,7 +13,7 @@ module Service
       decoder.stub(:decode) do |payload|
         Domain::AIS::SixBitEncoding.decode(payload)
       end
-      @registry.stub(:bind).and_yield(decoder)
+      @registry.stub(:bind).and_return(decoder)
       
       @vessel1 = Domain::Vessel.new(1234, Domain::Vessel::CLASS_A)
       @vessel1.position = Domain::LatLon.new(3.0, 5.0) 
