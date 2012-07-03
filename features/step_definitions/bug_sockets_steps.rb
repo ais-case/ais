@@ -7,6 +7,9 @@ Then /^there should be only one connection to the vessel service$/ do
   match = /:(?<port>\d+)$/.match(endpoint)
   match.should_not be_false
   port = match[:port]
+  
+  # Note that each connection is bi-directional, so there should be two
+  # lines in the netstat output for each connection to the service
   netstat = `netstat -an | grep #{port} | grep -v LISTEN`
-  netstat.lines.count.should eq(1)
+  netstat.lines.count.should eq(2)
 end
