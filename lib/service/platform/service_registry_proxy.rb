@@ -69,11 +69,16 @@ module Service
         socket.setsockopt(ZMQ::LINGER, 1000)
         rc = socket.connect(endpoint)
         if ZMQ::Util.resultcode_ok?(rc)
-          proxy = PROXIES[name].new(socket) 
-          begin
-            yield proxy
-          ensure
-            socket.close
+          proxy = PROXIES[name].new(socket)
+          if block_given?
+            begin
+              yield proxy
+            ensure
+              proxy.release
+            end
+            nil
+          else
+            proxy 
           end
         else
           raise RuntimeError, "Couldn't connect to #{ep}"

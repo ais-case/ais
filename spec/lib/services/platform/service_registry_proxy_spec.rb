@@ -54,6 +54,25 @@ module Service::Platform
         socket = double("Socket")
         socket.should_receive(:connect).with(endpoint) { 0 }
         socket.should_receive(:setsockopt)
+        socket.should_not_receive(:close)
+  
+        context = double("Context")
+        context.should_receive(:socket) { socket }
+  
+        @registry.context = context
+        @registry.should_receive(:lookup).with(name) { endpoint }
+                
+        service = @registry.bind(name)
+        service.should be_a_kind_of(Service::TransmitterProxy)
+      end
+
+      it "accepts a block and automatically releases the proxy" do
+        name = 'ais/transmitter'
+        endpoint = 'tcp://localhost:22000'
+        
+        socket = double("Socket")
+        socket.should_receive(:connect).with(endpoint) { 0 }
+        socket.should_receive(:setsockopt)
         socket.should_receive(:close) { 0 }
   
         context = double("Context")
@@ -64,7 +83,7 @@ module Service::Platform
         
         @registry.bind(name) do |service|
           service.should be_a_kind_of(Service::TransmitterProxy) 
-        end      
+        end
       end
 
       it "raises an exception when the socket fails" do
