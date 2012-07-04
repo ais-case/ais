@@ -50,7 +50,7 @@ function Map(id, centeredAt, loader) {
     controls: [
             new OpenLayers.Control.Navigation(),
             new OpenLayers.Control.PanZoomBar()],
-    theme: 'ol/theme/style.css'
+    theme: 'ol/theme/default/style.css'
   });
   
   this.map.zoomTo(11);
