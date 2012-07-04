@@ -7,6 +7,10 @@
 		<th>MMSI:</th>
 		<td><%=@vessel.mmsi%></td>
 	</tr>
+  <tr>
+    <th>Class:</th>
+    <td><% if @vessel.vessel_class == Domain::Vessel::CLASS_A %>A<% else %>B<% end %></td>
+  </tr>
 	<tr>
 		<th>Position:</th>
 		<td><% if @vessel.position %><%=@vessel.position%><% else %>Unknown<% end %></td>
