@@ -18,15 +18,41 @@ Marker.prototype.addLine = function(direction, length) {
 function Map(id, centeredAt, loader) {
   this.markerLayer = new OpenLayers.Layer.Markers('Markers');
   
+  function getTileURL(bounds) {
+    var res = this.map.getResolution();
+    var x = Math.round((bounds.left - this.maxExtent.left) / (res * this.tileSize.w));
+    var y = Math.round((this.maxExtent.top - bounds.top) / (res * this.tileSize.h));
+    var z = this.map.getZoom();
+    var limit = Math.pow(2, z);
+    if (y < 0 || y >= limit) {
+      return null;
+    } else {
+      x = ((x % limit) + limit) % limit;
+      var url = this.url;
+      var path= z + "/" + x + "/" + y + "." + this.type;
+      if (url instanceof Array) {
+        url = this.selectUrl(path, url);
+      }
+      return url + path;
+    }
+  }
+
   OpenLayers.ImgPath = '/ol/img/';
   this.map = new OpenLayers.Map({
     div: id,
+    projection: new OpenLayers.Projection("EPSG:900913"),
     layers: [
       new OpenLayers.Layer.OSM(),
+      new OpenLayers.Layer.TMS("Seezeichen", "http://tiles.openseamap.org/seamark/",
+        { numZoomLevels: 18, type: 'png', getURL: getTileURL, isBaseLayer: false, displayOutsideMaxExtent: true}),
       this.markerLayer,
     ],
+    controls: [
+            new OpenLayers.Control.Navigation(),
+            new OpenLayers.Control.PanZoomBar()],
     theme: 'ol/theme/style.css'
   });
+  
   this.map.zoomTo(11);
   this.map.setCenter(centeredAt.getLonLat());
   this.loader = loader;
