@@ -9,7 +9,7 @@ function PopUp(marker, loader) {
 }
 
 PopUp.prototype.addToMap = function(map) {
-  map.addPopup(this.popup);
+  map.addPopup(this.popup, true);
   var self = this;
 
   this.loader.loadInfo(function(data) {
