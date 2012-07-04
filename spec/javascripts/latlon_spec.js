@@ -8,8 +8,8 @@ describe("LatLon", function() {
   it("can return OpenLayers OSM spherical mercator coordinates", function() {
     var latlon = new LatLon(52, 4);
     var ol = latlon.getLonLat();
-    expect(ol.lat).toEqual(6800125.4534507);
-    expect(ol.lon).toEqual(445277.96311111);
+    expect(ol.lat).toBeCloseTo(6800125.45345, 5);
+    expect(ol.lon).toBeCloseTo(445277.96311, 5);
   });
   
   it("can be created from OSM spherical mercator coordinates", function() {
