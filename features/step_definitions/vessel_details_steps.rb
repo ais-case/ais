@@ -32,8 +32,10 @@ When /^"(.*?)" sends a voyage report$/ do |arg1|
 end
 
 When /^I select vessel "(.*?)" on the map$/ do |name|
-  visit map_path
   point = @vessel.position
+  point1 = Domain::LatLon.new(point.lat - 0.05, point.lon - 0.05)
+  point2 = Domain::LatLon.new(point.lat + 0.05, point.lon + 0.05)
+  visit "#{map_path}##{URI::encode(point1.to_s)}_#{URI::encode(point2.to_s)}"
   page.evaluate_script('map.clickMarker(new LatLon(' << point.lat.to_s << ',' << point.lon.to_s << '))')
 end
 
