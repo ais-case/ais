@@ -43,8 +43,8 @@ function Map(id, centeredAt, loader) {
     projection: new OpenLayers.Projection("EPSG:900913"),
     layers: [
       new OpenLayers.Layer.OSM(),
-      new OpenLayers.Layer.TMS("Seezeichen", "http://tiles.openseamap.org/seamark/",
-        { numZoomLevels: 18, type: 'png', getURL: getTileURL, isBaseLayer: false, displayOutsideMaxExtent: true}),
+      // new OpenLayers.Layer.TMS("Seezeichen", "http://tiles.openseamap.org/seamark/",
+      //  { numZoomLevels: 18, type: 'png', getURL: getTileURL, isBaseLayer: false, displayOutsideMaxExtent: true}),
       this.markerLayer,
     ],
     controls: [
