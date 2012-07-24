@@ -14,4 +14,6 @@
 //= require jquery
 //= require jquery_ujs
 //= require OpenLayers
-//= require_tree .
+//= require ajax_data_loader.js
+//= require map.js
+//= require domain
