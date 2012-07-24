@@ -7,7 +7,7 @@ module Domain
     end
     
     it "requires a mmsi and class" do
-      @vessel.mmsi.should eq 1234
+      @vessel.mmsi.should eq(1234)
       @vessel.vessel_class.should eq Vessel::CLASS_A
     end
     
@@ -19,9 +19,9 @@ module Domain
       @vessel.name = "Seal"
       @vessel.position = LatLon.new(50.0, 4.0)
   
-      @vessel.name.should eq "Seal"
-      @vessel.position.lat.should eq 50.0
-      @vessel.position.lon.should eq 4.0
+      @vessel.name.should eq("Seal")
+      @vessel.position.lat.should eq(50.0)
+      @vessel.position.lon.should eq(4.0)
     end
 
     it "has navigation_status, heading, speed, anchored, type and compliant attributes" do

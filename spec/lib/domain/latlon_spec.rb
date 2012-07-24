@@ -4,35 +4,35 @@ module Domain
   describe LatLon do
       it "can create a new LatLon from a string" do
         latlon = LatLon.from_str("47.16N, 9.66E")
-        latlon.lat.should eq 47.16
-        latlon.lon.should eq 9.66
+        latlon.lat.should eq(47.16)
+        latlon.lon.should eq(9.66)
   
         latlon = LatLon.from_str("47.16N, 9.66W")
-        latlon.lat.should eq 47.16
-        latlon.lon.should eq -9.66
+        latlon.lat.should eq(47.16)
+        latlon.lon.should eq(-9.66)
   
         latlon = LatLon.from_str("47.16S, 9.66W")
-        latlon.lat.should eq -47.16
-        latlon.lon.should eq -9.66
+        latlon.lat.should eq(-47.16)
+        latlon.lon.should eq(-9.66)
   
         latlon = LatLon.from_str("47.16S, 9.66E")
-        latlon.lat.should eq -47.16
-        latlon.lon.should eq 9.66
+        latlon.lat.should eq(-47.16)
+        latlon.lon.should eq(9.66)
   
         latlon = LatLon.from_str("47N, 9E")
-        latlon.lat.should eq 47.0
-        latlon.lon.should eq 9.0
+        latlon.lat.should eq(47.0)
+        latlon.lon.should eq(9.0)
       end
       
       it "rejects invalid string input" do
-        expect { LatLon.from_str " 1.1N, 9.6E" }.to raise_error
-        expect { LatLon.from_str "1.1 N, 9.6E" }.to raise_error
-        expect { LatLon.from_str "1 1.1N, 9.6E" }.to raise_error
+        expect { LatLon.from_str(" 1.1N, 9.6E") }.to raise_error
+        expect { LatLon.from_str("1.1 N, 9.6E") }.to raise_error
+        expect { LatLon.from_str("1 1.1N, 9.6E") }.to raise_error
       end
       
-      it 'can be converted to a string' do
+      it "can be converted to a string" do
         latlon = LatLon.new(47.16, -9.66666666)
-        latlon.to_s.should eq "47.16N, 9.6667W"
+        latlon.to_s.should eq("47.16N, 9.6667W")
       end
       
       it "can be compared to other LatLon objects" do
