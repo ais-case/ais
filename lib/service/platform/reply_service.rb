@@ -30,7 +30,7 @@ module Service
               @log.debug("Reply service replied to request")
             end
           rescue => e
-            @log.fatal("Subscriber service thread exception: #{e.message}")
+            @log.fatal("Reply service thread exception: #{e.message}")
             e.backtrace.each { |line| @log.fatal(line) }
             puts e.message
             queue.push(false)
