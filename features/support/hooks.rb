@@ -10,6 +10,7 @@ end
 
 After do |scenario|
   @manager.stop
+  Service::VesselProxySingleton.instance.destroy
   
   if ENV.has_key?('CUCUMBER_CI')
     if scenario.failed?

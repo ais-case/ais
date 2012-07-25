@@ -1,16 +1,17 @@
 require 'thread'
-require_relative '../thread_safe_singleton'
 require_relative 'platform/service_registry_proxy'
 
 module Service
   class VesselProxySingleton
-    include ThreadSafeSingleton
-    
+    private_class_method :new
+    @@mutex = Mutex.new
+    @@instance = nil
+      
     def initialize
       @request_queue = SizedQueue.new(1)
       @reply_queue = SizedQueue.new(1)
       
-      Thread.new(@request_queue, @reply_queue) do |request_queue, reply_queue|
+      @thread = Thread.new(@request_queue, @reply_queue) do |request_queue, reply_queue|
         begin 
           registry = Service::Platform::ServiceRegistryProxy.new(Rails.configuration.registry_endpoint)
           service = registry.bind('ais/vessel')
@@ -36,6 +37,13 @@ module Service
         end
       end
     end
+    
+    def self.instance
+      @@mutex.synchronize do
+        @@instance = new unless @@instance
+        @@instance
+      end
+    end
   
     def vessels(*args)
       @request_queue.push(['vessels', args])
@@ -45,6 +53,15 @@ module Service
     def info(mmsi)
       @request_queue.push(['info', mmsi])
       @reply_queue.pop   
+    end
+    
+    def destroy
+      @@mutex.synchronize do
+        if @@instance
+          Thread.kill(@thread)
+          @@instance = nil
+        end
+      end
     end
   end
 end
