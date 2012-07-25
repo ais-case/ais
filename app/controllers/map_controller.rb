@@ -1,8 +1,12 @@
 class MapController < ApplicationController
-  attr_writer :registry
+  attr_writer :registry, :vessel_service
   
   def get_registry
     @registry ||= Service::Platform::ServiceRegistryProxy.new(Rails.configuration.registry_endpoint)
+  end
+  
+  def vessel_service
+    @vessel_service ||= Service::VesselProxySingleton.instance 
   end
   
   def markers
@@ -17,14 +21,10 @@ class MapController < ApplicationController
     
     logger.debug("Controller received marker request with latlons #{latlon1} and #{latlon2}")
     
-    vessels = []
-    registry = get_registry
-    registry.bind('ais/vessel') do |service|
-      if latlon1 and latlon2
-        vessels = service.vessels(latlon1, latlon2)
-      else
-        vessels = service.vessels
-      end
+    if latlon1 and latlon2
+      vessels = vessel_service.vessels(latlon1, latlon2)
+    else
+      vessels = vessel_service.vessels
     end
     logger.debug("Controller received #{vessels.length} vessels")
 
@@ -41,11 +41,7 @@ class MapController < ApplicationController
   def info
     logger.debug("Controller received info request for #{params[:id]}")
     
-    vessels = []
-    registry = get_registry
-    registry.bind('ais/vessel') do |service|
-      @vessel = service.info(params[:id].to_i)
-    end
+    @vessel = vessel_service.info(params[:id].to_i)
 
     respond_to do |format| 
       format.html { render :layout => false }
