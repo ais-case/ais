@@ -160,10 +160,12 @@ module Service
             Marshal.dump(vessels[0])
           else
             @log.error("No vessel found with mmsi #{mmsi}")
+            nil
           end
         end
       else
         @log.error("Info request without mmsi")
+        nil
       end      
     end
   end

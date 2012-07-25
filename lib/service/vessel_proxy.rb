@@ -31,8 +31,11 @@ module Service
       Domain::NavigationStatus
       Domain::Vessel
       Domain::VesselType
-
-      return Marshal.load(message)
+      if message.length > 0
+        Marshal.load(message)
+      else
+        nil
+      end
     end
   end
 end
