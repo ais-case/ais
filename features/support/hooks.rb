@@ -9,8 +9,11 @@ Before do
 end
 
 After do |scenario|
+  # Reset sessions immediately. If the browser stays open it can make additional requests
+  # (AJAX style) while the services are being shut down, causing the tests to hang.
+  Capybara.reset_sessions!
+  Service::VesselProxySingleton.instance.reset
   @manager.stop
-  Service::VesselProxySingleton.instance.destroy
   
   if ENV.has_key?('CUCUMBER_CI')
     if scenario.failed?

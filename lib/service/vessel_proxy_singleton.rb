@@ -12,10 +12,10 @@ module Service
       @reply_queue = SizedQueue.new(1)
       
       @thread = Thread.new(@request_queue, @reply_queue) do |request_queue, reply_queue|
-        begin 
-          registry = Service::Platform::ServiceRegistryProxy.new(Rails.configuration.registry_endpoint)
-          service = registry.bind('ais/vessel')
+        registry = Service::Platform::ServiceRegistryProxy.new(Rails.configuration.registry_endpoint)
+        service = registry.bind('ais/vessel')
           
+        begin 
           while true
             request, args = request_queue.pop
             if request == 'vessels'
@@ -30,7 +30,8 @@ module Service
             reply_queue.push(reply)
           end
         rescue => e
-          e.backtrace.each { |line| Rails.logger.fatal(line) }
+          @stderr.puts(e.to_s)
+          e.backtrace.each { |line| $stderr.puts(line) }
         ensure
           service.release
           registry.release
@@ -51,14 +52,16 @@ module Service
     end
   
     def info(mmsi)
-      @request_queue.push(['info', mmsi])
+      @request_queue.push(['info', [mmsi]])
       @reply_queue.pop   
     end
     
-    def destroy
+    def reset
       @@mutex.synchronize do
         if @@instance
           Thread.kill(@thread)
+          sleep(0.1)
+          @thread = nil
           @@instance = nil
         end
       end
