@@ -63,8 +63,8 @@ cd ${BUILDPATH}
 rm -r zeromq-2.2.0
 echo "done."
 
-ZMQ_GEM_PATH="${HOME}/.rvm/gems/${RUBY_VERSION}@ais/gems/ffi-rzmq-0.9.3"
-echo -n "Symlinking zmq libraries from {$ZMQ_GEM_PATH}... "
+ZMQ_GEM_PATH="${HOME}/.rvm/gems/ruby-${RUBY_VERSION}@ais/gems/ffi-rzmq-0.9.3"
+echo -n "Symlinking zmq libraries from ${ZMQ_GEM_PATH}... "
 for LIBFILE in ${BUILDPATH}/zmq/lib/*;
 do
     DEST="${ZMQ_GEM_PATH}/ext/`basename ${LIBFILE}`"
