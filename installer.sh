@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Some setup
-RUBY_VERSION="1.9.3-p194"
+MY_RUBY_VERSION="1.9.3-p194"
 cd `dirname $0`
 BASEPATH=`pwd`
 LOG="$BASEPATH/log/setup.log"
@@ -28,9 +28,9 @@ echo -n "Installing zlib, this may take a while... "
 rvm pkg install zlib 1>>${LOG} 2>&1
 echo "done."
 
-echo -n "Installing ruby ${RUBY_VERSION}, this may take a while... "
-rvm install ${RUBY_VERSION} 1>>${LOG} 2>&1
-rvm use ${RUBY_VERSION} 1>>${LOG} 2>&1
+echo -n "Installing ruby ${MY_RUBY_VERSION}, this may take a while... "
+rvm install ${MY_RUBY_VERSION} 1>>${LOG} 2>&1
+rvm use ${MY_RUBY_VERSION} 1>>${LOG} 2>&1
 echo "done."
 
 echo -n "Setting up gemset for project... "
@@ -63,7 +63,7 @@ cd ${BUILDPATH}
 rm -r zeromq-2.2.0
 echo "done."
 
-ZMQ_GEM_PATH="${HOME}/.rvm/gems/ruby-${RUBY_VERSION}@ais/gems/ffi-rzmq-0.9.3"
+ZMQ_GEM_PATH="${HOME}/.rvm/gems/ruby-${MY_RUBY_VERSION}@ais/gems/ffi-rzmq-0.9.3"
 echo -n "Symlinking zmq libraries from ${ZMQ_GEM_PATH}... "
 for LIBFILE in ${BUILDPATH}/zmq/lib/*;
 do
