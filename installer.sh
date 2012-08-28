@@ -22,14 +22,17 @@ echo "done."
 
 echo -n "Installing openssl, this may take a while... "
 rvm pkg install openssl 1>>${LOG} 2>&1
+rm -rf ~/.rvm/src/openssl* 1>>${LOG} 2>&1
 echo "done."
 
 echo -n "Installing zlib, this may take a while... "
 rvm pkg install zlib 1>>${LOG} 2>&1
+rm -rf ~/.rvm/src/zlib* 2>&1
 echo "done."
 
 echo -n "Installing ruby ${MY_RUBY_VERSION}, this may take a while... "
 rvm install ${MY_RUBY_VERSION} 1>>${LOG} 2>&1
+rm -rf ~/.rvm/src/ruby-${MY_RUBY_VERSION} 2>&1
 rvm use ${MY_RUBY_VERSION} 1>>${LOG} 2>&1
 echo "done."
 
@@ -79,6 +82,7 @@ echo "done."
 # Now install rvmrc
 cd ${BASEPATH} && cd ..
 cp ${BASEPATH}/.rvmrc.distrib ${BASEPATH}/.rvmrc
+echo '[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"' >> ~/.bashrc
 
 echo
 echo "Done with installation"
