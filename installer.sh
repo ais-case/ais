@@ -25,9 +25,9 @@ rvm pkg install openssl 1>>${LOG} 2>&1
 rm -rf ~/.rvm/src/openssl* 1>>${LOG} 2>&1
 echo "done."
 
-echo -n "Installing zlib, this may take a while... "
-rvm pkg install zlib 1>>${LOG} 2>&1
-rm -rf ~/.rvm/src/zlib* 2>&1
+echo -n "Installing libyaml... "
+rvm pkg install libyaml 1>>${LOG} 2>&1
+rm -rf ~/.rvm/src/libyaml* 2>&1
 echo "done."
 
 echo -n "Installing ruby ${MY_RUBY_VERSION}, this may take a while... "
