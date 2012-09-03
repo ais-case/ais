@@ -27,7 +27,7 @@ echo "done."
 
 echo -n "Installing libyaml... "
 rvm pkg install libyaml 1>>${LOG} 2>&1
-rm -rf ~/.rvm/src/libyaml* 2>&1
+rm -rf ~/.rvm/src/yaml* 2>&1
 echo "done."
 
 echo -n "Installing ruby ${MY_RUBY_VERSION}, this may take a while... "
