@@ -6,7 +6,7 @@ the Gemfile in the root directory of the project. You may want to install and
 use a RVM gemset. This keeps to the installed gems separated from other gems
 on your system to prevent any version conflicts.
 
-== Quickstart
+== Quickstart lab machines
 
 1. Clone the repository:
     
@@ -16,15 +16,18 @@ on your system to prevent any version conflicts.
 
     $ ais/installer.sh
 
-3. Now activate the project <tt>.rvmrc</tt> to ensure the correct
-   RVM environment is selected when you work on the project:
-
-    $ source ~/.rvm/scripts/rvm && cd ais  
+3. Now in a new terminal window, go to the ais directory.
 
    When asked: <tt>Do you wish to trust this .rvmrc file?</tt>,answer with 
    <tt>yes</tt>, <tt><ENTER></tt> 
  
 You can now jump straight to "Running the system" to start the services
+
+== Quickstart own laptop
+
+The easiest way to run the system on your own laptop is by installing VirtualBox and using the (bootable) disk image from {here}[https://s3-eu-west-1.amazonaws.com/ti2200/AIS.vdi.zip]. We recommend creating a VM with >1GB of memory. 
+
+If you run Linux or Mac OS X you may also use the other installation methods, but you may have to install additional packages.
 
 == Installation
 
