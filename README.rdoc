@@ -6,17 +6,21 @@ the Gemfile in the root directory of the project. You may want to install and
 use a RVM gemset. This keeps to the installed gems separated from other gems
 on your system to prevent any version conflicts.
 
+The system has not been tested on Windows, we strongly recommend using Linux or Mac OS X (if you have the developer tools installed.
+
 == Quickstart lab machines
 
-1. Clone the repository:
+1. Boot the lab machine in Linux
+
+2. Clone the repository:
     
     $ git clone git://github.com/ais-case/ais.git
 
-2. Run the installer:
+3. Run the installer:
 
     $ ais/installer.sh
 
-3. Now in a new terminal window, go to the ais directory.
+4. Now in a new terminal window, go to the ais directory.
 
    When asked: <tt>Do you wish to trust this .rvmrc file?</tt>,answer with 
    <tt>yes</tt>, <tt><ENTER></tt> 
