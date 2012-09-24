@@ -9,7 +9,7 @@ require_relative '../domain/ais/six_bit_encoding'
 require_relative '../domain/ais/message_factory'
 require_relative 'platform/base_service'
 require_relative 'platform/reply_service'
-require_relative 'platform/subscriber_service'
+require_relative 'platform/http_subscriber_service'
 require_relative 'platform/publisher_service'
 
 module Service
@@ -18,7 +18,7 @@ module Service
       super(registry)
       @log = Util::get_log('transmitter')
       @reply_service = Platform::ReplyService.new(method(:process_request), @log)
-      @source = Platform::SubscriberService.new(method(:process_raw_message), [''], @log)
+      @source = Platform::HttpSubscriberService.new(method(:process_raw_message), @log)
       @publisher = Platform::PublisherService.new(@log)
       @encoder = nil
     end
@@ -33,7 +33,7 @@ module Service
       if ENV.has_key?('RAILS_ENV') and ENV['RAILS_ENV'] == 'test'
         ais_source = nil 
       else
-        ais_source = 'tcp://82.210.120.176:21000' 
+        ais_source = 'http://82.210.120.176:21000/SUBSCRIBE/ais.sentence' 
       end
 
       if not ais_source.nil?      

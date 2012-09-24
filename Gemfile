@@ -39,6 +39,7 @@ gem 'jquery-rails'
 
 # Project specific gems
 gem "ffi-rzmq"
+gem "json"
 
 group :development, :test do
   gem 'rspec-rails', '~> 2.0'
