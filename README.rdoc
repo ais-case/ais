@@ -126,7 +126,7 @@ are automatically installed when you run <tt>bundle install</tt>.
 
     $ rake spec
 	
-* Javascript unit tests use the {Jasmine}[http://pivotal.github.com/jasmine/] 
+* Javascript unit tests use the {Jasmine}[https://jasmine.github.io/] 
   tool, and can be found in <tt>spec/javascript</tt>. To run the tests use:
 
     $ rake jasmine:ci
